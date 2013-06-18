@@ -1,0 +1,65 @@
+<html>
+<head>
+  <title>FlowTip Demo</title>
+  <script type="text/javascript" src="../flowtip.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      target = document.createElement("div");
+      $(target).css({
+        position: "absolute",
+        width: "21px",
+        height: "21px",
+        zIndex: "9999",
+        backgroundColor: "red"
+      })
+      $("body")[0].appendChild(target);
+
+      flowtip = new FlowTip({
+        width: 300,
+        height: 200,
+        region: "top",
+        persevere: true,
+        targetOffsetFrom: "tail",
+        rootAlign: "center",
+        rootAlignOffset: 0,
+        targetAlign: "center",
+        targetAlignOffset: 0
+      });
+
+      flowtip.setTarget(target);
+      flowtip.show();
+
+      $(flowtip.root).css({
+        backgroundColor: "black",
+        color: "white",
+        zIndex: "9999",
+        textAlign: "center",
+        width: "300px",
+        height: "300px"
+      });
+
+      $(flowtip.tail).css({
+        backgroundColor: "blue",
+        width: "11px",
+        height: "5px"
+      });
+
+      $("body").mousemove(function(event) {
+        target.style.top = (event.pageY - 10) + "px";
+        target.style.left = (event.pageX - 10) + "px";
+        flowtip.reposition();
+      });
+    });
+  </script>
+  <style type="text/css">
+    body {
+      margin: 0px;
+    }
+  </style>
+</head>
+<body>
+
+</body>
+</html>
