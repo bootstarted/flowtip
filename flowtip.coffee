@@ -3,6 +3,8 @@
 # *A flexible, adaptable and easy to use tooltip positioning library.*
 #
 # Click [here](demo.html) for to see a demo.
+#
+# **GitHub Repo**/**Download**: [https://github.com/qiushihe/flowtip](https://github.com/qiushihe/flowtip)
 
 class @FlowTip
 
