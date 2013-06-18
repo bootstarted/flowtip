@@ -2,9 +2,32 @@
 #
 # *A flexible, adaptable and easy to use tooltip positioning library.*
 #
-# Click [here](demo.html) for to see a demo.
+# [**Interactive Demo**](demo.html)
 #
-# **GitHub Repo**/**Download**: [https://github.com/qiushihe/flowtip](https://github.com/qiushihe/flowtip)
+# [**GitHub Repo**/**Download**](https://github.com/qiushihe/flowtip)
+
+# ### Glossaries
+#
+# The documentation and source of this library refers to several terms that may require clarification:
+#
+# **Tooltip**: An instance of **FlowTip** object.
+#
+# **Root**: The **root** of a tooltip refers to the element that contains both the tooltip's
+# "content" element, and "tail" element.
+#
+# **Content (element)**: The container element for the tooltip's content.
+#
+# **Tail**: The tail of the tooltip. It's usually visualized as a pointy "nub" of sort.
+#
+# **Target**: The target is the thing the tooltip points to.
+#
+# **Region**: There are four different regions a tooltip could be in at any given time. The four
+# regions are "top", "bottom", "left" and "right". Region is described relative to the target of
+# the tooltip. For example, region "top" means the tooltip would appear above the target, and
+# region "right" means the tooltip would appear to the right side of the target.
+#
+# **Pivot**: The pivot is a imaginary line that is aligned to the target and the tooltip's root is
+# then in term aligned to the pivot.
 
 class @FlowTip
 
@@ -12,14 +35,42 @@ class @FlowTip
 
   # ### Create a FlowTip
   #
-  # Call **FlowTip**'s constructor, optionally with some of the attributes listed below:
+  # Creates an instance of the **FlowTip** object:
+  #
+  #     var tooltip = new FlowTip();
+  #
+  # An instance of the **FlowTip** can be created with options (see **Attributes** section below):
   #
   #     var myFlowTip = new FlowTip({
   #         region: "bottom"
   #         className: "my-tip"
   #         hasTail: false
   #     })
+  #
+  # At this point, the tooltip is not yet "attached" to a target. The tooltip's target can be set by
+  # calling `setTarget`:
+  #
+  #     tooltip.setTarget(tooltipTarget);
+  #
+  # where `tooltipTarget` may be a DOM object or a jQuery selection.
+  #
+  # To make the tooltip visible, call `show`:
+  #
+  #     tooltip.show();
+  #
+  # This will render the tooltip is it's not already rendered, and position the tooltip in the
+  # appropriate region (see `region` in **Attributes** section below) with proper alignments
+  # (see **Alignments** section below).
+  #
+  # It's important to note that instances of **FlowTip** does **not** automatically re-position
+  # themselves when their targets move. The responsibility of detecting target movement lies outside
+  # the scope of this library. To update the tooltip's position against its target:
+  #
+  #     tooltip.reposition();
   constructor: (options = {}) ->
+    @visible = false
+    @target = null
+
     for option of options
       if _.has(options, option) && options[option] != undefined
         this[option] = options[option]
@@ -36,111 +87,86 @@ class @FlowTip
   tailClassName: ""
 
   # `appendTo`: **Element**; The element within which the tooltip will be inserted into.
-  # Default value is the document's `body` and the tooltip would thus be free to move/appear
+  # Default value is the document's `body` and the tooltip would thus be free to appear and move
   # anywhere on the page and edge detection will only be performed on the edge of the page.
-  # If `appendTo` is set to a element in the page, edge detection will be performed on the edge of
-  # the element.
+  #
+  # If `appendTo` is set to an element then edge detection will be performed on the edge of
+  # the element instead.
   appendTo: null
 
-  # `tooltipContent`: **String** | **Element**; The content of the tooltip. May be specified as
-  # (HTML) string or DOM element. Can be (re)set by calling `setTooltipContent(...)`.
+  # `tooltipContent`: **String** or **Element**; The content of the tooltip. May be specified as
+  # (HTML) string or DOM element. Can be set or updated by calling `setTooltipContent`.
   tooltipContent: null
 
-  # `region`: **String**; The preferred region in which the tooltip will appear relative to its
-  # target. Possibly values are: `top`, `bottom`, `left` and `right`.
+  # `region`: **String**; The preferred region in which the tooltip will appear at first relative to
+  # its target. Possibly values are: `top`, `bottom`, `left` and `right`.
   region: "top"
 
-  # `persevere`: **Boolean**; If set to `true`, the tooltip will be reverted back to its preferred
-  # region whenever possible (i.e. whenever there is enough space in that region). If set
-  # to `false`, the tooltip will remain in the region edge detection puts it in until edge detection
-  # changes it again.
+  # `persevere`: **Boolean**; If set to `true`, the tooltip will revert back to its preferred region
+  # whenever there is enough space in that region. If set to `false`, the tooltip will remain in the
+  # region edge detection puts it in, until edge detection changes it again.
   persevere: false
 
-  # `hasTail`: **Boolean**; Controls if the tooltip has a "tail" that remains pointing to the
-  # tooltip's target.
+  # `hasTail`: **Boolean**; Controls if the tooltip's tail's visibility. When set to `false` the
+  # tooltip's tail will be hidden and ignored for all positioning calculations.
   hasTail: true
+
+  # `width`: **Integer**; Width of the tooltip's root. If set to `null`, the tooltip will expand to
+  # fit its content's width.
+  width: null
+
+  # `height`: **Integer** or the string "auto"; Height of the tooltip's root. If set to `null`, the
+  # tooltip will expand to fit its content's height. If set to `"auto"`, the tooltip's content will
+  # be relatively positioned to allow possible scrolling.
+  height: "auto"
+
+  # `minWidth`: **String**; In the form of `42px`, or other forms accepted by CSS min-width.
+  minWidth: null
+
+  # `minHeight`: **String**; In the form of `42px`, or other forms accepted by CSS max-width.
+  minHeight: null
+
+  # `maxWidth`: **String**; In the form of `42px`, or other forms accepted by CSS min-height.
+  maxWidth: null
+
+  # `maxHeight`:**String**; In the form of `42px`, or other forms accepted by CSS max-height.
+  maxHeight: null
+
+  # `tailWidth`: **Integer**; Width of the tail element.
+  tailWidth: 20
+
+  # `tailHeight`: **Integer**; Height of the tail element.
+  tailHeight: 10
 
   animated: false
 
-  width: null
-  height: "auto"
-  minWidth: null
-  minHeight: null
-  maxWidth: null
-  maxHeight: null
-
-  tailWidth: 20
-  tailHeight: 10
-
-  # `targetOffset`: **Integer**; The distance between:
-  #
-  # * the edge of the tooltip's target in the current region
-  # * the closest edge of the tooltip's root (or tail; see `targetOffsetFrom` below) to the target's
-  #   edge
+  # `targetOffset`: **Integer**; The distance between the tooltip's root (or tip of the tail, see
+  # `targetOffsetFrom` below) and the target's edge.
   targetOffset: 10
 
-  # `rotationOffset`: **Integer**; The distance between two closest edges of:
-  #
-  # * the boundary representive of the tooltip's `appendTo` attribute
-  # * the target of the tooltip
-  #
-  # ... beyond which point edge detection will cause the tooltip to be rotated to an adjacent
-  # region.
+  # `rotationOffset`: **Integer**; The distance between the target's edge and the edge of the
+  # boundary representative the tooltip's `appendTo` element. When this distance is smaller than
+  # `rotationOffset`, edge detection will place the tooltip in an adjacent region (i.e. rotating the
+  # tooltip).
   rotationOffset: 30
 
-  # `edgeOffset`: **Integer**; The distance between two closest edges of:
-  #
-  # * the boundary representive of the tooltip's `appendTo` attribute
-  # * the target of the tooltip
-  #
-  # ... beyond which point edge detection will cause the tooltip to be flipped to an opposit region.
+  # `edgeOffset`: **Integer**; The distance between the tooltip's root's edge and the edge of the
+  # boundary representative the tooltip's `appendTo` element. When this distance is smaller than
+  # `edgeOffset`, edge detection will place the tooltip in an opposite region (i.e. flipping the
+  # tooltip).
   edgeOffset: 30
 
   # `targetOffsetFrom`: **String**; Possible values are `root` and `tail`. When set to `root`,
   # `targetOffset` will be calculated against the edge of the tooltip's root; When set to `tail`,
-  # `targetOffset` will take the tooltip's tail into account.
+  # `targetOffset` will be calculated against the tip of the tail.
   targetOffsetFrom: "root"
 
   # ### Alignments
   #
-  # Tooltip's alignments are divided into **root alignment** and **target alignment**, each with
+  # Tool tip's alignments are divided into **root alignment** and **target alignment**, each with
   # a corresponding **offset** attribute that controls the direction of the alignment and offset
   # amount.
   #
-  # ##### Alignment Pivot
-  #
-  # When talking about alignments, it's easiest to reference an imaginary "pivot" to which both the
-  # tooltip and its target are aligned to. For example, if both the tooltip's root and its target
-  # are set to "center" align, then this "pivot" would be a line that would run across the center of
-  # both elements.
-  #
-  # The alignment pivot can also be seen as *the point at which the tooltip is "pointing" at the
-  # target*.
-  #
-  # ##### Root Alignment
-  #
-  # Root alignment referrs to the alignment of the tooltip's root relative to the pivot.
-  #
-  # `rootAlign`: **String**; Possible values are `center` and `edge`. When set to `center`, the
-  # tooltip's root will be center aligned against the pivot. When set to `edge`, one of the
-  # tooltip's root's edge will be aligned against the pivot. See `rootAlignOffset` for the
-  # exact mechanics of the two values. This value can also be specified on a per-region basis via
-  # `[top|bottom|left|right]RootAlign`, and if a region's specific value is absence, the value from
-  # `rootAlign` will be used.
-  rootAlign: "center"
-
-  # `rootAlignOffset`: **Integer**
-  #
-  # If `rootAlign` is set to `center`, this attribute controls the clockwise distance from the
-  # pivot the tooltip's root will shift. When this value is positive, the root will shift clockwise,
-  # and counter-clockwise when this value is negative.
-  #
-  # If `rootAlign` is set to `edge`, one of the tooltip's root's edge will be aligned against the
-  # pivot. When this attribute is positive, the clockwise edge will be used and the
-  # counter-clockwise edge will be used when this attribute is negative. The absolute value of this
-  # attribute controls the amount away from that edge the tooltip's root will shift.
-  rootAlignOffset: 0
-
   # ##### Target Alignment
   #
   # Target alignment refers to the alignment of the pivot relative to the target of the tooltip.
@@ -153,21 +179,44 @@ class @FlowTip
   # from `targetAlign` will be used.
   targetAlign: "center"
 
-  # `rootAlignOffset`: **Integer**
+  # `targetAlignOffset`: **Integer**
   #
-  # If `targetAlign` is set to `center`, this attribute controls the clockwise distance from the
-  # pivot the target will be effectively shift (i.e. the target will not move, but the pivot will
-  # shift in the opposite direction). When this value is positive, the pivot will effectively shift
-  # clockwise, and counter-clockwise when this value is negative.
+  # If `targetAlign` is set to `center`, this value controls the clockwise distance from the center
+  # of the target the pivot will shift. When this value is positive, the pivot will shift clockwise,
+  # and counter-clockwise when this value is negative.
   #
-  # If `targetAlign` is set to `edge`, one of the target's edge will be aligned against the
-  # pivot. When this attribute is positive, the clockwise edge will be used and the
-  # counter-clockwise edge will be used when this attribute is negative. The absolute value of this
-  # attribute controls the amount away from that edge the target will effectively shift.
+  # If `targetAlign` is set to `edge`, the pivot will shift away from one of the target's edges.
+  # When this value is positive, the clockwise edge will be used, and the counter-clockwise edge
+  # will be used when this value is negative. The absolute value of this value controls the amount
+  # of shifting.
   targetAlignOffset: 0
 
+  # ##### Root Alignment
+  #
+  # Root alignment refers to the alignment of the tooltip's root relative to the pivot.
+  #
+  # `rootAlign`: **String**; Possible values are `center` and `edge`. When set to `center`, the
+  # tooltip's root will be center aligned against the pivot. When set to `edge`, one of the
+  # tooltip's root's edge will be aligned against the pivot. See `rootAlignOffset` for the
+  # exact mechanics of the two values. This value can also be specified on a per-region basis via
+  # `[top|bottom|left|right]RootAlign`, and if a region's specific value is absence, the value from
+  # `rootAlign` will be used.
+  rootAlign: "center"
+
+  # `rootAlignOffset`: **Integer**
+  #
+  # If `rootAlign` is set to `center`, this value controls the clockwise distance from the pivot the
+  # tooltip's root will shift. When this value is positive, the root will shift clockwise, and
+  # counter-clockwise when this value is negative.
+  #
+  # If `rootAlign` is set to `edge`, one of the tooltip's root's edge will be aligned against the
+  # pivot. When this value is positive, the clockwise edge will be used, and the counter-clockwise
+  # edge will be used when this value is negative. The absolute value of this value controls the
+  # amount of shifting.
+  rootAlignOffset: 0
+
   # `render`: Render the tooltip's root (if not already rendered), content and insert the tooltip
-  # into the DOM. If called repeately, only re-render the tooltip's content.
+  # into the DOM. If called repeatedly, only re-render the tooltip's content.
   render: ->
     return @_renderContent() if @$root
 
@@ -195,20 +244,19 @@ class @FlowTip
 
     @_insertToDOM()
 
-  # `setTarget`: Set/update the tooltip's target. The target is the element to which the
-  # tooltip will be pointing at.
+  # `setTarget`: Set the tooltip's target. The target is the element to which the tooltip will be
+  # pointing at.
   setTarget: (target) ->
     @$target = $(target)
     @target = @$target[0]
 
-  # `setTooltipContent`: Set/update the tooltip's content. If `render` is set to `true` for
-  # `options`, the `render()` method will be called to re-render the content.
+  # `setTooltipContent`: Set the tooltip's content. If `render` is set to `true` for `options`, the
+  # `render()` method will be called to re-render the content.
   setTooltipContent: (content, options = {}) ->
     @tooltipContent = content
     @render() if options.render
 
-  # `reposition`: Perform edge detection and position calculations to update the tooltip's
-  # position.
+  # `reposition`: Perform edge detection and position calculations to update the tooltip's position.
   reposition: ->
     return unless @target
 
@@ -260,7 +308,7 @@ class @FlowTip
   trigger: (eventName) ->
     @$root.trigger("#{eventName}.flowtip")
 
-  # `destroy()`: Remove the tooltip's root from DOM.
+  # `destroy`: Remove the tooltip's root from DOM.
   destroy: ->
     @$root.remove() if @$root
 
@@ -268,8 +316,6 @@ class @FlowTip
   #
   # *Hitherto shalt thou come, but no further.*
 
-  # `_updateRegion`: Performs edge detection and place the tooltip in a different if the current one
-  # it's in doesn't have enough space.
   _updateRegion: (position) ->
     @_region ||= @region
     @_region = @region if @persevere
@@ -305,7 +351,6 @@ class @FlowTip
         else if targetParameter.top + (targetParameter.height / 2) - parentParameter.top - @edgeOffset < @rotationOffset
           @_region = "bottom"
 
-  # `_updatePosition`: Update tooltip's elements' positions.
   _updatePosition: (position) ->
     position = @_calculatePosition(@_region)
 
@@ -331,7 +376,6 @@ class @FlowTip
     else
       @tail.style.display = "none"
 
-  # `_calculatePosition`: Calculate the would-be position of the tooltip for the given region.
   _calculatePosition: (region) ->
     rootDimension = @_rootDimension()
     parentParameter = @_parentParameter()
@@ -420,7 +464,6 @@ class @FlowTip
     position
 
   _insertToDOM: ->
-    # Ensure "appendTo" is "position"'ed
     if @appendTo.style.position == ""
       @appendTo.style.position = "relative"
     @appendTo.appendChild(@root)
