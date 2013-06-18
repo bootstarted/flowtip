@@ -23,8 +23,22 @@
               </div>
               <h1>FlowTip</h1>
 <p><em>A flexible, adaptable and easy to use tooltip positioning library.</em></p>
-<p>Click <a href="demo.html">here</a> for to see a demo.</p>
-<p><strong>GitHub Repo</strong>/<strong>Download</strong>: <a href="https://github.com/qiushihe/flowtip"><a href="https://github.com/qiushihe/flowtip">https://github.com/qiushihe/flowtip</a></a></p>
+<p><a href="demo.html"><strong>Interactive Demo</strong></a></p>
+<p><a href="https://github.com/qiushihe/flowtip"><strong>GitHub Repo</strong>/<strong>Download</strong></a></p>
+<h3>Glossaries</h3>
+<p>The documentation and source of this library refers to several terms that may require clarification:</p>
+<p><strong>Tooltip</strong>: An instance of <strong>FlowTip</strong> object.</p>
+<p><strong>Root</strong>: The <strong>root</strong> of a tooltip refers to the element that contains both the tooltip&#39;s
+&quot;content&quot; element, and &quot;tail&quot; element.</p>
+<p><strong>Content (element)</strong>: The container element for the tooltip&#39;s content.</p>
+<p><strong>Tail</strong>: The tail of the tooltip. It&#39;s usually visualized as a pointy &quot;nub&quot; of sort.</p>
+<p><strong>Target</strong>: The target is the thing the tooltip points to.</p>
+<p><strong>Region</strong>: There are four different regions a tooltip could be in at any given time. The four
+regions are &quot;top&quot;, &quot;bottom&quot;, &quot;left&quot; and &quot;right&quot;. Region is described relative to the target of
+the tooltip. For example, region &quot;top&quot; means the tooltip would appear above the target, and
+region &quot;right&quot; means the tooltip would appear to the right side of the target.</p>
+<p><strong>Pivot</strong>: The pivot is a imaginary line that is aligned to the target and the tooltip&#39;s root is
+then in term aligned to the pivot.</p>
 
             </div>
             
@@ -42,16 +56,34 @@
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
               <h3>Create a FlowTip</h3>
-<p>Call <strong>FlowTip</strong>&#39;s constructor, optionally with some of the attributes listed below:</p>
+<p>Creates an instance of the <strong>FlowTip</strong> object:</p>
+<pre><code>var tooltip = new FlowTip();</code></pre>
+<p>An instance of the <strong>FlowTip</strong> can be created with options (see <strong>Attributes</strong> section below):</p>
 <pre><code>var myFlowTip = new FlowTip({
     region: &quot;bottom&quot;
     className: &quot;my-tip&quot;
     hasTail: false
 })</code></pre>
+<p>At this point, the tooltip is not yet &quot;attached&quot; to a target. The tooltip&#39;s target can be set by
+calling <code>setTarget</code>:</p>
+<pre><code>tooltip.setTarget(tooltipTarget);</code></pre>
+<p>where <code>tooltipTarget</code> may be a DOM object or a jQuery selection.</p>
+<p>To make the tooltip visible, call <code>show</code>:</p>
+<pre><code>tooltip.show();</code></pre>
+<p>This will render the tooltip is it&#39;s not already rendered, and position the tooltip in the
+appropriate region (see <code>region</code> in <strong>Attributes</strong> section below) with proper alignments
+(see <strong>Alignments</strong> section below).</p>
+<p>It&#39;s important to note that instances of <strong>FlowTip</strong> does <strong>not</strong> automatically re-position
+themselves when their targets move. The responsibility of detecting target movement lies outside
+the scope of this library. To update the tooltip&#39;s position against its target:</p>
+<pre><code>tooltip.reposition();</code></pre>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>  constructor: (options = {}) -&gt;
+    <span class="property">@visible</span> = <span class="literal">false</span>
+    <span class="property">@target</span> = <span class="literal">null</span>
+
     <span class="keyword">for</span> option <span class="keyword">of</span> options
       <span class="keyword">if</span> _.has(options, option) &amp;&amp; options[option] != <span class="literal">undefined</span>
         <span class="keyword">this</span>[option] = options[option]</pre></div></div>
@@ -112,10 +144,10 @@
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p><code>appendTo</code>: <strong>Element</strong>; The element within which the tooltip will be inserted into.
-Default value is the document&#39;s <code>body</code> and the tooltip would thus be free to move/appear
-anywhere on the page and edge detection will only be performed on the edge of the page.
-If <code>appendTo</code> is set to a element in the page, edge detection will be performed on the edge of
-the element.</p>
+Default value is the document&#39;s <code>body</code> and the tooltip would thus be free to appear and move
+anywhere on the page and edge detection will only be performed on the edge of the page.</p>
+<p>If <code>appendTo</code> is set to an element then edge detection will be performed on the edge of
+the element instead.</p>
 
             </div>
             
@@ -130,8 +162,8 @@ the element.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p><code>tooltipContent</code>: <strong>String</strong> | <strong>Element</strong>; The content of the tooltip. May be specified as
-(HTML) string or DOM element. Can be (re)set by calling <code>setTooltipContent(...)</code>.</p>
+              <p><code>tooltipContent</code>: <strong>String</strong> or <strong>Element</strong>; The content of the tooltip. May be specified as
+(HTML) string or DOM element. Can be set or updated by calling <code>setTooltipContent</code>.</p>
 
             </div>
             
@@ -146,8 +178,8 @@ the element.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p><code>region</code>: <strong>String</strong>; The preferred region in which the tooltip will appear relative to its
-target. Possibly values are: <code>top</code>, <code>bottom</code>, <code>left</code> and <code>right</code>.</p>
+              <p><code>region</code>: <strong>String</strong>; The preferred region in which the tooltip will appear at first relative to
+its target. Possibly values are: <code>top</code>, <code>bottom</code>, <code>left</code> and <code>right</code>.</p>
 
             </div>
             
@@ -162,10 +194,9 @@ target. Possibly values are: <code>top</code>, <code>bottom</code>, <code>left</
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p><code>persevere</code>: <strong>Boolean</strong>; If set to <code>true</code>, the tooltip will be reverted back to its preferred
-region whenever possible (i.e. whenever there is enough space in that region). If set
-to <code>false</code>, the tooltip will remain in the region edge detection puts it in until edge detection
-changes it again.</p>
+              <p><code>persevere</code>: <strong>Boolean</strong>; If set to <code>true</code>, the tooltip will revert back to its preferred region
+whenever there is enough space in that region. If set to <code>false</code>, the tooltip will remain in the
+region edge detection puts it in, until edge detection changes it again.</p>
 
             </div>
             
@@ -180,24 +211,12 @@ changes it again.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p><code>hasTail</code>: <strong>Boolean</strong>; Controls if the tooltip has a &quot;tail&quot; that remains pointing to the
-tooltip&#39;s target.</p>
+              <p><code>hasTail</code>: <strong>Boolean</strong>; Controls if the tooltip&#39;s tail&#39;s visibility. When set to <code>false</code> the
+tooltip&#39;s tail will be hidden and ignored for all positioning calculations.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  hasTail: <span class="literal">true</span>
-
-  animated: <span class="literal">false</span>
-
-  width: <span class="literal">null</span>
-  height: <span class="string">"auto"</span>
-  minWidth: <span class="literal">null</span>
-  minHeight: <span class="literal">null</span>
-  maxWidth: <span class="literal">null</span>
-  maxHeight: <span class="literal">null</span>
-
-  tailWidth: <span class="number">20</span>
-  tailHeight: <span class="number">10</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  hasTail: <span class="literal">true</span></pre></div></div>
             
         </li>
         
@@ -208,16 +227,12 @@ tooltip&#39;s target.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p><code>targetOffset</code>: <strong>Integer</strong>; The distance between:</p>
-<ul>
-<li>the edge of the tooltip&#39;s target in the current region</li>
-<li>the closest edge of the tooltip&#39;s root (or tail; see <code>targetOffsetFrom</code> below) to the target&#39;s
-edge</li>
-</ul>
+              <p><code>width</code>: <strong>Integer</strong>; Width of the tooltip&#39;s root. If set to <code>null</code>, the tooltip will expand to
+fit its content&#39;s width.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  targetOffset: <span class="number">10</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  width: <span class="literal">null</span></pre></div></div>
             
         </li>
         
@@ -228,17 +243,13 @@ edge</li>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p><code>rotationOffset</code>: <strong>Integer</strong>; The distance between two closest edges of:</p>
-<ul>
-<li>the boundary representive of the tooltip&#39;s <code>appendTo</code> attribute</li>
-<li>the target of the tooltip</li>
-</ul>
-<p>... beyond which point edge detection will cause the tooltip to be rotated to an adjacent
-region.</p>
+              <p><code>height</code>: <strong>Integer</strong> or the string &quot;auto&quot;; Height of the tooltip&#39;s root. If set to <code>null</code>, the
+tooltip will expand to fit its content&#39;s height. If set to <code>&quot;auto&quot;</code>, the tooltip&#39;s content will
+be relatively positioned to allow possible scrolling.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  rotationOffset: <span class="number">30</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  height: <span class="string">"auto"</span></pre></div></div>
             
         </li>
         
@@ -249,16 +260,11 @@ region.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p><code>edgeOffset</code>: <strong>Integer</strong>; The distance between two closest edges of:</p>
-<ul>
-<li>the boundary representive of the tooltip&#39;s <code>appendTo</code> attribute</li>
-<li>the target of the tooltip</li>
-</ul>
-<p>... beyond which point edge detection will cause the tooltip to be flipped to an opposit region.</p>
+              <p><code>minWidth</code>: <strong>String</strong>; In the form of <code>42px</code>, or other forms accepted by CSS min-width.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  edgeOffset: <span class="number">30</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  minWidth: <span class="literal">null</span></pre></div></div>
             
         </li>
         
@@ -269,13 +275,11 @@ region.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p><code>targetOffsetFrom</code>: <strong>String</strong>; Possible values are <code>root</code> and <code>tail</code>. When set to <code>root</code>,
-<code>targetOffset</code> will be calculated against the edge of the tooltip&#39;s root; When set to <code>tail</code>,
-<code>targetOffset</code> will take the tooltip&#39;s tail into account.</p>
+              <p><code>minHeight</code>: <strong>String</strong>; In the form of <code>42px</code>, or other forms accepted by CSS max-width.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  targetOffsetFrom: <span class="string">"root"</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  minHeight: <span class="literal">null</span></pre></div></div>
             
         </li>
         
@@ -283,32 +287,14 @@ region.</p>
         <li id="section-15">
             <div class="annotation">
               
-              <div class="pilwrap for-h3">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <h3>Alignments</h3>
-<p>Tooltip&#39;s alignments are divided into <strong>root alignment</strong> and <strong>target alignment</strong>, each with
-a corresponding <strong>offset</strong> attribute that controls the direction of the alignment and offset
-amount.</p>
-<h5>Alignment Pivot</h5>
-<p>When talking about alignments, it&#39;s easiest to reference an imaginary &quot;pivot&quot; to which both the
-tooltip and its target are aligned to. For example, if both the tooltip&#39;s root and its target
-are set to &quot;center&quot; align, then this &quot;pivot&quot; would be a line that would run across the center of
-both elements.</p>
-<p>The alignment pivot can also be seen as <em>the point at which the tooltip is &quot;pointing&quot; at the
-target</em>.</p>
-<h5>Root Alignment</h5>
-<p>Root alignment referrs to the alignment of the tooltip&#39;s root relative to the pivot.</p>
-<p><code>rootAlign</code>: <strong>String</strong>; Possible values are <code>center</code> and <code>edge</code>. When set to <code>center</code>, the
-tooltip&#39;s root will be center aligned against the pivot. When set to <code>edge</code>, one of the
-tooltip&#39;s root&#39;s edge will be aligned against the pivot. See <code>rootAlignOffset</code> for the
-exact mechanics of the two values. This value can also be specified on a per-region basis via
-<code>[top|bottom|left|right]RootAlign</code>, and if a region&#39;s specific value is absence, the value from
-<code>rootAlign</code> will be used.</p>
+              <p><code>maxWidth</code>: <strong>String</strong>; In the form of <code>42px</code>, or other forms accepted by CSS min-height.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  rootAlign: <span class="string">"center"</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  maxWidth: <span class="literal">null</span></pre></div></div>
             
         </li>
         
@@ -319,18 +305,11 @@ exact mechanics of the two values. This value can also be specified on a per-reg
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p><code>rootAlignOffset</code>: <strong>Integer</strong></p>
-<p>If <code>rootAlign</code> is set to <code>center</code>, this attribute controls the clockwise distance from the
-pivot the tooltip&#39;s root will shift. When this value is positive, the root will shift clockwise,
-and counter-clockwise when this value is negative.</p>
-<p>If <code>rootAlign</code> is set to <code>edge</code>, one of the tooltip&#39;s root&#39;s edge will be aligned against the
-pivot. When this attribute is positive, the clockwise edge will be used and the
-counter-clockwise edge will be used when this attribute is negative. The absolute value of this
-attribute controls the amount away from that edge the tooltip&#39;s root will shift.</p>
+              <p><code>maxHeight</code>:<strong>String</strong>; In the form of <code>42px</code>, or other forms accepted by CSS max-height.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  rootAlignOffset: <span class="number">0</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  maxHeight: <span class="literal">null</span></pre></div></div>
             
         </li>
         
@@ -338,10 +317,115 @@ attribute controls the amount away from that edge the tooltip&#39;s root will sh
         <li id="section-17">
             <div class="annotation">
               
-              <div class="pilwrap for-h5">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <h5>Target Alignment</h5>
+              <p><code>tailWidth</code>: <strong>Integer</strong>; Width of the tail element.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  tailWidth: <span class="number">20</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p><code>tailHeight</code>: <strong>Integer</strong>; Height of the tail element.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  tailHeight: <span class="number">10</span>
+
+  animated: <span class="literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p><code>targetOffset</code>: <strong>Integer</strong>; The distance between the tooltip&#39;s root (or tip of the tail, see
+<code>targetOffsetFrom</code> below) and the target&#39;s edge.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  targetOffset: <span class="number">10</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p><code>rotationOffset</code>: <strong>Integer</strong>; The distance between the target&#39;s edge and the edge of the
+boundary representative the tooltip&#39;s <code>appendTo</code> element. When this distance is smaller than
+<code>rotationOffset</code>, edge detection will place the tooltip in an adjacent region (i.e. rotating the
+tooltip).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  rotationOffset: <span class="number">30</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p><code>edgeOffset</code>: <strong>Integer</strong>; The distance between the tooltip&#39;s root&#39;s edge and the edge of the
+boundary representative the tooltip&#39;s <code>appendTo</code> element. When this distance is smaller than
+<code>edgeOffset</code>, edge detection will place the tooltip in an opposite region (i.e. flipping the
+tooltip).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  edgeOffset: <span class="number">30</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p><code>targetOffsetFrom</code>: <strong>String</strong>; Possible values are <code>root</code> and <code>tail</code>. When set to <code>root</code>,
+<code>targetOffset</code> will be calculated against the edge of the tooltip&#39;s root; When set to <code>tail</code>,
+<code>targetOffset</code> will be calculated against the tip of the tail.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  targetOffsetFrom: <span class="string">"root"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <h3>Alignments</h3>
+<p>Tool tip&#39;s alignments are divided into <strong>root alignment</strong> and <strong>target alignment</strong>, each with
+a corresponding <strong>offset</strong> attribute that controls the direction of the alignment and offset
+amount.</p>
+<h5>Target Alignment</h5>
 <p>Target alignment refers to the alignment of the pivot relative to the target of the tooltip.</p>
 <p><code>targetAlign</code>: <strong>String</strong>; Possible values are <code>center</code> and <code>edge</code>. When set to <code>center</code>, the
 pivot will be center aligned against the target. When set to <code>edge</code>, one of the pivot&#39;s edge
@@ -357,21 +441,20 @@ from <code>targetAlign</code> will be used.</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <p><code>rootAlignOffset</code>: <strong>Integer</strong></p>
-<p>If <code>targetAlign</code> is set to <code>center</code>, this attribute controls the clockwise distance from the
-pivot the target will be effectively shift (i.e. the target will not move, but the pivot will
-shift in the opposite direction). When this value is positive, the pivot will effectively shift
-clockwise, and counter-clockwise when this value is negative.</p>
-<p>If <code>targetAlign</code> is set to <code>edge</code>, one of the target&#39;s edge will be aligned against the
-pivot. When this attribute is positive, the clockwise edge will be used and the
-counter-clockwise edge will be used when this attribute is negative. The absolute value of this
-attribute controls the amount away from that edge the target will effectively shift.</p>
+              <p><code>targetAlignOffset</code>: <strong>Integer</strong></p>
+<p>If <code>targetAlign</code> is set to <code>center</code>, this value controls the clockwise distance from the center
+of the target the pivot will shift. When this value is positive, the pivot will shift clockwise,
+and counter-clockwise when this value is negative.</p>
+<p>If <code>targetAlign</code> is set to <code>edge</code>, the pivot will shift away from one of the target&#39;s edges.
+When this value is positive, the clockwise edge will be used, and the counter-clockwise edge
+will be used when this value is negative. The absolute value of this value controls the amount
+of shifting.</p>
 
             </div>
             
@@ -380,14 +463,58 @@ attribute controls the amount away from that edge the target will effectively sh
         </li>
         
         
-        <li id="section-19">
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h5">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <h5>Root Alignment</h5>
+<p>Root alignment refers to the alignment of the tooltip&#39;s root relative to the pivot.</p>
+<p><code>rootAlign</code>: <strong>String</strong>; Possible values are <code>center</code> and <code>edge</code>. When set to <code>center</code>, the
+tooltip&#39;s root will be center aligned against the pivot. When set to <code>edge</code>, one of the
+tooltip&#39;s root&#39;s edge will be aligned against the pivot. See <code>rootAlignOffset</code> for the
+exact mechanics of the two values. This value can also be specified on a per-region basis via
+<code>[top|bottom|left|right]RootAlign</code>, and if a region&#39;s specific value is absence, the value from
+<code>rootAlign</code> will be used.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  rootAlign: <span class="string">"center"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p><code>rootAlignOffset</code>: <strong>Integer</strong></p>
+<p>If <code>rootAlign</code> is set to <code>center</code>, this value controls the clockwise distance from the pivot the
+tooltip&#39;s root will shift. When this value is positive, the root will shift clockwise, and
+counter-clockwise when this value is negative.</p>
+<p>If <code>rootAlign</code> is set to <code>edge</code>, one of the tooltip&#39;s root&#39;s edge will be aligned against the
+pivot. When this value is positive, the clockwise edge will be used, and the counter-clockwise
+edge will be used when this value is negative. The absolute value of this value controls the
+amount of shifting.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  rootAlignOffset: <span class="number">0</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p><code>render</code>: Render the tooltip&#39;s root (if not already rendered), content and insert the tooltip
-into the DOM. If called repeately, only re-render the tooltip&#39;s content.</p>
+into the DOM. If called repeatedly, only re-render the tooltip&#39;s content.</p>
 
             </div>
             
@@ -421,14 +548,14 @@ into the DOM. If called repeately, only re-render the tooltip&#39;s content.</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <p><code>setTarget</code>: Set/update the tooltip&#39;s target. The target is the element to which the
-tooltip will be pointing at.</p>
+              <p><code>setTarget</code>: Set the tooltip&#39;s target. The target is the element to which the tooltip will be
+pointing at.</p>
 
             </div>
             
@@ -439,14 +566,14 @@ tooltip will be pointing at.</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
-              <p><code>setTooltipContent</code>: Set/update the tooltip&#39;s content. If <code>render</code> is set to <code>true</code> for
-<code>options</code>, the <code>render()</code> method will be called to re-render the content.</p>
+              <p><code>setTooltipContent</code>: Set the tooltip&#39;s content. If <code>render</code> is set to <code>true</code> for <code>options</code>, the
+<code>render()</code> method will be called to re-render the content.</p>
 
             </div>
             
@@ -457,14 +584,13 @@ tooltip will be pointing at.</p>
         </li>
         
         
-        <li id="section-22">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <p><code>reposition</code>: Perform edge detection and position calculations to update the tooltip&#39;s
-position.</p>
+              <p><code>reposition</code>: Perform edge detection and position calculations to update the tooltip&#39;s position.</p>
 
             </div>
             
@@ -492,11 +618,11 @@ position.</p>
         </li>
         
         
-        <li id="section-23">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p><code>show</code>: Show the tooltip. Also update the tooltip&#39;s <code>visible</code> attribute.</p>
 
@@ -520,11 +646,11 @@ position.</p>
         </li>
         
         
-        <li id="section-24">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p><code>hide</code>: Hide the tooltip. Also update the tooltip&#39;s <code>visible</code> attribute.</p>
 
@@ -542,11 +668,11 @@ position.</p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p><code>trigger</code>: Trigger an event from the root of the tooltip.</p>
 
@@ -558,13 +684,13 @@ position.</p>
         </li>
         
         
-        <li id="section-26">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
-              <p><code>destroy()</code>: Remove the tooltip&#39;s root from DOM.</p>
+              <p><code>destroy</code>: Remove the tooltip&#39;s root from DOM.</p>
 
             </div>
             
@@ -574,16 +700,14 @@ position.</p>
         </li>
         
         
-        <li id="section-27">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap for-h5">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <h5>Private Methods</h5>
 <p><em>Hitherto shalt thou come, but no further.</em></p>
-<p><code>_updateRegion</code>: Performs edge detection and place the tooltip in a different if the current one
-it&#39;s in doesn&#39;t have enough space.</p>
 
             </div>
             
@@ -620,22 +744,9 @@ it&#39;s in doesn&#39;t have enough space.</p>
         <span class="keyword">if</span> (parentParameter.top + parentParameter.height) - (targetParameter.top + (targetParameter.height / <span class="number">2</span>)) - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
           <span class="property">@_region</span> = <span class="string">"top"</span>
         <span class="keyword">else</span> <span class="keyword">if</span> targetParameter.top + (targetParameter.height / <span class="number">2</span>) - parentParameter.top - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
-          <span class="property">@_region</span> = <span class="string">"bottom"</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
-              </div>
-              <p><code>_updatePosition</code>: Update tooltip&#39;s elements&#39; positions.</p>
+          <span class="property">@_region</span> = <span class="string">"bottom"</span>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  _updatePosition: (position) -&gt;
+  _updatePosition: (position) -&gt;
     position = <span class="property">@_calculatePosition</span>(<span class="property">@_region</span>)
 
     <span class="property">@root</span>.style.top = <span class="string">"<span class="subst">#{position.top}</span>px"</span>
@@ -658,22 +769,9 @@ it&#39;s in doesn&#39;t have enough space.</p>
       <span class="property">@tail</span>.style.height = <span class="string">"<span class="subst">#{position.tail.height}</span>px"</span>
       <span class="property">@tail</span>.className = <span class="string">"flowtip-tail <span class="subst">#{@tailClassName}</span> <span class="subst">#{@_tailType(@_region)}</span>"</span>
     <span class="keyword">else</span>
-      <span class="property">@tail</span>.style.display = <span class="string">"none"</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-29">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
-              </div>
-              <p><code>_calculatePosition</code>: Calculate the would-be position of the tooltip for the given region.</p>
+      <span class="property">@tail</span>.style.display = <span class="string">"none"</span>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  _calculatePosition: (region) -&gt;
+  _calculatePosition: (region) -&gt;
     rootDimension = <span class="property">@_rootDimension</span>()
     parentParameter = <span class="property">@_parentParameter</span>()
     targetParameter = <span class="property">@_targetParameter</span>()
@@ -760,22 +858,8 @@ it&#39;s in doesn&#39;t have enough space.</p>
 
     position
 
-  _insertToDOM: -&gt;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-30">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
-              </div>
-              <p>Ensure &quot;appendTo&quot; is &quot;position&quot;&#39;ed</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> <span class="property">@appendTo</span>.style.position == <span class="string">""</span>
+  _insertToDOM: -&gt;
+    <span class="keyword">if</span> <span class="property">@appendTo</span>.style.position == <span class="string">""</span>
       <span class="property">@appendTo</span>.style.position = <span class="string">"relative"</span>
     <span class="property">@appendTo</span>.appendChild(<span class="property">@root</span>)
 
