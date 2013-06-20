@@ -86,9 +86,10 @@ class @FlowTip
   # `tailClassName`: **String**; Additional class name(s) for the tooltip's tail.
   tailClassName: ""
 
-  # `appendTo`: **Element**; The element within which the tooltip will be inserted into.
-  # Default value is the document's `body` and the tooltip would thus be free to appear and move
-  # anywhere on the page and edge detection will only be performed on the edge of the page.
+  # `appendTo`: **Element**; The element within which the tooltip will be inserted into. Can be set
+  # or updated by calling `setAppendTo`. Default value is the document's `body` and the tooltip
+  # would thus be free to appear and move anywhere on the page and edge detection will only be
+  # performed on the edge of the page.
   #
   # If `appendTo` is set to an element then edge detection will be performed on the edge of
   # the element instead.
@@ -243,6 +244,13 @@ class @FlowTip
     @$appendTo = $(@appendTo ||= document.body)
 
     @_insertToDOM()
+
+  # `setAppendTo`: Set the tooltip's containing element. If the tooltip has already been rendered,
+  # the tooltip will be moved/inserted into the new containing element.
+  setAppendTo: (appendTo) ->
+    @$appendTo = $(appendTo)
+    @appendTo = @$appendTo[0]
+    @_insertToDOM() if @$root
 
   # `setTarget`: Set the tooltip's target. The target is the element to which the tooltip will be
   # pointing at.
