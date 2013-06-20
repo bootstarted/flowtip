@@ -228,8 +228,8 @@
     FlowTip.prototype._updatePosition = function(position) {
       var contentHeight, contentOuterHeight, contentSpacing, rootHeight;
       position = this._calculatePosition(this._region);
-      this.root.style.top = "" + position.top + "px";
-      this.root.style.left = "" + position.left + "px";
+      this.root.style.top = "" + (position.top + this.$appendTo.scrollTop()) + "px";
+      this.root.style.left = "" + (position.left + this.$appendTo.scrollLeft()) + "px";
       rootHeight = this.$root.height();
       contentHeight = this.$content.height();
       contentOuterHeight = this.$content.outerHeight(true);

@@ -362,8 +362,8 @@ class @FlowTip
   _updatePosition: (position) ->
     position = @_calculatePosition(@_region)
 
-    @root.style.top = "#{position.top}px"
-    @root.style.left = "#{position.left}px"
+    @root.style.top = "#{position.top + @$appendTo.scrollTop()}px"
+    @root.style.left = "#{position.left + @$appendTo.scrollLeft()}px"
 
     rootHeight = @$root.height()
     contentHeight = @$content.height()
