@@ -143,9 +143,10 @@ the scope of this library. To update the tooltip&#39;s position against its targ
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p><code>appendTo</code>: <strong>Element</strong>; The element within which the tooltip will be inserted into.
-Default value is the document&#39;s <code>body</code> and the tooltip would thus be free to appear and move
-anywhere on the page and edge detection will only be performed on the edge of the page.</p>
+              <p><code>appendTo</code>: <strong>Element</strong>; The element within which the tooltip will be inserted into. Can be set
+or updated by calling <code>setAppendTo</code>. Default value is the document&#39;s <code>body</code> and the tooltip
+would thus be free to appear and move anywhere on the page and edge detection will only be
+performed on the edge of the page.</p>
 <p>If <code>appendTo</code> is set to an element then edge detection will be performed on the edge of
 the element instead.</p>
 
@@ -554,6 +555,25 @@ into the DOM. If called repeatedly, only re-render the tooltip&#39;s content.</p
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
+              <p><code>setAppendTo</code>: Set the tooltip&#39;s containing element. If the tooltip has already been rendered,
+the tooltip will be moved/inserted into the new containing element.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  setAppendTo: (appendTo) -&gt;
+    <span class="property">@$appendTo</span> = $(appendTo)
+    <span class="property">@appendTo</span> = <span class="property">@$appendTo</span>[<span class="number">0</span>]
+    <span class="property">@_insertToDOM</span>() <span class="keyword">if</span> <span class="property">@$root</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
               <p><code>setTarget</code>: Set the tooltip&#39;s target. The target is the element to which the tooltip will be
 pointing at.</p>
 
@@ -566,11 +586,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-29">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p><code>setTooltipContent</code>: Set the tooltip&#39;s content. If <code>render</code> is set to <code>true</code> for <code>options</code>, the
 <code>render()</code> method will be called to re-render the content.</p>
@@ -584,11 +604,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-30">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p><code>reposition</code>: Perform edge detection and position calculations to update the tooltip&#39;s position.</p>
 
@@ -618,11 +638,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-31">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p><code>show</code>: Show the tooltip. Also update the tooltip&#39;s <code>visible</code> attribute.</p>
 
@@ -646,11 +666,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-32">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p><code>hide</code>: Hide the tooltip. Also update the tooltip&#39;s <code>visible</code> attribute.</p>
 
@@ -668,11 +688,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-33">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p><code>trigger</code>: Trigger an event from the root of the tooltip.</p>
 
@@ -684,11 +704,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-34">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p><code>destroy</code>: Remove the tooltip&#39;s root from DOM.</p>
 
@@ -700,11 +720,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-35">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap for-h5">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <h5>Private Methods</h5>
 <p><em>Hitherto shalt thou come, but no further.</em></p>
@@ -722,28 +742,28 @@ pointing at.</p>
 
     <span class="keyword">switch</span> <span class="property">@_region</span>
       <span class="keyword">when</span> <span class="string">"top"</span>
-        <span class="keyword">if</span> position.top - <span class="property">@edgeOffset</span> &lt; parentParameter.top
+        <span class="keyword">if</span> position.top - <span class="property">@edgeOffset</span> &lt; <span class="number">0</span>
           <span class="property">@_region</span> = <span class="string">"bottom"</span>
       <span class="keyword">when</span> <span class="string">"bottom"</span>
-        <span class="keyword">if</span> position.top + rootDimension.height + <span class="property">@edgeOffset</span> &gt; parentParameter.top + parentParameter.height
+        <span class="keyword">if</span> position.top + rootDimension.height + <span class="property">@edgeOffset</span> &gt; parentParameter.height
           <span class="property">@_region</span> = <span class="string">"top"</span>
       <span class="keyword">when</span> <span class="string">"left"</span>
         <span class="keyword">if</span> position.left - <span class="property">@edgeOffset</span> &lt; parentParameter.left
           <span class="property">@_region</span> = <span class="string">"right"</span>
       <span class="keyword">when</span> <span class="string">"right"</span>
-        <span class="keyword">if</span> position.left + rootDimension.width + <span class="property">@edgeOffset</span> &gt; parentParameter.left + parentParameter.width
+        <span class="keyword">if</span> position.left + rootDimension.width + <span class="property">@edgeOffset</span> &gt; parentParameter.width
           <span class="property">@_region</span> = <span class="string">"left"</span>
 
     <span class="keyword">switch</span> <span class="property">@_region</span>
       <span class="keyword">when</span> <span class="string">"top"</span>, <span class="string">"bottom"</span>
-        <span class="keyword">if</span> (parentParameter.left + parentParameter.width) - (targetParameter.left + (targetParameter.width / <span class="number">2</span>)) - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
+        <span class="keyword">if</span> (parentParameter.width) - (targetParameter.left + (targetParameter.width / <span class="number">2</span>)) - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
           <span class="property">@_region</span> = <span class="string">"left"</span>
-        <span class="keyword">else</span> <span class="keyword">if</span> targetParameter.left + (targetParameter.width / <span class="number">2</span>) - parentParameter.left - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> targetParameter.left + (targetParameter.width / <span class="number">2</span>) - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
           <span class="property">@_region</span> = <span class="string">"right"</span>
       <span class="keyword">when</span> <span class="string">"left"</span>, <span class="string">"right"</span>
-        <span class="keyword">if</span> (parentParameter.top + parentParameter.height) - (targetParameter.top + (targetParameter.height / <span class="number">2</span>)) - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
+        <span class="keyword">if</span> (parentParameter.height) - (targetParameter.top + (targetParameter.height / <span class="number">2</span>)) - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
           <span class="property">@_region</span> = <span class="string">"top"</span>
-        <span class="keyword">else</span> <span class="keyword">if</span> targetParameter.top + (targetParameter.height / <span class="number">2</span>) - parentParameter.top - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> targetParameter.top + (targetParameter.height / <span class="number">2</span>) - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
           <span class="property">@_region</span> = <span class="string">"bottom"</span>
 
   _updatePosition: (position) -&gt;
@@ -821,15 +841,15 @@ pointing at.</p>
 
     <span class="keyword">switch</span> region
       <span class="keyword">when</span> <span class="string">"top"</span>, <span class="string">"bottom"</span>
-        <span class="keyword">if</span> position.left &lt; parentParameter.left + <span class="property">@edgeOffset</span>
-          position.left = parentParameter.left + <span class="property">@edgeOffset</span>
-        <span class="keyword">else</span> <span class="keyword">if</span> position.left + rootDimension.width &gt; parentParameter.left + parentParameter.width - <span class="property">@edgeOffset</span>
-          position.left = parentParameter.left + parentParameter.width - rootDimension.width - <span class="property">@edgeOffset</span>
+        <span class="keyword">if</span> position.left &lt; <span class="property">@edgeOffset</span>
+          position.left = <span class="property">@edgeOffset</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> position.left + rootDimension.width &gt; parentParameter.width - <span class="property">@edgeOffset</span>
+          position.left = parentParameter.width - rootDimension.width - <span class="property">@edgeOffset</span>
       <span class="keyword">when</span> <span class="string">"left"</span>, <span class="string">"right"</span>
-        <span class="keyword">if</span> position.top &lt; parentParameter.top + <span class="property">@edgeOffset</span>
-          position.top = parentParameter.top + <span class="property">@edgeOffset</span>
-        <span class="keyword">else</span> <span class="keyword">if</span> position.top + rootDimension.height &gt; parentParameter.top + parentParameter.height - <span class="property">@edgeOffset</span>
-          position.top = parentParameter.top + parentParameter.height - rootDimension.height - <span class="property">@edgeOffset</span>
+        <span class="keyword">if</span> position.top &lt; <span class="property">@edgeOffset</span>
+          position.top = <span class="property">@edgeOffset</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> position.top + rootDimension.height &gt; parentParameter.height - <span class="property">@edgeOffset</span>
+          position.top = parentParameter.height - rootDimension.height - <span class="property">@edgeOffset</span>
 
     <span class="keyword">if</span> <span class="property">@hasTail</span>
       position.tail = <span class="keyword">switch</span> region
@@ -858,9 +878,22 @@ pointing at.</p>
 
     position
 
-  _insertToDOM: -&gt;
-    <span class="keyword">if</span> <span class="property">@appendTo</span>.style.position == <span class="string">""</span>
-      <span class="property">@appendTo</span>.style.position = <span class="string">"relative"</span>
+  _insertToDOM: -&gt;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>Ensure &quot;position&quot; is explicitly defined on the appendTo element</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="property">@appendTo</span>.style.position = <span class="property">@$appendTo</span>.css(<span class="string">"position"</span>)
     <span class="property">@appendTo</span>.appendChild(<span class="property">@root</span>)
 
   _renderContent: -&gt;

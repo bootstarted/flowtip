@@ -8,6 +8,8 @@
       if (options == null) {
         options = {};
       }
+      this.visible = false;
+      this.target = null;
       for (option in options) {
         if (_.has(options, option) && options[option] !== void 0) {
           this[option] = options[option];
@@ -31,8 +33,6 @@
 
     FlowTip.prototype.hasTail = true;
 
-    FlowTip.prototype.animated = false;
-
     FlowTip.prototype.width = null;
 
     FlowTip.prototype.height = "auto";
@@ -49,6 +49,8 @@
 
     FlowTip.prototype.tailHeight = 10;
 
+    FlowTip.prototype.animated = false;
+
     FlowTip.prototype.targetOffset = 10;
 
     FlowTip.prototype.rotationOffset = 30;
@@ -57,13 +59,13 @@
 
     FlowTip.prototype.targetOffsetFrom = "root";
 
-    FlowTip.prototype.rootAlign = "center";
-
-    FlowTip.prototype.rootAlignOffset = 0;
-
     FlowTip.prototype.targetAlign = "center";
 
     FlowTip.prototype.targetAlignOffset = 0;
+
+    FlowTip.prototype.rootAlign = "center";
+
+    FlowTip.prototype.rootAlignOffset = 0;
 
     FlowTip.prototype.render = function() {
       if (this.$root) {
@@ -88,6 +90,14 @@
       this.$tail = $(this.tail);
       this.$appendTo = $(this.appendTo || (this.appendTo = document.body));
       return this._insertToDOM();
+    };
+
+    FlowTip.prototype.setAppendTo = function(appendTo) {
+      this.$appendTo = $(appendTo);
+      this.appendTo = this.$appendTo[0];
+      if (this.$root) {
+        return this._insertToDOM();
+      }
     };
 
     FlowTip.prototype.setTarget = function(target) {
@@ -177,12 +187,12 @@
       targetParameter = this._targetParameter();
       switch (this._region) {
         case "top":
-          if (position.top - this.edgeOffset < parentParameter.top) {
+          if (position.top - this.edgeOffset < 0) {
             this._region = "bottom";
           }
           break;
         case "bottom":
-          if (position.top + rootDimension.height + this.edgeOffset > parentParameter.top + parentParameter.height) {
+          if (position.top + rootDimension.height + this.edgeOffset > parentParameter.height) {
             this._region = "top";
           }
           break;
@@ -192,24 +202,24 @@
           }
           break;
         case "right":
-          if (position.left + rootDimension.width + this.edgeOffset > parentParameter.left + parentParameter.width) {
+          if (position.left + rootDimension.width + this.edgeOffset > parentParameter.width) {
             this._region = "left";
           }
       }
       switch (this._region) {
         case "top":
         case "bottom":
-          if ((parentParameter.left + parentParameter.width) - (targetParameter.left + (targetParameter.width / 2)) - this.edgeOffset < this.rotationOffset) {
+          if (parentParameter.width - (targetParameter.left + (targetParameter.width / 2)) - this.edgeOffset < this.rotationOffset) {
             return this._region = "left";
-          } else if (targetParameter.left + (targetParameter.width / 2) - parentParameter.left - this.edgeOffset < this.rotationOffset) {
+          } else if (targetParameter.left + (targetParameter.width / 2) - this.edgeOffset < this.rotationOffset) {
             return this._region = "right";
           }
           break;
         case "left":
         case "right":
-          if ((parentParameter.top + parentParameter.height) - (targetParameter.top + (targetParameter.height / 2)) - this.edgeOffset < this.rotationOffset) {
+          if (parentParameter.height - (targetParameter.top + (targetParameter.height / 2)) - this.edgeOffset < this.rotationOffset) {
             return this._region = "top";
-          } else if (targetParameter.top + (targetParameter.height / 2) - parentParameter.top - this.edgeOffset < this.rotationOffset) {
+          } else if (targetParameter.top + (targetParameter.height / 2) - this.edgeOffset < this.rotationOffset) {
             return this._region = "bottom";
           }
       }
@@ -294,18 +304,18 @@
       switch (region) {
         case "top":
         case "bottom":
-          if (position.left < parentParameter.left + this.edgeOffset) {
-            position.left = parentParameter.left + this.edgeOffset;
-          } else if (position.left + rootDimension.width > parentParameter.left + parentParameter.width - this.edgeOffset) {
-            position.left = parentParameter.left + parentParameter.width - rootDimension.width - this.edgeOffset;
+          if (position.left < this.edgeOffset) {
+            position.left = this.edgeOffset;
+          } else if (position.left + rootDimension.width > parentParameter.width - this.edgeOffset) {
+            position.left = parentParameter.width - rootDimension.width - this.edgeOffset;
           }
           break;
         case "left":
         case "right":
-          if (position.top < parentParameter.top + this.edgeOffset) {
-            position.top = parentParameter.top + this.edgeOffset;
-          } else if (position.top + rootDimension.height > parentParameter.top + parentParameter.height - this.edgeOffset) {
-            position.top = parentParameter.top + parentParameter.height - rootDimension.height - this.edgeOffset;
+          if (position.top < this.edgeOffset) {
+            position.top = this.edgeOffset;
+          } else if (position.top + rootDimension.height > parentParameter.height - this.edgeOffset) {
+            position.top = parentParameter.height - rootDimension.height - this.edgeOffset;
           }
       }
       if (this.hasTail) {
@@ -340,9 +350,7 @@
     };
 
     FlowTip.prototype._insertToDOM = function() {
-      if (this.appendTo.style.position === "") {
-        this.appendTo.style.position = "relative";
-      }
+      this.appendTo.style.position = this.$appendTo.css("position");
       return this.appendTo.appendChild(this.root);
     };
 
