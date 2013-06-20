@@ -472,8 +472,8 @@ class @FlowTip
     position
 
   _insertToDOM: ->
-    if @appendTo.style.position == ""
-      @appendTo.style.position = "relative"
+    # Ensure "position" is explicitly defined on the appendTo element
+    @appendTo.style.position = @$appendTo.css("position")
     @appendTo.appendChild(@root)
 
   _renderContent: ->
