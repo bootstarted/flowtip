@@ -769,8 +769,8 @@ pointing at.</p>
   _updatePosition: (position) -&gt;
     position = <span class="property">@_calculatePosition</span>(<span class="property">@_region</span>)
 
-    <span class="property">@root</span>.style.top = <span class="string">"<span class="subst">#{position.top}</span>px"</span>
-    <span class="property">@root</span>.style.left = <span class="string">"<span class="subst">#{position.left}</span>px"</span>
+    <span class="property">@root</span>.style.top = <span class="string">"<span class="subst">#{position.top + @$appendTo.scrollTop()}</span>px"</span>
+    <span class="property">@root</span>.style.left = <span class="string">"<span class="subst">#{position.left + @$appendTo.scrollLeft()}</span>px"</span>
 
     rootHeight = <span class="property">@$root</span>.height()
     contentHeight = <span class="property">@$content</span>.height()
