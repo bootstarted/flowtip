@@ -6,6 +6,17 @@
   <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
   <script type="text/javascript">
     $(function() {
+      container = document.createElement("div");
+      $(container).css({
+        border: "1px solid red",
+        position: "absolute",
+        width: "1024px",
+        height: "800px",
+        top: "50px",
+        left: "50px"
+      });
+      $("body")[0].appendChild(container);
+
       target = document.createElement("div");
       $(target).css({
         position: "absolute",
@@ -21,6 +32,7 @@
         height: 200,
         region: "top",
         persevere: true,
+        appendTo: container,
         targetOffsetFrom: "tail",
         rootAlign: "center",
         rootAlignOffset: 0,
