@@ -335,28 +335,28 @@ class @FlowTip
 
     switch @_region
       when "top"
-        if position.top - @edgeOffset < parentParameter.top
+        if position.top - @edgeOffset < 0
           @_region = "bottom"
       when "bottom"
-        if position.top + rootDimension.height + @edgeOffset > parentParameter.top + parentParameter.height
+        if position.top + rootDimension.height + @edgeOffset > parentParameter.height
           @_region = "top"
       when "left"
         if position.left - @edgeOffset < parentParameter.left
           @_region = "right"
       when "right"
-        if position.left + rootDimension.width + @edgeOffset > parentParameter.left + parentParameter.width
+        if position.left + rootDimension.width + @edgeOffset > parentParameter.width
           @_region = "left"
 
     switch @_region
       when "top", "bottom"
-        if (parentParameter.left + parentParameter.width) - (targetParameter.left + (targetParameter.width / 2)) - @edgeOffset < @rotationOffset
+        if (parentParameter.width) - (targetParameter.left + (targetParameter.width / 2)) - @edgeOffset < @rotationOffset
           @_region = "left"
-        else if targetParameter.left + (targetParameter.width / 2) - parentParameter.left - @edgeOffset < @rotationOffset
+        else if targetParameter.left + (targetParameter.width / 2) - @edgeOffset < @rotationOffset
           @_region = "right"
       when "left", "right"
-        if (parentParameter.top + parentParameter.height) - (targetParameter.top + (targetParameter.height / 2)) - @edgeOffset < @rotationOffset
+        if (parentParameter.height) - (targetParameter.top + (targetParameter.height / 2)) - @edgeOffset < @rotationOffset
           @_region = "top"
-        else if targetParameter.top + (targetParameter.height / 2) - parentParameter.top - @edgeOffset < @rotationOffset
+        else if targetParameter.top + (targetParameter.height / 2) - @edgeOffset < @rotationOffset
           @_region = "bottom"
 
   _updatePosition: (position) ->
@@ -434,15 +434,15 @@ class @FlowTip
 
     switch region
       when "top", "bottom"
-        if position.left < parentParameter.left + @edgeOffset
-          position.left = parentParameter.left + @edgeOffset
-        else if position.left + rootDimension.width > parentParameter.left + parentParameter.width - @edgeOffset
-          position.left = parentParameter.left + parentParameter.width - rootDimension.width - @edgeOffset
+        if position.left < @edgeOffset
+          position.left = @edgeOffset
+        else if position.left + rootDimension.width > parentParameter.width - @edgeOffset
+          position.left = parentParameter.width - rootDimension.width - @edgeOffset
       when "left", "right"
-        if position.top < parentParameter.top + @edgeOffset
-          position.top = parentParameter.top + @edgeOffset
-        else if position.top + rootDimension.height > parentParameter.top + parentParameter.height - @edgeOffset
-          position.top = parentParameter.top + parentParameter.height - rootDimension.height - @edgeOffset
+        if position.top < @edgeOffset
+          position.top = @edgeOffset
+        else if position.top + rootDimension.height > parentParameter.height - @edgeOffset
+          position.top = parentParameter.height - rootDimension.height - @edgeOffset
 
     if @hasTail
       position.tail = switch region
