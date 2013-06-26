@@ -1,77 +1,29 @@
 <html>
 <head>
   <title>FlowTip Demo</title>
-  <script type="text/javascript" src="public/javascripts/flowtip.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-  <script type="text/javascript">
-    $(function() {
-      container = document.createElement("div");
-      $(container).css({
-        border: "1px solid red",
-        position: "absolute",
-        width: "1024px",
-        height: "800px",
-        top: "50px",
-        left: "50px"
-      });
-      $("body")[0].appendChild(container);
 
-      target = document.createElement("div");
-      $(target).css({
-        position: "absolute",
-        width: "21px",
-        height: "21px",
-        zIndex: "9999",
-        backgroundColor: "red"
-      })
-      $("body")[0].appendChild(target);
-
-      flowtip = new FlowTip({
-        width: 300,
-        height: 200,
-        region: "top",
-        persevere: true,
-        appendTo: container,
-        targetOffsetFrom: "tail",
-        rootAlign: "center",
-        rootAlignOffset: 0,
-        targetAlign: "center",
-        targetAlignOffset: 0
-      });
-
-      flowtip.setTarget(target);
-      flowtip.show();
-
-      $(flowtip.root).css({
-        backgroundColor: "black",
-        color: "white",
-        zIndex: "9999",
-        textAlign: "center",
-        width: "300px",
-        height: "300px"
-      });
-
-      $(flowtip.tail).css({
-        backgroundColor: "blue",
-        width: "11px",
-        height: "5px"
-      });
-
-      $("body").mousemove(function(event) {
-        target.style.top = (event.pageY - 10) + "px";
-        target.style.left = (event.pageX - 10) + "px";
-        flowtip.reposition();
-      });
-    });
-  </script>
-  <style type="text/css">
-    body {
-      margin: 0px;
-    }
-  </style>
+  <script type="text/javascript" src="flowtip.js"></script>
+  <script type="text/javascript" src="demo.js"></script>
+  <link rel="stylesheet" media="all" href="demo.css" />
 </head>
 <body>
-
+  <h1 id="title">FlowTip Demo</h1>
+  <ul id="demo-modes">
+    <li><a data-demo-mode="standard">Standard</a></li>
+    <li><a data-demo-mode="persevere">Persevere</a></li>
+    <li><a data-demo-mode="edge-align">Edge Align</a></li>
+    <li><a data-demo-mode="mixed-align">Mixed Align</a></li>
+    <li><a data-demo-mode="target-align">Target Align</a></li>
+  </ul>
+  <div id="demo-container-wrap">
+    <h3>Container</h3>
+    <div id="demo-container"></div>
+  </div>
+  <div id="demo-code-wrap">
+    <h3>Code</h3>
+    <div id="demo-code"></div>
+  </div>
 </body>
 </html>
