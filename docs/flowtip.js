@@ -89,6 +89,7 @@
       this.$content = $(this.content);
       this.$tail = $(this.tail);
       this.$appendTo = $(this.appendTo || (this.appendTo = document.body));
+      this.appendTo = this.$appendTo[0];
       return this._insertToDOM();
     };
 
@@ -197,7 +198,7 @@
           }
           break;
         case "left":
-          if (position.left - this.edgeOffset < parentParameter.left) {
+          if (position.left - this.edgeOffset < 0) {
             this._region = "right";
           }
           break;
@@ -350,7 +351,12 @@
     };
 
     FlowTip.prototype._insertToDOM = function() {
-      this.appendTo.style.position = this.$appendTo.css("position");
+      var position;
+      position = this.$appendTo.css("position");
+      if (position !== "relative" && position !== "absolute" && position !== "fixed") {
+        position = "relative";
+      }
+      this.appendTo.style.position = position;
       return this.appendTo.appendChild(this.root);
     };
 

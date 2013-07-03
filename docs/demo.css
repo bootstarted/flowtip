@@ -1,0 +1,98 @@
+/*
+Bathroom of MetaLab
+  * F5E6DD
+  * DACFC2
+  * B6A591
+  * 82726A
+  * 5A5050
+*/
+
+html { height: 100%; }
+body {
+  font-family: "arial";
+  font-size: 14px;
+  line-height: 18px;
+  margin: 0; padding: 0;
+  height:100%;
+  position: relative;
+}
+
+h1 {
+  font-size: 24px;
+  margin: 20px 0px;
+  color: #5A5050;
+}
+
+h3 {
+  font-size: 18px;
+  margin: 10px 0px;
+  color: #82726A;
+}
+
+#title {
+  border-bottom: 2px solid #B6A591;
+  margin: 0px;
+  padding: 20px 20px 1px 20px;
+}
+
+#demo-modes {
+  margin: 0px;
+  padding: 0px;
+  margin-left: 20px;
+  margin-top: 6px;
+}
+
+#demo-modes li {
+  margin: 0px;
+  padding: 0px;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+#demo-modes li a {
+  cursor: pointer;
+}
+
+#demo-modes li a:hover {
+  text-decoration: underline;
+}
+
+#demo-container-wrap {
+  margin-left: 90px;
+  margin-top: 60px;
+}
+
+#demo-container {
+  width: 800px;
+  height: 500px;
+  background-color: #F5E6DD;
+}
+
+#demo-code-wrap {
+  position: absolute;
+  top: 115px;
+  left: 1000px;
+}
+
+#demo-code {
+  font-family: "Monaco";
+  color: #5A5050;
+}
+
+.flowtip-target {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  z-index: 9999;
+  background-color: #5A5050;
+}
+
+.flowtip-content {
+  width: 200px;
+  height: 80px;
+  background-color: #B6A591;
+}
+
+.flowtip-tail {
+  background-color: #82726A;
+}
