@@ -242,6 +242,7 @@ class @FlowTip
     @$content = $(@content)
     @$tail = $(@tail)
     @$appendTo = $(@appendTo ||= document.body)
+    @appendTo = @$appendTo[0]
 
     @_insertToDOM()
 
@@ -341,7 +342,7 @@ class @FlowTip
         if position.top + rootDimension.height + @edgeOffset > parentParameter.height
           @_region = "top"
       when "left"
-        if position.left - @edgeOffset < parentParameter.left
+        if position.left - @edgeOffset < 0
           @_region = "right"
       when "right"
         if position.left + rootDimension.width + @edgeOffset > parentParameter.width
@@ -473,7 +474,9 @@ class @FlowTip
 
   _insertToDOM: ->
     # Ensure "position" is explicitly defined on the appendTo element
-    @appendTo.style.position = @$appendTo.css("position")
+    position = @$appendTo.css("position")
+    position = "relative" unless position in ["relative", "absolute", "fixed"]
+    @appendTo.style.position = position
     @appendTo.appendChild(@root)
 
   _renderContent: ->
