@@ -53,11 +53,11 @@
 
     FlowTip.prototype.targetOffset = 10;
 
-    FlowTip.prototype.rotationOffset = 30;
+    FlowTip.prototype.targetOffsetFrom = "root";
 
     FlowTip.prototype.edgeOffset = 30;
 
-    FlowTip.prototype.targetOffsetFrom = "root";
+    FlowTip.prototype.rotationOffset = 30;
 
     FlowTip.prototype.targetAlign = "center";
 
@@ -176,52 +176,100 @@
       }
     };
 
+    FlowTip.prototype._fitsInRegion = function(region) {
+      var parentParameter, position, rootDimension;
+      position = this._calculatePosition(region);
+      rootDimension = this._rootDimension();
+      parentParameter = this._parentParameter();
+      switch (region) {
+        case "top":
+          return position.top - this.edgeOffset >= 0;
+        case "bottom":
+          return position.top + rootDimension.height + this.edgeOffset <= parentParameter.height;
+        case "left":
+          return position.left - this.edgeOffset >= 0;
+        case "right":
+          return position.left + rootDimension.width + this.edgeOffset <= parentParameter.width;
+      }
+    };
+
     FlowTip.prototype._updateRegion = function(position) {
-      var parentParameter, rootDimension, targetParameter;
+      var fits_bottom, fits_left, fits_right, fits_top, parentParameter, targetParameter;
       this._region || (this._region = this.region);
       if (this.persevere) {
         this._region = this.region;
       }
-      position = this._calculatePosition(this._region);
-      rootDimension = this._rootDimension();
       parentParameter = this._parentParameter();
       targetParameter = this._targetParameter();
+      fits_top = this._fitsInRegion("top");
+      fits_bottom = this._fitsInRegion("bottom");
+      fits_left = this._fitsInRegion("left");
+      fits_right = this._fitsInRegion("right");
       switch (this._region) {
         case "top":
-          if (position.top - this.edgeOffset < 0) {
+          if (!fits_top && fits_bottom) {
             this._region = "bottom";
           }
           break;
         case "bottom":
-          if (position.top + rootDimension.height + this.edgeOffset > parentParameter.height) {
+          if (!fits_bottom && fits_top) {
             this._region = "top";
           }
           break;
         case "left":
-          if (position.left - this.edgeOffset < 0) {
+          if (!fits_left && fits_right) {
             this._region = "right";
           }
           break;
         case "right":
-          if (position.left + rootDimension.width + this.edgeOffset > parentParameter.width) {
+          if (!fits_right && fits_left) {
             this._region = "left";
           }
       }
       switch (this._region) {
         case "top":
         case "bottom":
+          if (!fits_top && !fits_bottom) {
+            if (fits_left) {
+              this._region = "left";
+            } else if (fits_right) {
+              this._region = "right";
+            }
+          }
+          break;
+        case "left":
+        case "right":
+          if (!fits_left && !fits_right) {
+            if (fits_top) {
+              this._region = "top";
+            } else if (fits_bottom) {
+              this._region = "bottom";
+            }
+          }
+      }
+      switch (this._region) {
+        case "top":
+        case "bottom":
           if (parentParameter.width - (targetParameter.left + (targetParameter.width / 2)) - this.edgeOffset < this.rotationOffset) {
-            return this._region = "left";
+            if (fits_left) {
+              return this._region = "left";
+            }
           } else if (targetParameter.left + (targetParameter.width / 2) - this.edgeOffset < this.rotationOffset) {
-            return this._region = "right";
+            if (fits_right) {
+              return this._region = "right";
+            }
           }
           break;
         case "left":
         case "right":
           if (parentParameter.height - (targetParameter.top + (targetParameter.height / 2)) - this.edgeOffset < this.rotationOffset) {
-            return this._region = "top";
+            if (fits_top) {
+              return this._region = "top";
+            }
           } else if (targetParameter.top + (targetParameter.height / 2) - this.edgeOffset < this.rotationOffset) {
-            return this._region = "bottom";
+            if (fits_bottom) {
+              return this._region = "bottom";
+            }
           }
       }
     };

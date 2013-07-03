@@ -63,20 +63,23 @@ h3 {
 }
 
 #demo-container {
-  width: 800px;
+  width: auto;
   height: 500px;
   background-color: #F5E6DD;
+  margin-right: 650px;
 }
 
 #demo-code-wrap {
   position: absolute;
   top: 115px;
-  left: 1000px;
+  width: 600px;
+  right: 0px;
 }
 
 #demo-code {
   font-family: "Monaco";
   color: #5A5050;
+  margin-right: 50px;
 }
 
 .flowtip-target {

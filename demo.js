@@ -79,6 +79,12 @@ $(function() {
     }
   });
 
+  $(window).resize(function() {
+    if (started) {
+      flowtip.reposition();
+    }
+  });
+
   $("#demo-modes a").on("click", function(event) {
     var mode = $(event.target).attr("data-demo-mode");
     if (mode == "standard") {
