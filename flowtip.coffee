@@ -145,11 +145,21 @@ class @FlowTip
   # `targetOffsetFrom` below) and the target's edge.
   targetOffset: 10
 
-  # `rotationOffset`: **Integer**; The distance between the target's edge and the edge of the
-  # boundary representative the tooltip's `appendTo` element. When this distance is smaller than
-  # `rotationOffset`, edge detection will place the tooltip in an adjacent region (i.e. rotating the
-  # tooltip).
-  rotationOffset: 30
+  # `targetOffsetFrom`: **String**; Possible values are `root` and `tail`. When set to `root`,
+  # `targetOffset` will be calculated against the edge of the tooltip's root; When set to `tail`,
+  # `targetOffset` will be calculated against the tip of the tail.
+  targetOffsetFrom: "root"
+
+  # ### Edge Detection
+  #
+  # There are three strategies for detection: **flip**, **rotate** and **squeeze**.
+
+  # ##### Flip
+  #
+  # The tooltip will be flipped when the root of the tooltip gets too close to the edge of the
+  # boundary. Adjust `edgeOffset` to control the amount of space allowed. The tooltip will be
+  # flipped horizontally when in the left and right regions, and vertically when in the top and
+  # bottom regions.
 
   # `edgeOffset`: **Integer**; The distance between the tooltip's root's edge and the edge of the
   # boundary representative the tooltip's `appendTo` element. When this distance is smaller than
@@ -157,21 +167,35 @@ class @FlowTip
   # tooltip).
   edgeOffset: 30
 
-  # `targetOffsetFrom`: **String**; Possible values are `root` and `tail`. When set to `root`,
-  # `targetOffset` will be calculated against the edge of the tooltip's root; When set to `tail`,
-  # `targetOffset` will be calculated against the tip of the tail.
-  targetOffsetFrom: "root"
+  # ##### Rotate
+  #
+  # The tooltip will be rotated to an adjacent region if the target gets too close to the edge of
+  # the boundary. Adjust `rotationOffset` to control the amount of space allowed. For example, the
+  # tooltip will be rotated to the top region if the tooltip is currently in the left or right
+  # region, and the target gets too close to the bottom edge of the boundary.
+
+  # `rotationOffset`: **Integer**; The distance between the target's edge and the edge of the
+  # boundary representative the tooltip's `appendTo` element. When this distance is smaller than
+  # `rotationOffset`, edge detection will place the tooltip in an adjacent region (i.e. rotating the
+  # tooltip).
+  rotationOffset: 30
+
+  # ##### Squeeze
+  #
+  # The tooltip will be squeezed to an adjacent if the root of the tooltip gets too close to the
+  # edge of the boundary on both sides. For example, if the tooltip is in left or right region, and
+  # neither region has enough space, the tooltip will be squeezed to the top region.
 
   # ### Alignments
   #
   # Tool tip's alignments are divided into **root alignment** and **target alignment**, each with
   # a corresponding **offset** attribute that controls the direction of the alignment and offset
   # amount.
-  #
+
   # ##### Target Alignment
   #
   # Target alignment refers to the alignment of the pivot relative to the target of the tooltip.
-  #
+
   # `targetAlign`: **String**; Possible values are `center` and `edge`. When set to `center`, the
   # pivot will be center aligned against the target. When set to `edge`, one of the pivot's edge
   # will be aligned against the pivot. See `targetAlignOffset` for the exact mechanics of the two
@@ -195,7 +219,7 @@ class @FlowTip
   # ##### Root Alignment
   #
   # Root alignment refers to the alignment of the tooltip's root relative to the pivot.
-  #
+
   # `rootAlign`: **String**; Possible values are `center` and `edge`. When set to `center`, the
   # tooltip's root will be center aligned against the pivot. When set to `edge`, one of the
   # tooltip's root's edge will be aligned against the pivot. See `rootAlignOffset` for the
@@ -325,40 +349,71 @@ class @FlowTip
   #
   # *Hitherto shalt thou come, but no further.*
 
+  _fitsInRegion: (region) ->
+    position = @_calculatePosition(region)
+    rootDimension = @_rootDimension()
+    parentParameter = @_parentParameter()
+
+    switch region
+      when "top"
+        position.top - @edgeOffset >= 0
+      when "bottom"
+        position.top + rootDimension.height + @edgeOffset <= parentParameter.height
+      when "left"
+        position.left - @edgeOffset >= 0
+      when "right"
+        position.left + rootDimension.width + @edgeOffset <= parentParameter.width
+
   _updateRegion: (position) ->
     @_region ||= @region
     @_region = @region if @persevere
 
-    position = @_calculatePosition(@_region)
-    rootDimension = @_rootDimension()
     parentParameter = @_parentParameter()
     targetParameter = @_targetParameter()
 
+    fits_top = @_fitsInRegion("top")
+    fits_bottom = @_fitsInRegion("bottom")
+    fits_left = @_fitsInRegion("left")
+    fits_right = @_fitsInRegion("right")
+
+    # Edge detection - flip
     switch @_region
       when "top"
-        if position.top - @edgeOffset < 0
-          @_region = "bottom"
+        @_region = "bottom" if !fits_top && fits_bottom
       when "bottom"
-        if position.top + rootDimension.height + @edgeOffset > parentParameter.height
-          @_region = "top"
+        @_region = "top" if !fits_bottom && fits_top
       when "left"
-        if position.left - @edgeOffset < 0
-          @_region = "right"
+        @_region = "right" if !fits_left && fits_right
       when "right"
-        if position.left + rootDimension.width + @edgeOffset > parentParameter.width
-          @_region = "left"
+        @_region = "left" if !fits_right && fits_left
 
+    # Edge detection - squeeze
+    switch @_region
+      when "top", "bottom"
+        if (!fits_top && !fits_bottom)
+          if fits_left
+            @_region = "left"
+          else if fits_right
+            @_region = "right"
+      when "left", "right"
+        if (!fits_left && !fits_right)
+          if fits_top
+            @_region = "top"
+          else if fits_bottom
+            @_region = "bottom"
+
+    # Edge detection - rotate
     switch @_region
       when "top", "bottom"
         if (parentParameter.width) - (targetParameter.left + (targetParameter.width / 2)) - @edgeOffset < @rotationOffset
-          @_region = "left"
+          @_region = "left" if fits_left
         else if targetParameter.left + (targetParameter.width / 2) - @edgeOffset < @rotationOffset
-          @_region = "right"
+          @_region = "right" if fits_right
       when "left", "right"
         if (parentParameter.height) - (targetParameter.top + (targetParameter.height / 2)) - @edgeOffset < @rotationOffset
-          @_region = "top"
+          @_region = "top" if fits_top
         else if targetParameter.top + (targetParameter.height / 2) - @edgeOffset < @rotationOffset
-          @_region = "bottom"
+          @_region = "bottom" if fits_bottom
 
   _updatePosition: (position) ->
     position = @_calculatePosition(@_region)
