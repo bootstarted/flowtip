@@ -418,8 +418,8 @@ class @FlowTip
   _updatePosition: (position) ->
     position = @_calculatePosition(@_region)
 
-    @root.style.top = "#{position.top + @$appendTo.scrollTop()}px"
-    @root.style.left = "#{position.left + @$appendTo.scrollLeft()}px"
+    @root.style.top = "#{Math.round(position.top) + @$appendTo.scrollTop()}px"
+    @root.style.left = "#{Math.round(position.left) + @$appendTo.scrollLeft()}px"
 
     rootHeight = @$root.height()
     contentHeight = @$content.height()
@@ -432,8 +432,8 @@ class @FlowTip
 
     if @hasTail
       @tail.style.display = "block"
-      @tail.style.top = "#{position.tail.top}px"
-      @tail.style.left = "#{position.tail.left}px"
+      @tail.style.top = "#{Math.round(position.tail.top)}px"
+      @tail.style.left = "#{Math.round(position.tail.left)}px"
       @tail.style.width = "#{position.tail.width}px"
       @tail.style.height = "#{position.tail.height}px"
       @tail.className = "flowtip-tail #{@tailClassName} #{@_tailType(@_region)}"
