@@ -437,6 +437,8 @@ class @FlowTip
       @tail.style.width = "#{position.tail.width}px"
       @tail.style.height = "#{position.tail.height}px"
       @tail.className = "flowtip-tail #{@tailClassName} #{@_tailType(@_region)}"
+      @root.className = @root.className.replace(/tail-at-[\w]+/, "")
+      @root.className = "#{@root.className} tail-at-#{@_tailType(@_region)}"
     else
       @tail.style.display = "none"
 
