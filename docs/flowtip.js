@@ -29,6 +29,16 @@
 
     FlowTip.prototype.region = "top";
 
+    FlowTip.prototype.topDisabled = false;
+
+    FlowTip.prototype.bottomDisabled = false;
+
+    FlowTip.prototype.leftDisabled = false;
+
+    FlowTip.prototype.rightDisabled = false;
+
+    FlowTip.prototype.hideInDisabledRegions = false;
+
     FlowTip.prototype.persevere = false;
 
     FlowTip.prototype.hasTail = true;
@@ -176,6 +186,10 @@
       }
     };
 
+    FlowTip.prototype._availableRegion = function(region) {
+      return !this["" + region + "Disabled"];
+    };
+
     FlowTip.prototype._fitsInRegion = function(region) {
       var parentParameter, position, rootDimension;
       position = this._calculatePosition(region);
@@ -193,84 +207,84 @@
       }
     };
 
+    FlowTip.prototype._availableAndFitsIn = function(regions, regionParameter, _first) {
+      var region;
+      _first || (_first = regions[0]);
+      region = regions[0];
+      if (!regions || regions.length <= 0) {
+        if (this.hideInDisabledRegions) {
+          return _first;
+        } else {
+          return this._region;
+        }
+      }
+      if (regionParameter[region].availables && regionParameter[region].fits) {
+        return region;
+      } else {
+        return this._availableAndFitsIn(regions.slice(1), regionParameter, _first);
+      }
+    };
+
     FlowTip.prototype._updateRegion = function(position) {
-      var fits_bottom, fits_left, fits_right, fits_top, parentParameter, targetParameter;
+      var parentParameter, regionParameter, rotateOptions, targetParameter, _ref, _ref1;
       this._region || (this._region = this.region);
       if (this.persevere) {
         this._region = this.region;
       }
       parentParameter = this._parentParameter();
       targetParameter = this._targetParameter();
-      fits_top = this._fitsInRegion("top");
-      fits_bottom = this._fitsInRegion("bottom");
-      fits_left = this._fitsInRegion("left");
-      fits_right = this._fitsInRegion("right");
-      switch (this._region) {
-        case "top":
-          if (!fits_top && fits_bottom) {
-            this._region = "bottom";
-          }
-          break;
-        case "bottom":
-          if (!fits_bottom && fits_top) {
-            this._region = "top";
-          }
-          break;
-        case "left":
-          if (!fits_left && fits_right) {
-            this._region = "right";
-          }
-          break;
-        case "right":
-          if (!fits_right && fits_left) {
-            this._region = "left";
-          }
+      regionParameter = this._regionParameter();
+      if (this._region === "top" && !regionParameter.top.fits) {
+        this._region = this._availableAndFitsIn(["bottom", "left", "right"], regionParameter);
+      } else if (this._region === "bottom" && !regionParameter.bottom.fits) {
+        this._region = this._availableAndFitsIn(["top", "left", "right"], regionParameter);
+      } else if (this._region === "left" && !regionParameter.left.fits) {
+        this._region = this._availableAndFitsIn(["right", "top", "bottom"], regionParameter);
+      } else if (this._region === "right" && !regionParameter.right.fits) {
+        this._region = this._availableAndFitsIn(["left", "top", "bottom"], regionParameter);
       }
-      switch (this._region) {
-        case "top":
-        case "bottom":
-          if (!fits_top && !fits_bottom) {
-            if (fits_left) {
-              this._region = "left";
-            } else if (fits_right) {
-              this._region = "right";
-            }
-          }
-          break;
-        case "left":
-        case "right":
-          if (!fits_left && !fits_right) {
-            if (fits_top) {
-              this._region = "top";
-            } else if (fits_bottom) {
-              this._region = "bottom";
-            }
-          }
+      if (((_ref = this._region) === "top" || _ref === "bottom") && !regionParameter.top.fits && !regionParameter.bottom.fits) {
+        this._region = this._availableAndFitsIn(["left", "right"], regionParameter);
+      } else if (((_ref1 = this._region) === "left" || _ref1 === "right") && !regionParameter.left.fits && !regionParameter.right.fits) {
+        this._region = this._availableAndFitsIn(["top", "bottom"], regionParameter);
       }
-      switch (this._region) {
-        case "top":
-        case "bottom":
-          if (parentParameter.width - (targetParameter.left + (targetParameter.width / 2)) - this.edgeOffset < this.rotationOffset) {
-            if (fits_left) {
-              return this._region = "left";
+      rotateOptions = (function() {
+        switch (this._region) {
+          case "top":
+          case "bottom":
+            if (parentParameter.width - (targetParameter.left + (targetParameter.width / 2)) - this.edgeOffset < this.rotationOffset) {
+              if (this._region === "top") {
+                return ["left", "bottom"];
+              } else {
+                return ["left", "top"];
+              }
+            } else if (targetParameter.left + (targetParameter.width / 2) - this.edgeOffset < this.rotationOffset) {
+              if (this._region === "top") {
+                return ["right", "bottom"];
+              } else {
+                return ["right", "top"];
+              }
             }
-          } else if (targetParameter.left + (targetParameter.width / 2) - this.edgeOffset < this.rotationOffset) {
-            if (fits_right) {
-              return this._region = "right";
+            break;
+          case "left":
+          case "right":
+            if (parentParameter.height - (targetParameter.top + (targetParameter.height / 2)) - this.edgeOffset < this.rotationOffset) {
+              if (this._region === "left") {
+                return ["top", "right"];
+              } else {
+                return ["top", "left"];
+              }
+            } else if (targetParameter.top + (targetParameter.height / 2) - this.edgeOffset < this.rotationOffset) {
+              if (this._region === "left") {
+                return ["bottom", "right"];
+              } else {
+                return ["bottom", "left"];
+              }
             }
-          }
-          break;
-        case "left":
-        case "right":
-          if (parentParameter.height - (targetParameter.top + (targetParameter.height / 2)) - this.edgeOffset < this.rotationOffset) {
-            if (fits_top) {
-              return this._region = "top";
-            }
-          } else if (targetParameter.top + (targetParameter.height / 2) - this.edgeOffset < this.rotationOffset) {
-            if (fits_bottom) {
-              return this._region = "bottom";
-            }
-          }
+        }
+      }).call(this);
+      if (rotateOptions) {
+        return this._region = this._availableAndFitsIn(rotateOptions, regionParameter);
       }
     };
 
@@ -293,9 +307,16 @@
         this.tail.style.left = "" + (Math.round(position.tail.left)) + "px";
         this.tail.style.width = "" + position.tail.width + "px";
         this.tail.style.height = "" + position.tail.height + "px";
-        return this.tail.className = "flowtip-tail " + this.tailClassName + " " + (this._tailType(this._region));
+        this.tail.className = "flowtip-tail " + this.tailClassName + " " + (this._tailType(this._region));
+        this.root.className = this.root.className.replace(/tail-at-[\w]+/, "");
+        this.root.className = "" + this.root.className + " tail-at-" + (this._tailType(this._region));
       } else {
-        return this.tail.style.display = "none";
+        this.tail.style.display = "none";
+      }
+      if (!this._availableRegion(this._region)) {
+        return this.root.style.opacity = 0;
+      } else {
+        return this.root.style.opacity = 1;
       }
     };
 
@@ -554,6 +575,27 @@
         left: parentOffset.left,
         height: this.$appendTo.outerHeight(),
         width: this.$appendTo.outerWidth()
+      };
+    };
+
+    FlowTip.prototype._regionParameter = function() {
+      return {
+        top: {
+          fits: this._fitsInRegion("top"),
+          availables: this._availableRegion("top")
+        },
+        bottom: {
+          fits: this._fitsInRegion("bottom"),
+          availables: this._availableRegion("bottom")
+        },
+        left: {
+          fits: this._fitsInRegion("left"),
+          availables: this._availableRegion("left")
+        },
+        right: {
+          fits: this._fitsInRegion("right"),
+          availables: this._availableRegion("right")
+        }
       };
     };
 

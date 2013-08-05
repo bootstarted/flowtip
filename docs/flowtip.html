@@ -195,6 +195,43 @@ its target. Possibly values are: <code>top</code>, <code>bottom</code>, <code>le
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
+              <p><code>topDisabled</code>, <code>bottomDisabled</code>, <code>leftDisabled</code> and <code>rightDisabled</code>: <strong>Boolean</strong>; When set to
+<code>true</code>, the specified region will become unavailable for the various edge detection algorithms.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  topDisabled: <span class="literal">false</span>
+  bottomDisabled: <span class="literal">false</span>
+  leftDisabled: <span class="literal">false</span>
+  rightDisabled: <span class="literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><code>hideInDisabledRegions</code>: <strong>Boolean</strong>; When set to <code>true</code>, and when the only suitable regions for
+the tooltip are disabled, the tooltip will be hidden. When set to <code>false</code>, and when the only
+suitable regions for the tooltip are disabled, the tooltip will be placed in its original
+region.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  hideInDisabledRegions: <span class="literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
               <p><code>persevere</code>: <strong>Boolean</strong>; If set to <code>true</code>, the tooltip will revert back to its preferred region
 whenever there is enough space in that region. If set to <code>false</code>, the tooltip will remain in the
 region edge detection puts it in, until edge detection changes it again.</p>
@@ -206,11 +243,11 @@ region edge detection puts it in, until edge detection changes it again.</p>
         </li>
         
         
-        <li id="section-10">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p><code>hasTail</code>: <strong>Boolean</strong>; Controls if the tooltip&#39;s tail&#39;s visibility. When set to <code>false</code> the
 tooltip&#39;s tail will be hidden and ignored for all positioning calculations.</p>
@@ -222,11 +259,11 @@ tooltip&#39;s tail will be hidden and ignored for all positioning calculations.<
         </li>
         
         
-        <li id="section-11">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p><code>width</code>: <strong>Integer</strong>; Width of the tooltip&#39;s root. If set to <code>null</code>, the tooltip will expand to
 fit its content&#39;s width.</p>
@@ -238,11 +275,11 @@ fit its content&#39;s width.</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p><code>height</code>: <strong>Integer</strong> or the string &quot;auto&quot;; Height of the tooltip&#39;s root. If set to <code>null</code>, the
 tooltip will expand to fit its content&#39;s height. If set to <code>&quot;auto&quot;</code>, the tooltip&#39;s content will
@@ -255,11 +292,11 @@ be relatively positioned to allow possible scrolling.</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p><code>minWidth</code>: <strong>String</strong>; In the form of <code>42px</code>, or other forms accepted by CSS min-width.</p>
 
@@ -270,11 +307,11 @@ be relatively positioned to allow possible scrolling.</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p><code>minHeight</code>: <strong>String</strong>; In the form of <code>42px</code>, or other forms accepted by CSS max-width.</p>
 
@@ -285,11 +322,11 @@ be relatively positioned to allow possible scrolling.</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p><code>maxWidth</code>: <strong>String</strong>; In the form of <code>42px</code>, or other forms accepted by CSS min-height.</p>
 
@@ -300,11 +337,11 @@ be relatively positioned to allow possible scrolling.</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p><code>maxHeight</code>:<strong>String</strong>; In the form of <code>42px</code>, or other forms accepted by CSS max-height.</p>
 
@@ -315,11 +352,11 @@ be relatively positioned to allow possible scrolling.</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p><code>tailWidth</code>: <strong>Integer</strong>; Width of the tail element.</p>
 
@@ -330,11 +367,11 @@ be relatively positioned to allow possible scrolling.</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p><code>tailHeight</code>: <strong>Integer</strong>; Height of the tail element.</p>
 
@@ -347,11 +384,11 @@ be relatively positioned to allow possible scrolling.</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p><code>targetOffset</code>: <strong>Integer</strong>; The distance between the tooltip&#39;s root (or tip of the tail, see
 <code>targetOffsetFrom</code> below) and the target&#39;s edge.</p>
@@ -363,11 +400,11 @@ be relatively positioned to allow possible scrolling.</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p><code>targetOffsetFrom</code>: <strong>String</strong>; Possible values are <code>root</code> and <code>tail</code>. When set to <code>root</code>,
 <code>targetOffset</code> will be calculated against the edge of the tooltip&#39;s root; When set to <code>tail</code>,
@@ -380,11 +417,11 @@ be relatively positioned to allow possible scrolling.</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap for-h3">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <h3>Edge Detection</h3>
 <p>There are three strategies for detection: <strong>flip</strong>, <strong>rotate</strong> and <strong>squeeze</strong>.</p>
@@ -405,11 +442,11 @@ tooltip).</p>
         </li>
         
         
-        <li id="section-22">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap for-h5">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <h5>Rotate</h5>
 <p>The tooltip will be rotated to an adjacent region if the target gets too close to the edge of
@@ -428,16 +465,16 @@ tooltip).</p>
         </li>
         
         
-        <li id="section-23">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap for-h5">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <h5>Squeeze</h5>
-<p>The tooltip will be squeezed to an adjacent if the root of the tooltip gets too close to the
-edge of the boundary on both sides. For example, if the tooltip is in left or right region, and
-neither region has enough space, the tooltip will be squeezed to the top region.</p>
+<p>The tooltip will be squeezed to an adjacent region if the root of the tooltip gets too close to
+the edge of the boundary on both sides. For example, if the tooltip is in left or right region,
+and neither region has enough space, the tooltip will be squeezed to the top region.</p>
 <h3>Alignments</h3>
 <p>Tool tip&#39;s alignments are divided into <strong>root alignment</strong> and <strong>target alignment</strong>, each with
 a corresponding <strong>offset</strong> attribute that controls the direction of the alignment and offset
@@ -458,11 +495,11 @@ from <code>targetAlign</code> will be used.</p>
         </li>
         
         
-        <li id="section-24">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p><code>targetAlignOffset</code>: <strong>Integer</strong></p>
 <p>If <code>targetAlign</code> is set to <code>center</code>, this value controls the clockwise distance from the center
@@ -480,11 +517,11 @@ of shifting.</p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap for-h5">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <h5>Root Alignment</h5>
 <p>Root alignment refers to the alignment of the tooltip&#39;s root relative to the pivot.</p>
@@ -502,11 +539,11 @@ exact mechanics of the two values. This value can also be specified on a per-reg
         </li>
         
         
-        <li id="section-26">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p><code>rootAlignOffset</code>: <strong>Integer</strong></p>
 <p>If <code>rootAlign</code> is set to <code>center</code>, this value controls the clockwise distance from the pivot the
@@ -524,11 +561,11 @@ amount of shifting.</p>
         </li>
         
         
-        <li id="section-27">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p><code>render</code>: Render the tooltip&#39;s root (if not already rendered), content and insert the tooltip
 into the DOM. If called repeatedly, only re-render the tooltip&#39;s content.</p>
@@ -566,11 +603,11 @@ into the DOM. If called repeatedly, only re-render the tooltip&#39;s content.</p
         </li>
         
         
-        <li id="section-28">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p><code>setAppendTo</code>: Set the tooltip&#39;s containing element. If the tooltip has already been rendered,
 the tooltip will be moved/inserted into the new containing element.</p>
@@ -585,11 +622,11 @@ the tooltip will be moved/inserted into the new containing element.</p>
         </li>
         
         
-        <li id="section-29">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p><code>setTarget</code>: Set the tooltip&#39;s target. The target is the element to which the tooltip will be
 pointing at.</p>
@@ -603,11 +640,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-30">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p><code>setTooltipContent</code>: Set the tooltip&#39;s content. If <code>render</code> is set to <code>true</code> for <code>options</code>, the
 <code>render()</code> method will be called to re-render the content.</p>
@@ -621,11 +658,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-31">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p><code>reposition</code>: Perform edge detection and position calculations to update the tooltip&#39;s position.</p>
 
@@ -655,11 +692,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-32">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p><code>show</code>: Show the tooltip. Also update the tooltip&#39;s <code>visible</code> attribute.</p>
 
@@ -683,11 +720,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-33">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p><code>hide</code>: Hide the tooltip. Also update the tooltip&#39;s <code>visible</code> attribute.</p>
 
@@ -705,11 +742,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-34">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p><code>trigger</code>: Trigger an event from the root of the tooltip.</p>
 
@@ -721,11 +758,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-35">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p><code>destroy</code>: Remove the tooltip&#39;s root from DOM.</p>
 
@@ -737,18 +774,21 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap for-h5">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <h5>Private Methods</h5>
 <p><em>Hitherto shalt thou come, but no further.</em></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _fitsInRegion: (region) -&gt;
+            <div class="content"><div class='highlight'><pre>  _availableRegion: (region) -&gt;
+    !<span class="keyword">this</span>[<span class="string">"<span class="subst">#{region}</span>Disabled"</span>]
+
+  _fitsInRegion: (region) -&gt;
     position = <span class="property">@_calculatePosition</span>(region)
     rootDimension = <span class="property">@_rootDimension</span>()
     parentParameter = <span class="property">@_parentParameter</span>()
@@ -763,67 +803,11 @@ pointing at.</p>
       <span class="keyword">when</span> <span class="string">"right"</span>
         position.left + rootDimension.width + <span class="property">@edgeOffset</span> &lt;= parentParameter.width
 
-  _updateRegion: (position) -&gt;
-    <span class="property">@_region</span> ||= <span class="property">@region</span>
-    <span class="property">@_region</span> = <span class="property">@region</span> <span class="keyword">if</span> <span class="property">@persevere</span>
+  _availableAndFitsIn: (regions, regionParameter, _first) -&gt;
+    _first ||= regions[<span class="number">0</span>]
+    region = regions[<span class="number">0</span>]
 
-    parentParameter = <span class="property">@_parentParameter</span>()
-    targetParameter = <span class="property">@_targetParameter</span>()
-
-    fits_top = <span class="property">@_fitsInRegion</span>(<span class="string">"top"</span>)
-    fits_bottom = <span class="property">@_fitsInRegion</span>(<span class="string">"bottom"</span>)
-    fits_left = <span class="property">@_fitsInRegion</span>(<span class="string">"left"</span>)
-    fits_right = <span class="property">@_fitsInRegion</span>(<span class="string">"right"</span>)</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-37">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
-              </div>
-              <p>Edge detection - flip</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">switch</span> <span class="property">@_region</span>
-      <span class="keyword">when</span> <span class="string">"top"</span>
-        <span class="property">@_region</span> = <span class="string">"bottom"</span> <span class="keyword">if</span> !fits_top &amp;&amp; fits_bottom
-      <span class="keyword">when</span> <span class="string">"bottom"</span>
-        <span class="property">@_region</span> = <span class="string">"top"</span> <span class="keyword">if</span> !fits_bottom &amp;&amp; fits_top
-      <span class="keyword">when</span> <span class="string">"left"</span>
-        <span class="property">@_region</span> = <span class="string">"right"</span> <span class="keyword">if</span> !fits_left &amp;&amp; fits_right
-      <span class="keyword">when</span> <span class="string">"right"</span>
-        <span class="property">@_region</span> = <span class="string">"left"</span> <span class="keyword">if</span> !fits_right &amp;&amp; fits_left</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-38">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
-              </div>
-              <p>Edge detection - squeeze</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">switch</span> <span class="property">@_region</span>
-      <span class="keyword">when</span> <span class="string">"top"</span>, <span class="string">"bottom"</span>
-        <span class="keyword">if</span> (!fits_top &amp;&amp; !fits_bottom)
-          <span class="keyword">if</span> fits_left
-            <span class="property">@_region</span> = <span class="string">"left"</span>
-          <span class="keyword">else</span> <span class="keyword">if</span> fits_right
-            <span class="property">@_region</span> = <span class="string">"right"</span>
-      <span class="keyword">when</span> <span class="string">"left"</span>, <span class="string">"right"</span>
-        <span class="keyword">if</span> (!fits_left &amp;&amp; !fits_right)
-          <span class="keyword">if</span> fits_top
-            <span class="property">@_region</span> = <span class="string">"top"</span>
-          <span class="keyword">else</span> <span class="keyword">if</span> fits_bottom
-            <span class="property">@_region</span> = <span class="string">"bottom"</span></pre></div></div>
+    <span class="keyword">if</span> !regions || regions.length &lt;= <span class="number">0</span></pre></div></div>
             
         </li>
         
@@ -834,27 +818,98 @@ pointing at.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
+              <p>Return the first region if <code>hideInDisabledRegions</code> is <code>true</code>, and in which case the tooltip
+will be hidden by <code>_updatePosition</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">return</span> <span class="keyword">if</span> <span class="property">@hideInDisabledRegions</span> <span class="keyword">then</span> _first <span class="keyword">else</span> <span class="property">@_region</span>
+
+    <span class="keyword">if</span> regionParameter[region].availables &amp;&amp; regionParameter[region].fits
+      <span class="keyword">return</span> region
+    <span class="keyword">else</span>
+      <span class="keyword">return</span> <span class="property">@_availableAndFitsIn</span>(regions.slice(<span class="number">1</span>), regionParameter, _first)
+
+  _updateRegion: (position) -&gt;
+    <span class="property">@_region</span> ||= <span class="property">@region</span>
+    <span class="property">@_region</span> = <span class="property">@region</span> <span class="keyword">if</span> <span class="property">@persevere</span>
+
+    parentParameter = <span class="property">@_parentParameter</span>()
+    targetParameter = <span class="property">@_targetParameter</span>()
+    regionParameter = <span class="property">@_regionParameter</span>()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>Edge detection - flip</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> <span class="property">@_region</span> == <span class="string">"top"</span> &amp;&amp; !regionParameter.top.fits
+      <span class="property">@_region</span> = <span class="property">@_availableAndFitsIn</span>([<span class="string">"bottom"</span>, <span class="string">"left"</span>, <span class="string">"right"</span>], regionParameter)
+    <span class="keyword">else</span> <span class="keyword">if</span> <span class="property">@_region</span> == <span class="string">"bottom"</span> &amp;&amp; !regionParameter.bottom.fits
+      <span class="property">@_region</span> = <span class="property">@_availableAndFitsIn</span>([<span class="string">"top"</span>, <span class="string">"left"</span>, <span class="string">"right"</span>], regionParameter)
+    <span class="keyword">else</span> <span class="keyword">if</span> <span class="property">@_region</span> == <span class="string">"left"</span> &amp;&amp; !regionParameter.left.fits
+      <span class="property">@_region</span> = <span class="property">@_availableAndFitsIn</span>([<span class="string">"right"</span>, <span class="string">"top"</span>, <span class="string">"bottom"</span>], regionParameter)
+    <span class="keyword">else</span> <span class="keyword">if</span> <span class="property">@_region</span> == <span class="string">"right"</span> &amp;&amp; !regionParameter.right.fits
+      <span class="property">@_region</span> = <span class="property">@_availableAndFitsIn</span>([<span class="string">"left"</span>, <span class="string">"top"</span>, <span class="string">"bottom"</span>], regionParameter)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>Edge detection - squeeze</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> <span class="property">@_region</span> <span class="keyword">in</span> [<span class="string">"top"</span>, <span class="string">"bottom"</span>] &amp;&amp; !regionParameter.top.fits &amp;&amp; !regionParameter.bottom.fits
+      <span class="property">@_region</span> = <span class="property">@_availableAndFitsIn</span>([<span class="string">"left"</span>, <span class="string">"right"</span>], regionParameter)
+    <span class="keyword">else</span> <span class="keyword">if</span> <span class="property">@_region</span> <span class="keyword">in</span> [<span class="string">"left"</span>, <span class="string">"right"</span>] &amp;&amp; !regionParameter.left.fits &amp;&amp; !regionParameter.right.fits
+      <span class="property">@_region</span> = <span class="property">@_availableAndFitsIn</span>([<span class="string">"top"</span>, <span class="string">"bottom"</span>], regionParameter)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
               <p>Edge detection - rotate</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">switch</span> <span class="property">@_region</span>
+            <div class="content"><div class='highlight'><pre>    rotateOptions = <span class="keyword">switch</span> <span class="property">@_region</span>
       <span class="keyword">when</span> <span class="string">"top"</span>, <span class="string">"bottom"</span>
         <span class="keyword">if</span> (parentParameter.width) - (targetParameter.left + (targetParameter.width / <span class="number">2</span>)) - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
-          <span class="property">@_region</span> = <span class="string">"left"</span> <span class="keyword">if</span> fits_left
+          <span class="keyword">if</span> <span class="property">@_region</span> == <span class="string">"top"</span> <span class="keyword">then</span> [<span class="string">"left"</span>, <span class="string">"bottom"</span>] <span class="keyword">else</span> [<span class="string">"left"</span>, <span class="string">"top"</span>]
         <span class="keyword">else</span> <span class="keyword">if</span> targetParameter.left + (targetParameter.width / <span class="number">2</span>) - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
-          <span class="property">@_region</span> = <span class="string">"right"</span> <span class="keyword">if</span> fits_right
+          <span class="keyword">if</span> <span class="property">@_region</span> == <span class="string">"top"</span> <span class="keyword">then</span> [<span class="string">"right"</span>, <span class="string">"bottom"</span>] <span class="keyword">else</span> [<span class="string">"right"</span>, <span class="string">"top"</span>]
       <span class="keyword">when</span> <span class="string">"left"</span>, <span class="string">"right"</span>
         <span class="keyword">if</span> (parentParameter.height) - (targetParameter.top + (targetParameter.height / <span class="number">2</span>)) - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
-          <span class="property">@_region</span> = <span class="string">"top"</span> <span class="keyword">if</span> fits_top
+          <span class="keyword">if</span> <span class="property">@_region</span> == <span class="string">"left"</span> <span class="keyword">then</span> [<span class="string">"top"</span>, <span class="string">"right"</span>] <span class="keyword">else</span> [<span class="string">"top"</span>, <span class="string">"left"</span>]
         <span class="keyword">else</span> <span class="keyword">if</span> targetParameter.top + (targetParameter.height / <span class="number">2</span>) - <span class="property">@edgeOffset</span> &lt; <span class="property">@rotationOffset</span>
-          <span class="property">@_region</span> = <span class="string">"bottom"</span> <span class="keyword">if</span> fits_bottom
+          <span class="keyword">if</span> <span class="property">@_region</span> == <span class="string">"left"</span> <span class="keyword">then</span> [<span class="string">"bottom"</span>, <span class="string">"right"</span>] <span class="keyword">else</span> [<span class="string">"bottom"</span>, <span class="string">"left"</span>]
+    <span class="keyword">if</span> rotateOptions
+      <span class="property">@_region</span> = <span class="property">@_availableAndFitsIn</span>(rotateOptions, regionParameter)
 
   _updatePosition: (position) -&gt;
     position = <span class="property">@_calculatePosition</span>(<span class="property">@_region</span>)
 
-    <span class="property">@root</span>.style.top = <span class="string">"<span class="subst">#{position.top + @$appendTo.scrollTop()}</span>px"</span>
-    <span class="property">@root</span>.style.left = <span class="string">"<span class="subst">#{position.left + @$appendTo.scrollLeft()}</span>px"</span>
+    <span class="property">@root</span>.style.top = <span class="string">"<span class="subst">#{Math.round(position.top) + @$appendTo.scrollTop()}</span>px"</span>
+    <span class="property">@root</span>.style.left = <span class="string">"<span class="subst">#{Math.round(position.left) + @$appendTo.scrollLeft()}</span>px"</span>
 
     rootHeight = <span class="property">@$root</span>.height()
     contentHeight = <span class="property">@$content</span>.height()
@@ -867,13 +922,20 @@ pointing at.</p>
 
     <span class="keyword">if</span> <span class="property">@hasTail</span>
       <span class="property">@tail</span>.style.display = <span class="string">"block"</span>
-      <span class="property">@tail</span>.style.top = <span class="string">"<span class="subst">#{position.tail.top}</span>px"</span>
-      <span class="property">@tail</span>.style.left = <span class="string">"<span class="subst">#{position.tail.left}</span>px"</span>
+      <span class="property">@tail</span>.style.top = <span class="string">"<span class="subst">#{Math.round(position.tail.top)}</span>px"</span>
+      <span class="property">@tail</span>.style.left = <span class="string">"<span class="subst">#{Math.round(position.tail.left)}</span>px"</span>
       <span class="property">@tail</span>.style.width = <span class="string">"<span class="subst">#{position.tail.width}</span>px"</span>
       <span class="property">@tail</span>.style.height = <span class="string">"<span class="subst">#{position.tail.height}</span>px"</span>
       <span class="property">@tail</span>.className = <span class="string">"flowtip-tail <span class="subst">#{@tailClassName}</span> <span class="subst">#{@_tailType(@_region)}</span>"</span>
+      <span class="property">@root</span>.className = <span class="property">@root</span>.className.replace(<span class="regexp">/tail-at-[\w]+/</span>, <span class="string">""</span>)
+      <span class="property">@root</span>.className = <span class="string">"<span class="subst">#{@root.className}</span> tail-at-<span class="subst">#{@_tailType(@_region)}</span>"</span>
     <span class="keyword">else</span>
       <span class="property">@tail</span>.style.display = <span class="string">"none"</span>
+
+    <span class="keyword">if</span> !<span class="property">@_availableRegion</span>(<span class="property">@_region</span>)
+      <span class="property">@root</span>.style.opacity = <span class="number">0</span>
+    <span class="keyword">else</span>
+      <span class="property">@root</span>.style.opacity = <span class="number">1</span>
 
   _calculatePosition: (region) -&gt;
     rootDimension = <span class="property">@_rootDimension</span>()
@@ -967,11 +1029,11 @@ pointing at.</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>Ensure &quot;position&quot; is explicitly defined on the appendTo element</p>
 
@@ -1134,6 +1196,26 @@ pointing at.</p>
       left: parentOffset.left
       height: <span class="property">@$appendTo</span>.outerHeight()
       width: <span class="property">@$appendTo</span>.outerWidth()
+    }
+
+  _regionParameter: -&gt;
+    {
+      top: {
+        fits: <span class="property">@_fitsInRegion</span>(<span class="string">"top"</span>)
+        availables: <span class="property">@_availableRegion</span>(<span class="string">"top"</span>)
+      }
+      bottom: {
+        fits: <span class="property">@_fitsInRegion</span>(<span class="string">"bottom"</span>)
+        availables: <span class="property">@_availableRegion</span>(<span class="string">"bottom"</span>)
+      }
+      left: {
+        fits: <span class="property">@_fitsInRegion</span>(<span class="string">"left"</span>)
+        availables: <span class="property">@_availableRegion</span>(<span class="string">"left"</span>)
+      }
+      right: {
+        fits: <span class="property">@_fitsInRegion</span>(<span class="string">"right"</span>)
+        availables: <span class="property">@_availableRegion</span>(<span class="string">"right"</span>)
+      }
     }</pre></div></div>
             
         </li>
