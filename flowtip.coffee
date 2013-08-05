@@ -103,6 +103,19 @@ class @FlowTip
   # its target. Possibly values are: `top`, `bottom`, `left` and `right`.
   region: "top"
 
+  # `topDisabled`, `bottomDisabled`, `leftDisabled` and `rightDisabled`: **Boolean**; When set to
+  # `true`, the specified region will become unavailable for the various edge detection algorithms.
+  topDisabled: false
+  bottomDisabled: false
+  leftDisabled: false
+  rightDisabled: false
+
+  # `hideInDisabledRegions`: **Boolean**; When set to `true`, and when the only suitable regions for
+  # the tooltip are disabled, the tooltip will be hidden. When set to `false`, and when the only
+  # suitable regions for the tooltip are disabled, the tooltip will be placed in its original
+  # region.
+  hideInDisabledRegions: false
+
   # `persevere`: **Boolean**; If set to `true`, the tooltip will revert back to its preferred region
   # whenever there is enough space in that region. If set to `false`, the tooltip will remain in the
   # region edge detection puts it in, until edge detection changes it again.
@@ -182,9 +195,9 @@ class @FlowTip
 
   # ##### Squeeze
   #
-  # The tooltip will be squeezed to an adjacent if the root of the tooltip gets too close to the
-  # edge of the boundary on both sides. For example, if the tooltip is in left or right region, and
-  # neither region has enough space, the tooltip will be squeezed to the top region.
+  # The tooltip will be squeezed to an adjacent region if the root of the tooltip gets too close to
+  # the edge of the boundary on both sides. For example, if the tooltip is in left or right region,
+  # and neither region has enough space, the tooltip will be squeezed to the top region.
 
   # ### Alignments
   #
@@ -349,6 +362,9 @@ class @FlowTip
   #
   # *Hitherto shalt thou come, but no further.*
 
+  _availableRegion: (region) ->
+    !this["#{region}Disabled"]
+
   _fitsInRegion: (region) ->
     position = @_calculatePosition(region)
     rootDimension = @_rootDimension()
@@ -364,56 +380,58 @@ class @FlowTip
       when "right"
         position.left + rootDimension.width + @edgeOffset <= parentParameter.width
 
+  _availableAndFitsIn: (regions, regionParameter, _first) ->
+    _first ||= regions[0]
+    region = regions[0]
+
+    if !regions || regions.length <= 0
+      # Return the first region if `hideInDisabledRegions` is `true`, and in which case the tooltip
+      # will be hidden by `_updatePosition`.
+      return if @hideInDisabledRegions then _first else @_region
+
+    if regionParameter[region].availables && regionParameter[region].fits
+      return region
+    else
+      return @_availableAndFitsIn(regions.slice(1), regionParameter, _first)
+
   _updateRegion: (position) ->
     @_region ||= @region
     @_region = @region if @persevere
 
     parentParameter = @_parentParameter()
     targetParameter = @_targetParameter()
-
-    fits_top = @_fitsInRegion("top")
-    fits_bottom = @_fitsInRegion("bottom")
-    fits_left = @_fitsInRegion("left")
-    fits_right = @_fitsInRegion("right")
+    regionParameter = @_regionParameter()
 
     # Edge detection - flip
-    switch @_region
-      when "top"
-        @_region = "bottom" if !fits_top && fits_bottom
-      when "bottom"
-        @_region = "top" if !fits_bottom && fits_top
-      when "left"
-        @_region = "right" if !fits_left && fits_right
-      when "right"
-        @_region = "left" if !fits_right && fits_left
+    if @_region == "top" && !regionParameter.top.fits
+      @_region = @_availableAndFitsIn(["bottom", "left", "right"], regionParameter)
+    else if @_region == "bottom" && !regionParameter.bottom.fits
+      @_region = @_availableAndFitsIn(["top", "left", "right"], regionParameter)
+    else if @_region == "left" && !regionParameter.left.fits
+      @_region = @_availableAndFitsIn(["right", "top", "bottom"], regionParameter)
+    else if @_region == "right" && !regionParameter.right.fits
+      @_region = @_availableAndFitsIn(["left", "top", "bottom"], regionParameter)
 
     # Edge detection - squeeze
-    switch @_region
-      when "top", "bottom"
-        if (!fits_top && !fits_bottom)
-          if fits_left
-            @_region = "left"
-          else if fits_right
-            @_region = "right"
-      when "left", "right"
-        if (!fits_left && !fits_right)
-          if fits_top
-            @_region = "top"
-          else if fits_bottom
-            @_region = "bottom"
+    if @_region in ["top", "bottom"] && !regionParameter.top.fits && !regionParameter.bottom.fits
+      @_region = @_availableAndFitsIn(["left", "right"], regionParameter)
+    else if @_region in ["left", "right"] && !regionParameter.left.fits && !regionParameter.right.fits
+      @_region = @_availableAndFitsIn(["top", "bottom"], regionParameter)
 
     # Edge detection - rotate
-    switch @_region
+    rotateOptions = switch @_region
       when "top", "bottom"
         if (parentParameter.width) - (targetParameter.left + (targetParameter.width / 2)) - @edgeOffset < @rotationOffset
-          @_region = "left" if fits_left
+          if @_region == "top" then ["left", "bottom"] else ["left", "top"]
         else if targetParameter.left + (targetParameter.width / 2) - @edgeOffset < @rotationOffset
-          @_region = "right" if fits_right
+          if @_region == "top" then ["right", "bottom"] else ["right", "top"]
       when "left", "right"
         if (parentParameter.height) - (targetParameter.top + (targetParameter.height / 2)) - @edgeOffset < @rotationOffset
-          @_region = "top" if fits_top
+          if @_region == "left" then ["top", "right"] else ["top", "left"]
         else if targetParameter.top + (targetParameter.height / 2) - @edgeOffset < @rotationOffset
-          @_region = "bottom" if fits_bottom
+          if @_region == "left" then ["bottom", "right"] else ["bottom", "left"]
+    if rotateOptions
+      @_region = @_availableAndFitsIn(rotateOptions, regionParameter)
 
   _updatePosition: (position) ->
     position = @_calculatePosition(@_region)
@@ -441,6 +459,11 @@ class @FlowTip
       @root.className = "#{@root.className} tail-at-#{@_tailType(@_region)}"
     else
       @tail.style.display = "none"
+
+    if !@_availableRegion(@_region)
+      @root.style.opacity = 0
+    else
+      @root.style.opacity = 1
 
   _calculatePosition: (region) ->
     rootDimension = @_rootDimension()
@@ -688,4 +711,24 @@ class @FlowTip
       left: parentOffset.left
       height: @$appendTo.outerHeight()
       width: @$appendTo.outerWidth()
+    }
+
+  _regionParameter: ->
+    {
+      top: {
+        fits: @_fitsInRegion("top")
+        availables: @_availableRegion("top")
+      }
+      bottom: {
+        fits: @_fitsInRegion("bottom")
+        availables: @_availableRegion("bottom")
+      }
+      left: {
+        fits: @_fitsInRegion("left")
+        availables: @_availableRegion("left")
+      }
+      right: {
+        fits: @_fitsInRegion("right")
+        availables: @_availableRegion("right")
+      }
     }
