@@ -102,6 +102,17 @@ $(function() {
       });
     } else if (mode == "target-align") {
       show_demo({ targetAlign: "center", targetAlignOffset: 10 });
+    } else if (mode == "disabled") {
+      show_demo({
+        bottomDisabled: true,
+        leftDisabled: true
+      });
+    } else if (mode == "disabled-hidden") {
+      show_demo({
+        bottomDisabled: true,
+        leftDisabled: true,
+        hideInDisabledRegions: true
+      });
     }
   });
 
