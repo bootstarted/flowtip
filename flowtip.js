@@ -113,7 +113,13 @@
 
     FlowTip.prototype.setTarget = function(target) {
       this.$target = $(target);
-      return this.target = this.$target[0];
+      this.target = this.$target[0];
+      return this.clientRect = false;
+    };
+
+    FlowTip.prototype.setClientRect = function(rect) {
+      this.target = rect;
+      return this.clientRect = true;
     };
 
     FlowTip.prototype.setTooltipContent = function(content, options) {
@@ -557,14 +563,23 @@
 
     FlowTip.prototype._targetParameter = function() {
       var parentOffset, targetOffset;
-      targetOffset = this.$target.offset();
       parentOffset = this.$appendTo.offset();
-      return {
-        top: targetOffset.top - parentOffset.top,
-        left: targetOffset.left - parentOffset.left,
-        height: this.$target.outerHeight(),
-        width: this.$target.outerWidth()
-      };
+      if (this.clientRect) {
+        return {
+          top: this.target.top - parentOffset.top,
+          left: this.target.left - parentOffset.left,
+          height: this.target.bottom - this.target.top,
+          width: this.target.right - this.target.left
+        };
+      } else {
+        targetOffset = this.$target.offset();
+        return {
+          top: targetOffset.top - parentOffset.top,
+          left: targetOffset.left - parentOffset.left,
+          height: this.$target.outerHeight(),
+          width: this.$target.outerWidth()
+        };
+      }
     };
 
     FlowTip.prototype._parentParameter = function() {

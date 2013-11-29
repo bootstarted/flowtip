@@ -295,6 +295,13 @@ class @FlowTip
   setTarget: (target) ->
     @$target = $(target)
     @target = @$target[0]
+    @clientRect = false
+
+  # `setClientRect`: Set the tooltip's target to be a ClientRect instead of a html element. The
+  # target is the ClientRect to which the tooltip will be pointing at.
+  setClientRect: (rect) ->
+    @target = rect
+    @clientRect = true
 
   # `setTooltipContent`: Set the tooltip's content. If `render` is set to `true` for `options`, the
   # `render()` method will be called to re-render the content.
@@ -694,15 +701,23 @@ class @FlowTip
         return "left"
 
   _targetParameter: ->
-    targetOffset = @$target.offset()
     parentOffset = @$appendTo.offset()
 
-    {
-      top: targetOffset.top - parentOffset.top
-      left: targetOffset.left - parentOffset.left
-      height: @$target.outerHeight()
-      width: @$target.outerWidth()
-    }
+    if @clientRect
+      {
+        top: @target.top - parentOffset.top
+        left: @target.left - parentOffset.left
+        height: @target.bottom - @target.top
+        width: @target.right - @target.left
+      }
+    else
+      targetOffset = @$target.offset()
+      {
+        top: targetOffset.top - parentOffset.top
+        left: targetOffset.left - parentOffset.left
+        height: @$target.outerHeight()
+        width: @$target.outerWidth()
+      }
 
   _parentParameter: ->
     parentOffset = @$appendTo.offset()
