@@ -571,9 +571,13 @@ class @FlowTip
       $(@content).html(@tooltipContent)
     else
       @$tooltipContent = $(@tooltipContent)
-      @content.innerHTML = ""
+
       if @$tooltipContent.length
-        @content.appendChild(@$tooltipContent[0])
+        node = @$tooltipContent[0]
+        @content.removeChild(node) if @content.contains(node)
+
+      @content.innerHTML = ""
+      @content.appendChild(node) if node
 
   _rootPivot: (region, targetParameter, rootDimension) ->
     targetPivot = @_targetPivot(region, targetParameter)
