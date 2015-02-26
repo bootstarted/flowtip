@@ -1,0 +1,16 @@
+#demo-container.with-coordinator {
+  position: relative;
+}
+
+.flowtip.with-coordinator {
+  width: 220px;
+  height: 75px;
+  background-color: pink;
+  position: absolute;
+}
+
+.flowtip.with-coordinator .flowtip-tail {
+  position: absolute;
+  width: 20px;
+  height: 10px;
+}
