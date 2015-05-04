@@ -1,5 +1,159 @@
-(function() {
-  this.FlowTip = React.createClass({
+
+define('flowtip-tail',["underscore", "react"], function(_, React) {
+  return React.createClass({
+    getOriginalDimension: function () {
+      return this._originalDimension;
+    },
+
+    getDefaultProps: function() {
+      return {
+        width: 20,
+        height: 10
+      };
+    },
+
+    componentWillMount: function () {
+      this._originalDimension = {
+        width: this.props.width,
+        height: this.props.height
+      };
+    },
+
+    render: function () {
+      if (this.props.hidden) {
+        return null;
+      }
+
+      var style = {
+        width: this.props.width,
+        height: this.props.height,
+        position: "absolute",
+        top: this.props.top,
+        left: this.props.left
+      };
+
+      var classNames = _.chain(["flowtip-tail", this.props.className])
+        .compact()
+        .join(" ");
+
+      return (
+        React.createElement("div", {style: style, className: classNames})
+      );
+    }
+  });
+});
+
+
+define('flowtip-content',["underscore", "react"], function(_, React) {
+  return React.createClass({
+    render: function () {
+      var classNames = _.chain(["flowtip-content", this.props.className])
+        .compact()
+        .join(" ");
+
+      return (
+        React.createElement("div", {className: classNames}, 
+          this.props.children
+        )
+      );
+    }
+  });
+});
+
+
+define('flowtip-root',[
+  "jquery",
+  "underscore",
+  "react",
+  "flowtip-tail",
+  "flowtip-content"
+], function(
+  $,
+  _,
+  React,
+  FlowTipTail,
+  FlowtipContent
+) {
+  return React.createClass({
+    getDimension: function () {
+      var $root = $(React.findDOMNode(this.refs.root));
+      return {
+        width: $root.width() || this.props.width,
+        height: $root.height() || this.props.height
+      };
+    },
+
+    getTailOriginalDimension: function () {
+      return this.refs.tail.getOriginalDimension();
+    },
+
+    getDefaultProps: function() {
+      return {
+        width: null,
+        height: "auto",
+        minWidth: null,
+        minHeight: null,
+        maxWidth: null,
+        maxHeight: null
+      };
+    },
+
+    render: function () {
+      if (this.props.hidden) {
+        return null;
+      }
+
+      var style = {
+        position: "absolute",
+        top: this.props.top,
+        left: this.props.left,
+        minWidth: this.props.minWidth,
+        minHeight: this.props.minHeight,
+        maxWidth: this.props.maxWidth,
+        maxHeight: this.props.maxHeight,
+        width: this.props.width,
+        height: this.props.height
+      };
+
+      var classNames = _.chain(["flowtip-root", this.props.className])
+        .compact()
+        .join(" ");
+
+      var contentProperties = {
+        className: this.props.contentClassName
+      };
+
+      var tailProperties = _.extend({
+        className: this.props.tailClassName
+      }, _.pick(this.props.tail, [
+        "top", "left", "width", "height", "hidden", "type"
+      ]));
+
+      return (
+        React.createElement("div", {style: style, className: classNames, ref: "root"}, 
+          React.createElement(FlowtipContent, React.__spread({},  contentProperties), 
+            this.props.children
+          ), 
+          React.createElement(FlowTipTail, React.__spread({ref: "tail"},  tailProperties))
+        )
+      );
+    }
+  });
+});
+
+
+define('flowtip',[
+  "jquery",
+  "underscore",
+  "react",
+  "flowtip-root"
+], function(
+  $,
+  _,
+  React,
+  FlowTipRoot
+) {
+  return React.createClass({
     rootAlign: function (region) {
       return this.props[region + "RootAlign"] || this.props.rootAlign;
     },
@@ -404,134 +558,13 @@
       rootProperties.tail.height = rootProperties.tail.height || this.props.tailHeight;
 
       return (
-        <div style={style} clgassName="flowtip">
-          <FlowTipRoot ref="root" {...rootProperties}>
-            {this.props.children}
-          </FlowTipRoot>
-        </div>
+        React.createElement("div", {style: style, clgassName: "flowtip"}, 
+          React.createElement(FlowTipRoot, React.__spread({ref: "root"},  rootProperties), 
+            this.props.children
+          )
+        )
       );
     }
   });
+});
 
-  var FlowTipTail = React.createClass({
-    getOriginalDimension: function () {
-      return this._originalDimension;
-    },
-
-    getDefaultProps: function() {
-      return {
-        width: 20,
-        height: 10
-      };
-    },
-
-    componentWillMount: function () {
-      this._originalDimension = {
-        width: this.props.width,
-        height: this.props.height
-      };
-    },
-
-    render: function () {
-      if (this.props.hidden) {
-        return null;
-      }
-
-      var style = {
-        width: this.props.width,
-        height: this.props.height,
-        position: "absolute",
-        top: this.props.top,
-        left: this.props.left
-      };
-
-      var classNames = _.chain(["flowtip-tail", this.props.className])
-        .compact()
-        .join(" ");
-
-      return (
-        <div style={style} className={classNames}></div>
-      );
-    }
-  });
-
-  var FlowtipContent = React.createClass({
-    render: function () {
-      var classNames = _.chain(["flowtip-content", this.props.className])
-        .compact()
-        .join(" ");
-
-      return (
-        <div className={classNames}>
-          {this.props.children}
-        </div>
-      );
-    }
-  });
-
-  var FlowTipRoot = React.createClass({
-    getDimension: function () {
-      var $root = $(React.findDOMNode(this.refs.root));
-      return {
-        width: $root.width() || this.props.width,
-        height: $root.height() || this.props.height
-      };
-    },
-
-    getTailOriginalDimension: function () {
-      return this.refs.tail.getOriginalDimension();
-    },
-
-    getDefaultProps: function() {
-      return {
-        width: null,
-        height: "auto",
-        minWidth: null,
-        minHeight: null,
-        maxWidth: null,
-        maxHeight: null
-      };
-    },
-
-    render: function () {
-      if (this.props.hidden) {
-        return null;
-      }
-
-      var style = {
-        position: "absolute",
-        top: this.props.top,
-        left: this.props.left,
-        minWidth: this.props.minWidth,
-        minHeight: this.props.minHeight,
-        maxWidth: this.props.maxWidth,
-        maxHeight: this.props.maxHeight,
-        width: this.props.width,
-        height: this.props.height
-      };
-
-      var classNames = _.chain(["flowtip-root", this.props.className])
-        .compact()
-        .join(" ");
-
-      var contentProperties = {
-        className: this.props.contentClassName
-      };
-
-      var tailProperties = _.extend({
-        className: this.props.tailClassName
-      }, _.pick(this.props.tail, [
-        "top", "left", "width", "height", "hidden", "type"
-      ]));
-
-      return (
-        <div style={style} className={classNames} ref="root">
-          <FlowtipContent {...contentProperties}>
-            {this.props.children}
-          </FlowtipContent>
-          <FlowTipTail ref="tail" {...tailProperties} />
-        </div>
-      );
-    }
-  });
-}).call(this);

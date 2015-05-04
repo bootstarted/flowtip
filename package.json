@@ -1,0 +1,33 @@
+{
+  "name": "FlowTip",
+  "version": "2.0.0",
+  "description": "A flexible, adaptable and easy to use tooltip positioning library.",
+  "main": "flowtip.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qiushihe/flowtip.git"
+  },
+  "keywords": [
+    "tooltip",
+    "position",
+    "flowtip"
+  ],
+  "author": "Billy He <qiushihe@me.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/qiushihe/flowtip/issues"
+  },
+  "homepage": "https://github.com/qiushihe/flowtip",
+  "dependencies": {
+    "jquery": "^2.1.4",
+    "react": "^0.13.2",
+    "react-tools": "^0.13.2",
+    "requirejs": "^2.1.17",
+    "requirejs-react-jsx": "^0.13.1",
+    "requirejs-text": "^2.0.12",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "amdclean": "^2.7.0"
+  }
+}
