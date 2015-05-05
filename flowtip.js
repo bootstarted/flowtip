@@ -1,4 +1,4 @@
-
+(function () {
 define('flowtip-tail',["underscore", "react"], function(_, React) {
   return React.createClass({
     getOriginalDimension: function () {
@@ -568,3 +568,4 @@ define('flowtip',[
   });
 });
 
+}());

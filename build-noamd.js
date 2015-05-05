@@ -41,5 +41,19 @@
     return singleContents.replace(/jsx!/g, '');
   },
 
-  wrap: true
+  wrap: {
+    start: "(function(namespace, jquery, underscore, React) {",
+    end: "namespace.FlowTip = flowtip; }(window, $, _, React));"
+  },
+
+  onModuleBundleComplete: function (data) {
+    if (data.path.match(/\/[^\/]*noamd[^\/]*\.js$/)) {
+      var fs = module.require('fs'),
+        amdclean = module.require('amdclean'),
+        outputFile = data.path,
+        cleanedCode = amdclean.clean({ 'filePath': outputFile });
+
+      fs.writeFileSync(outputFile, cleanedCode);
+    }
+  }
 })
