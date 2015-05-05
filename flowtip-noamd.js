@@ -1,6 +1,6 @@
 ;(function() {
 var flowtip_tail, flowtip_content, flowtip_root, flowtip;
-(function (namespace, jquery, underscore, React) {
+(function (namespace, jquery, underscore, react) {
   flowtip_tail = function (_, React) {
     return React.createClass({
       getOriginalDimension: function () {

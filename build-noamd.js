@@ -42,7 +42,7 @@
   },
 
   wrap: {
-    start: "(function(namespace, jquery, underscore, React) {",
+    start: "(function(namespace, jquery, underscore, react) {",
     end: "namespace.FlowTip = flowtip; }(window, $, _, React));"
   },
 
