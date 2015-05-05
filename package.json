@@ -28,6 +28,7 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "amdclean": "^2.7.0"
+    "amdclean": "^2.7.0",
+    "uglify-js": "^2.4.21"
   }
 }
