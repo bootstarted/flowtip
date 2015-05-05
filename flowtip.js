@@ -271,7 +271,6 @@ define('flowtip',[
           return targetAlignOffset * -1;
         }
       } else if (targetAlign == "edge") {
-        var positive = targetAlignOffset >= 0;
         if (region == "top" || region == "right") {
           return targetAlignOffset * -1;
         } else if (region == "bottom" || region == "left") {
