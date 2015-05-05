@@ -1,10 +1,7 @@
 ({
   baseUrl: "lib",
-  exclude: ["JSXTransformer", "jsx", "jquery", "underscore", "react"],
-  include: [
-    "jquery", "underscore", "react",
-    "jsx!flowtip"
-  ],
+  exclude: ["JSXTransformer", "jsx", "jquery", "react", "underscore"],
+  include: ["jsx!flowtip"],
   optimize: "none",
 
   paths: {
