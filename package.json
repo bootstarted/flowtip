@@ -14,6 +14,7 @@
   ],
   "author": "Billy He <qiushihe@me.com>",
   "license": "MIT",
+  "private": true,
   "bugs": {
     "url": "https://github.com/qiushihe/flowtip/issues"
   },
