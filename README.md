@@ -2,7 +2,7 @@
 
 *A flexible, adaptable and easy to use tooltip component for React.js*
 
-Looking for the non-React.js version? It's in the [v1](https://github.com/qiushihe/flowtip/tree/react/v1) folder.
+Looking for the non-React.js version? It's in the [v1](v1) folder.
 
 ## Dependencies
 
@@ -61,7 +61,7 @@ parentProperties = {
 
 ... where all `##` above should be integer values (i.e. not `##px`).
 
-For `flowtipProperties` see detailed listing below.
+For possible values of `flowtipProperties` see [FlowTip Properties](#flowtip-properties) below.
 
 ## FlowTip Properties
 
