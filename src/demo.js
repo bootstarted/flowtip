@@ -1,3 +1,8 @@
+import $ from "jquery";
+import React from "react";
+import ReactDOM from "react-dom";
+import FlowTip from "./flowtip";
+
 var FlowTipDemo = React.createClass({
   updateTargetProperties: function () {
     var $target = $(React.findDOMNode(this.refs.target));
@@ -125,7 +130,4 @@ var FlowTipDemoTarget = React.createClass({
   }
 });
 
-React.render(
-  <FlowTipDemo />,
-  document.body
-);
+ReactDOM.render(<FlowTipDemo />, document.body);
