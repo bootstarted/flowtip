@@ -1,67 +1,63 @@
-import $ from "jquery";
+/* eslint-disable react/no-multi-comp */
 import React from "react";
 import ReactDOM from "react-dom";
 import FlowTip from "./flowtip";
 
-var FlowTipDemo = React.createClass({
-  updateTargetProperties: function () {
-    var $target = $(React.findDOMNode(this.refs.target));
-    var targetOffset = $target.offset();
-    var parentOffset = $(React.findDOMNode(this.refs.parent)).offset();
+class FlowTipDemo extends React.Component {
+  state = {
+    targetProperties: {top: 0, left: 0, width: 0, height: 0},
+    parentProperties: {top: 0, left: 0, width: 0, height: 0},
+  };
+
+  updateTargetProperties() {
+    const target = ReactDOM.findDOMNode(this.refs.target);
+    const parent = ReactDOM.findDOMNode(this.refs.parent);
 
     this.setState({
       targetProperties: {
-        top: targetOffset.top - parentOffset.top,
-        left: targetOffset.left - parentOffset.left,
-        height: $target.outerHeight(),
-        width: $target.outerWidth()
+        top: target.offsetTop - parent.offsetTop,
+        left: target.offsetLeft - parent.offsetLeft,
+        height: target.offsetHeight,
+        width: target.offsetWidth,
       }
     });
-  },
+  }
 
-  updateParentProperties: function () {
-    var $parent = $(React.findDOMNode(this.refs.parent));
-    var parentOffset = $parent.offset();
+  updateParentProperties() {
+    const parent = ReactDOM.findDOMNode(this.refs.parent);
 
     this.setState({
       parentProperties: {
-        top: parentOffset.top,
-        left: parentOffset.left,
-        height: $parent.outerHeight(),
-        width: $parent.outerWidth(),
-        scrollTop: $parent.scrollTop(),
-        scrollLeft: $parent.scrollLeft()
+        top: parent.offsetTop,
+        left: parent.offsetLeft,
+        height: parent.offsetHeight,
+        width: parent.offsetWidth,
+        scrollTop: parent.scrollTop,
+        scrollLeft: parent.scrollLeft,
       }
     });
-  },
+  }
 
-  handleTargetMove: function (position) {
+  handleTargetMove(){
     this.updateTargetProperties();
-  },
+  }
 
-  getInitialState: function () {
-    return {
-      targetProperties: {top: 0, left: 0, width: 0, height: 0},
-      parentProperties: {top: 0, left: 0, width: 0, height: 0}
-    };
-  },
-
-  componentDidMount: function () {
+  componentDidMount() {
     this.updateParentProperties();
     this.updateTargetProperties();
-  },
+  }
 
-  render: function () {
-    var style = {height: "100%"};
+  render() {
+    const style = {height: "100%"};
 
-    var demoAreaStyle = {
+    const demoAreaStyle = {
       width: 800,
       height: 500,
       marginLeft: 50,
       position: "relative"
     };
 
-    var flowtipProperties = {
+    const flowtipProperties = {
       width: 200,
       height: 80,
       persevere: false,
@@ -85,37 +81,35 @@ var FlowTipDemo = React.createClass({
             FlowTip as React Component
           </FlowTip>
         </div>
-        <FlowTipDemoTarget onTargetMove={this.handleTargetMove} ref="target" />
+        <FlowTipDemoTarget onTargetMove={this.handleTargetMove.bind(this)} ref="target" />
       </div>
     );
   }
-});
+}
 
-var FlowTipDemoTarget = React.createClass({
-  handleMouseMove: function (ev) {
-    var position = {
+class FlowTipDemoTarget extends React.Component {
+  state = { posX: 0, posY: 0 };
+
+  handleMouseMove(ev) {
+    const position = {
       posX: ev.pageX - 10,
       posY: ev.pageY - 10
     };
 
     this.setState(position);
     this.props.onTargetMove(position);
-  },
+  }
 
-  getInitialState: function () {
-    return {posX: 0, posY: 0};
-  },
+  componentDidMount() {
+    window.addEventListener("mousemove", this.handleMouseMove.bind(this));
+  }
 
-  componentDidMount: function () {
-    window.addEventListener("mousemove", this.handleMouseMove);
-  },
+  componentWillUnmount() {
+    window.removeEventListener("mousemove", this.handleMouseMove.bind(this));
+  }
 
-  componentWillUnmount: function () {
-    window.removeEventListener("mousemove", this.handleMouseMove);
-  },
-
-  render: function () {
-    var style = {
+  render() {
+    const style = {
       position: "absolute",
       width: 20,
       height: 20,
@@ -128,6 +122,6 @@ var FlowTipDemoTarget = React.createClass({
       <div style={style} className="flowtipDemoTarget"></div>
     );
   }
-});
+};
 
-ReactDOM.render(<FlowTipDemo />, document.body);
+ReactDOM.render(<FlowTipDemo />, document.getElementById("demo"));
