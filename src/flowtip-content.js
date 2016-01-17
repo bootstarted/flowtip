@@ -1,16 +1,11 @@
 import React from "react";
-import _ from "underscore";
 
-export default React.createClass({
-  render: function () {
-    var classNames = _.chain(["flowtip-content", this.props.className])
-      .compact()
-      .join(" ");
+export default function({ className, children }) {
+  const classNames = `flowtip-content ${className}`;
 
-    return (
-      <div className={classNames}>
-        {this.props.children}
-      </div>
-    );
-  }
-});
+  return (
+    <div className={classNames}>
+      {children}
+    </div>
+  );
+};

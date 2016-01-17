@@ -1,30 +1,28 @@
 import React from "react";
 
-export default  React.createClass({
-  getOriginalDimension: function () {
+export default class FlowtipTail extends React.Component {
+  static defaultProps = {
+    width: 20,
+    height: 10
+  };
+
+  getOriginalDimension() {
     return this._originalDimension;
-  },
+  }
 
-  getDefaultProps: function() {
-    return {
-      width: 20,
-      height: 10
-    };
-  },
-
-  componentWillMount: function () {
+  componentWillMount() {
     this._originalDimension = {
       width: this.props.width,
       height: this.props.height
     };
-  },
+  }
 
-  render: function () {
+  render() {
     if (this.props.hidden) {
       return null;
     }
 
-    var style = {
+    const style = {
       width: this.props.width,
       height: this.props.height,
       position: "absolute",
@@ -32,10 +30,10 @@ export default  React.createClass({
       left: this.props.left
     };
 
-    var classNames = `flowtip-tail ${this.props.className}`
+    const classNames = `flowtip-tail ${this.props.className}`
 
     return (
       <div style={style} className={classNames}></div>
     );
   }
-});
+}

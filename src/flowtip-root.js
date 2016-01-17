@@ -1,40 +1,39 @@
 import React from "react";
-import $ from "jquery";
-import _ from "underscore";
+import ReactDOM from "react-dom"
+import { pick, extend } from "./utils";
 
 import FlowtipTail from "./flowtip-tail";
 import FlowtipContent from "./flowtip-content";
 
-export default React.createClass({
-  getDimension: function () {
-    var $root = $(React.findDOMNode(this.refs.root));
-    return {
-      width: $root.width() || this.props.width,
-      height: $root.height() || this.props.height
-    };
-  },
+export default class FlowtopRoot extends React.Component {
+  static defaultProps = {
+    width: null,
+    height: "auto",
+    minWidth: null,
+    minHeight: null,
+    maxWidth: null,
+    maxHeight: null
+  };
 
-  getTailOriginalDimension: function () {
+  getDimension() {
+    const root = ReactDOM.findDOMNode(this.refs.root);
+
+    return {
+      width: root.clientWidth || this.props.width,
+      height: root.clientHeight || this.props.height
+    };
+  }
+
+  getTailOriginalDimension() {
     return this.refs.tail.getOriginalDimension();
-  },
+  }
 
-  getDefaultProps: function() {
-    return {
-      width: null,
-      height: "auto",
-      minWidth: null,
-      minHeight: null,
-      maxWidth: null,
-      maxHeight: null
-    };
-  },
-
-  render: function () {
+  render() {
     if (this.props.hidden) {
       return null;
     }
 
-    var style = {
+    const style = {
       position: "absolute",
       top: this.props.top,
       left: this.props.left,
@@ -46,17 +45,15 @@ export default React.createClass({
       height: this.props.height
     };
 
-    var classNames = _.chain(["flowtip-root", this.props.className])
-      .compact()
-      .join(" ");
+    const classNames = `flowtip-root ${this.props.className}`
 
-    var contentProperties = {
+    const contentProperties = {
       className: this.props.contentClassName
     };
 
-    var tailProperties = _.extend({
+    const tailProperties = extend({
       className: this.props.tailClassName
-    }, _.pick(this.props.tail, [
+    }, pick(this.props.tail, [
       "top", "left", "width", "height", "hidden", "type"
     ]));
 
@@ -69,4 +66,4 @@ export default React.createClass({
       </div>
     );
   }
-});
+};
