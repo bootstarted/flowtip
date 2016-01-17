@@ -9,6 +9,10 @@ const config = {
     library: "flowtip",
     libraryTarget: "umd"
   },
+  externals: {
+    "react": "react",
+    "react-dom": "react-dom"
+  },
   resolve: {
     alias: {},
     extensions: ["", ".js"] // allow require without extension
@@ -17,6 +21,9 @@ const config = {
     new WebpackNotifierPlugin({ title: "flowtip" })
   ],
   module: {
+    preLoaders: [
+      { test: /\.js$/, exclude: /node_modules/, loader: "eslint" }
+    ],
     loaders: [
       { test: /\.js$/, exclude: /node_modules/, loader: "babel" }
     ]
