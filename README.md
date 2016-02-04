@@ -2,7 +2,7 @@
 
 *A flexible, adaptable and easy to use tooltip component for React.js*
 
-Looking for the non-React.js version? It's in the [v1](v1) folder.
+Looking for the non-React.js version? It's in the [legacy](https://github.com/qiushihe/flowtip/tree/legacy) branch.
 
 ## Dependencies
 
