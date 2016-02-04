@@ -4,7 +4,7 @@ import WebpackNotifierPlugin from "webpack-notifier";
 const config = {
   entry: path.resolve(__dirname, "src/flowtip.js"),
   output: {
-    path: path.resolve(__dirname, "build"),
+    path: path.resolve(__dirname, "lib"),
     filename: "flowtip.js",
     library: "flowtip",
     libraryTarget: "umd"
