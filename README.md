@@ -2,12 +2,12 @@
 
 *A flexible, adaptable and easy to use tooltip component for React.js*
 
-Looking for the non-React.js version? It's in the [v1](v1) folder.
+Looking for a non-React.js version? Checkout v1 [here](https://github.com/qiushihe/flowtip).
 
 ## Dependencies
 
-* [jQuery](http://jquery.com)
-* [Unerscore.js](http://underscorejs.org)
+* React
+* ReactDOM
 
 ## Glossaries
 

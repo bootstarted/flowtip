@@ -1,0 +1,153 @@
+{
+  "env": {
+    "browser": true,
+    "node": true
+  },
+
+  "parser": "babel-eslint",
+
+  "plugins": [
+    "react"
+  ],
+
+  "ecmaFeatures": {
+    "jsx": true
+  },
+
+  "rules": {
+    // For a complete reference, check out http://eslint.org/docs/rules/
+
+    //-------------------------------------------------------------------------
+    // Best practices
+    //-------------------------------------------------------------------------
+
+    // Prevent abbreviated blocks for clarity
+    "curly": 2,
+
+    // Enforce a reasonable cap on functions spiralling out of control
+    // with many branches.
+    "complexity": [2, 10],
+
+    // Prefer foo.x over foo['x']; static properties are always preferable
+    // to dynamic strings.
+    "dot-notation": 2,
+
+    "dot-location": [2, "property"],
+
+    // enforce === and !== for comparisons
+    "eqeqeq": [2, "smart"],
+
+    "guard-for-in": 2,
+
+    "no-floating-decimal": 2,
+
+    // Avoid funny things with parseInt.
+    // See: http://stackoverflow.com/questions/850341
+    "radix": 2,
+
+    // Avoid pitfalls when trying to call a just-declared function.
+    "wrap-iife": 2,
+
+    // May the force be with you.
+    "yoda": [0, "always"],
+
+    //-------------------------------------------------------------------------
+    // Strict Mode
+    //-------------------------------------------------------------------------
+
+    // Transpilers deal with the effects of strict, so ignore it.
+    "strict": [2, "never"],
+
+    //-------------------------------------------------------------------------
+    // Variable declaration
+    //-------------------------------------------------------------------------
+    "no-use-before-define": 2,
+
+    "no-undefined": 2,
+
+    "no-unused-vars": 2,
+
+    //-------------------------------------------------------------------------
+    // Code style
+    //-------------------------------------------------------------------------
+
+    // The one true brace style.
+    "brace-style": [2, "1tbs"],
+
+    "camelcase": 0,
+
+    "comma-spacing": [2, { "before": false, "after": true }],
+
+    "consistent-this": [2, "_this"],
+
+    "eol-last": 2,
+
+    "indent": [2, 2],
+
+    "key-spacing": [2, { "beforeColon": false, "afterColon": true }],
+
+    "new-cap": 2,
+
+    "no-lonely-if": 2,
+
+    "no-mixed-spaces-and-tabs": [2, true],
+
+    "no-multiple-empty-lines": 2,
+
+    // Nested ternaries are just plain confusing. Avoiding them keeps the
+    // code readable.
+    "no-nested-ternary": 2,
+
+    // There are no such thing as "private" properties. Use closure
+    // variables if you really need isolation.
+    "no-underscore-dangle": 0,
+
+    "no-spaced-func": 2,
+
+    // use one variable declaration for each variable you want to define
+    "one-var": [2, "never"],
+
+    // enforce double quotes
+    "quotes": [2, "double"],
+
+    // Enforce whitespace for visual clarity.
+    "space-after-keywords": [2, "always"],
+    "spaced-comment": [2, "always", { "exceptions": ["-"] }],
+
+    //-------------------------------------------------------------------------
+    // ECMAScript 6
+    //-------------------------------------------------------------------------
+
+    // Enforce `const` and `let` to describe what's going on.
+    "no-var": 2,
+
+    //-------------------------------------------------------------------------
+    // React
+    //-------------------------------------------------------------------------
+    "jsx-quotes": [2, "prefer-double"],
+    "react/jsx-uses-vars": 2,
+    "react/jsx-uses-react": 2,
+
+    // Display name is not needed when using ES6-style components
+    "react/display-name": 0,
+
+    // Make things consistent and readable – prefer `x={true}` over `x`
+    "react/jsx-boolean-value": 2,
+
+    // Keep the quote style consistent with Javascript land
+    "react/jsx-no-undef": 2,
+    "react/jsx-sort-props": 0,
+    "react/jsx-sort-prop-types": 0,
+    "react/no-did-mount-set-state": 1,
+    "react/no-did-update-set-state": 1,
+    "react/no-multi-comp": 2,
+    "react/no-unknown-property": 2,
+    "react/react-in-jsx-scope": 1,
+    "react/self-closing-comp": 2,
+    "react/wrap-multilines": 2,
+
+    // Potential issue in React ESLint package- receiving 'Can't add property
+    // react, object is not extensible' when used with eslint-loader.
+    "react/prop-types": 0
+  }
+}
