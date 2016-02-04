@@ -1,13 +1,16 @@
 # FlowTip
 
-*A flexible, adaptable and easy to use tooltip component for React.js*
+*A flexible, adaptable and easy to use tooltip positioning library.*
 
-Looking for the non-React.js version? It's in the [v1](v1) folder.
+* [Website](http://qiushihe.github.io/flowtip)
+* [Interactive Demo](http://qiushihe.github.io/flowtip/demo.html)
+* [Github Repo](https://github.com/qiushihe/flowtip)
 
 ## Dependencies
 
-* React
-* ReactDOM
+* [jQuery](http://jquery.com)
+* [Unerscore.js](http://underscorejs.org)
+* [CoffeeScript](http://coffeescript.org) (development only)
 
 ## Glossaries
 
@@ -35,35 +38,40 @@ then in term aligned to the pivot.
 
 ## Basic Usage
 
-To include an instance of FlowTip in your component:
+Creates an instance of the **FlowTip** object:
 
-```
-<FlowTip target={targetProperties} parent={parentProperties} {...flowtipProperties}>
-  <b>Holy Shit!</b>
-  <br />
-  FlowTip as React Component
-</FlowTip>
-```
+    var tooltip = new FlowTip();
 
-The `target` and `parent` properties specifies the position and dimension of the tooltip's
-target and parent, and for `parent` scroll positions should be included as well:
+An instance of the **FlowTip** can be created with options (see **Attributes** section below):
 
-```
-targetProperties = {
-  top: ##, left: ##, width: ##, height: ##
-};
+    var myFlowTip = new FlowTip({
+        region: "bottom"
+        className: "my-tip"
+        hasTail: false
+    })
 
-parentProperties = {
-  top: ##, left: ##, width: ##, height: ##,
-  scrollTop: ##, scrollLeft: ##
-};
-```
+At this point, the tooltip is not yet "attached" to a target. The tooltip's target can be set by
+calling `setTarget`:
 
-... where all `##` above should be integer values (i.e. not `##px`).
+    tooltip.setTarget(tooltipTarget);
 
-For possible values of `flowtipProperties` see [FlowTip Properties](#flowtip-properties) below.
+... where `tooltipTarget` may be a DOM object or a jQuery selection.
 
-## FlowTip Properties
+To make the tooltip visible, call `show`:
+
+    tooltip.show();
+
+This will render the tooltip is it's not already rendered, and position the tooltip in the
+appropriate region (see `region` in **Attributes** section below) with proper alignments
+(see **Alignments** section below).
+
+It's important to note that instances of **FlowTip** does **not** automatically re-position
+themselves when their targets move. The responsibility of detecting target movement lies outside
+the scope of this library. To update the tooltip's position against its target:
+
+    tooltip.reposition();
+
+## Attributes
 
 ### `className`: **String**
 
@@ -82,6 +90,24 @@ Additional class name(s) for the tooltip's content.
 _Default value: ""_
 
 Additional class name(s) for the tooltip's tail.
+
+### `appendTo`: **Element**
+
+_Default value: null_
+
+The element within which the tooltip will be inserted into. Can be set or updated by calling
+`setAppendTo`. Default value is the document's `body` and the tooltip would thus be free to appear
+and move anywhere on the page and edge detection will only be performed on the edge of the page.
+
+If `appendTo` is set to an element then edge detection will be performed on the edge of
+the element instead.
+
+### `tooltipContent`: **String** or **Element**
+
+_Default value: null_
+
+The content of the tooltip. May be specified as (HTML) string or DOM element. Can be set original
+updated by calling `setTooltipContent`.
 
 ### `region`: **String**
 
@@ -247,6 +273,56 @@ pivot. When this value is positive, the clockwise edge will be used, and the cou
 edge will be used when this value is negative. The absolute value of this value controls the
 amount of shifting.
 
+## Public Methods
+
+### `constructor`
+
+Accepts a hash of options. See **Attributes**.
+
+### `render`
+
+Render the tooltip's root (if not already rendered), content and insert the tooltip into the DOM.
+If called repeatedly, only re-render the tooltip's content.
+
+### `setAppendTo`
+
+Set the tooltip's containing element. If the tooltip has already been rendered, the tooltip will
+be moved/inserted into the new containing element.
+
+### `setTarget`
+
+Set the tooltip's target. The target is the element to which the tooltip will be pointing at.
+
+### `setClientRectTarget`
+
+Set the tooltip's target to be a ClientRect instead of a html element. The target is the
+ClientRect to which the tooltip will be pointing at.
+
+### `setTooltipContent`
+
+Set the tooltip's content. If `render` is set to `true` for `options`, the `render()` method will
+be called to re-render the content.
+
+### `reposition`
+
+Perform edge detection and position calculations to update the tooltip's position.
+
+### `show`
+
+Show the tooltip. Also update the tooltip's `visible` attribute.
+
+### `hide`
+
+Hide the tooltip. Also update the tooltip's `visible` attribute.
+
+### `trigger`
+
+Trigger an event from the root of the tooltip.
+
+### `destroy`
+
+Remove the tooltip's root from DOM.
+
 ## Edge Detection
 
 There are three strategies for detection: **flip**, **rotate** and **squeeze**.
@@ -286,3 +362,8 @@ Target alignment refers to the alignment of the pivot relative to the target of 
 
 Root alignment refers to the alignment of the tooltip's root relative to the pivot. See
 `rootAlign` and `rootAlignOffset`.
+
+## Coordinator
+
+_TODO: Add documentation for `FlowTip.Coordinator`_
+
