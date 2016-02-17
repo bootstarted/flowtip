@@ -4,6 +4,10 @@
 
 Looking for the non-React.js version? It's in the [legacy](https://github.com/qiushihe/flowtip/tree/legacy) branch.
 
+## Demo
+
+See the [demo from the legacy branch](http://qiushihe.github.io/flowtip/demo.html). The code sample on the side doesn't apply to the current React version but the bahaviour is basically the same.
+
 ## Dependencies
 
 * React
