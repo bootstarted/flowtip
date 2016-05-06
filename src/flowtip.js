@@ -406,8 +406,6 @@ export default class Flowtip extends React.Component {
   }
 
   render() {
-    const style = { position: "relative" };
-
     const rootProperties = extend(pick(this.props, [
       "className", "contentClassName", "tailClassName",
       "width", "height", "minWidth", "minHeight", "maxWidth", "maxHeight"
@@ -418,11 +416,9 @@ export default class Flowtip extends React.Component {
     rootProperties.tail.height = rootProperties.tail.height || this.props.tailHeight;
 
     return (
-      <div style={style} clgassName="flowtip">
-        <FlowtipRoot ref="root" {...rootProperties}>
-          {this.props.children}
-        </FlowtipRoot>
-      </div>
+      <FlowtipRoot ref="root" {...rootProperties}>
+        {this.props.children}
+      </FlowtipRoot>
     );
   }
 };
