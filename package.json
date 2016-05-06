@@ -20,6 +20,7 @@
   "homepage": "https://github.com/qiushihe/flowtip",
   "scripts": {
     "dev": "webpack-dev-server --devtool eval --progress --colors --content-base demo --host 0.0.0.0 --history-api-fallback --config webpack.dev.config.babel.js",
+    "prepublish": "npm run build",
     "build": "webpack -p --config webpack.config.babel.js",
     "lint": "eslint src"
   },
