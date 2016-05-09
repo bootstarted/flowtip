@@ -5,7 +5,7 @@ const config = {
   entry: {
     app: [
       "webpack-dev-server/client?http://0.0.0.0:8080",,
-      "./src/demo.js"
+      "./demo/demo.js"
     ]
   },
   output: {
@@ -17,6 +17,7 @@ const config = {
   },
   resolve: {
     alias: {},
+    fallback: [path.join(__dirname, "node_modules")],
     extensions: ["", ".js"] // allow require without extension
   },
   module: {
