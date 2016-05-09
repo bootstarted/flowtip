@@ -294,19 +294,17 @@ export default class Flowtip extends React.Component {
       position.left = target.left + target.width + effectiveTargetOffset;
     }
 
-    if (region === "top" || region === "bottom") {
-      if (position.left < this.props.edgeOffset) {
-        position.left = this.props.edgeOffset;
-      } else if (position.left + rootDimension.width > parent.width - this.props.edgeOffset) {
-        position.left = parent.width - rootDimension.width - this.props.edgeOffset;
-      }
-    } else if (region === "left" || region === "right") {
-      if (position.top < this.props.edgeOffset) {
-        position.top = this.props.edgeOffset;
-      } else if (position.top + rootDimension.height > parent.height - this.props.edgeOffset) {
-        position.top = parent.height - rootDimension.height - this.props.edgeOffset;
-      }
+    if (position.left < this.props.edgeOffset) {
+      position.left = this.props.edgeOffset;
+    } else if (position.left + rootDimension.width > parent.width - this.props.edgeOffset) {
+      position.left = parent.width - rootDimension.width - this.props.edgeOffset;
     }
+    if (position.top < this.props.edgeOffset) {
+      position.top = this.props.edgeOffset;
+    } else if (position.top + rootDimension.height > parent.height - this.props.edgeOffset) {
+      position.top = parent.height - rootDimension.height - this.props.edgeOffset;
+    }
+
 
     position.top = Math.round(position.top) + parent.scrollTop;
     position.left = Math.round(position.left) + parent.scrollLeft;
