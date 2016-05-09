@@ -67,13 +67,7 @@ export default class Flowtip extends React.Component {
     }
   }
 
-  availableAndFitsIn(regions, regionParameter, _first) {
-    if (!_first) {
-      _first = regions[0];
-    }
-
-    const region = regions[0];
-
+  availableAndFitsIn([region, ...regions], regionParameter) {
     if (!regions || regions.length <= 0) {
       return this.state.region;
     }
@@ -85,7 +79,7 @@ export default class Flowtip extends React.Component {
     if ((availables && fits) || (!availables && hides)) {
       return region;
     } else {
-      return this.availableAndFitsIn(regions.slice(1), regionParameter, _first);
+      return this.availableAndFitsIn(regions, regionParameter);
     }
   }
 
