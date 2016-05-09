@@ -111,20 +111,15 @@ export default class Flowtip extends React.Component {
   }
 
   tailType(region) {
-    if (region === "top") {
+    switch (region) {
+    case "top":
       return "bottom";
-    }
-
-    if (region === "bottom") {
+    case "bottom":
       return "top";
-    }
-
-    if (region === "left") {
-      return "right";
-    }
-
-    if (region === "right") {
+    case "right":
       return "left";
+    case "left":
+      return "right";
     }
   }
 
