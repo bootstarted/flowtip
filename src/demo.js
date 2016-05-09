@@ -11,29 +11,37 @@ class FlowTipDemo extends React.Component {
 
   updateTargetProperties() {
     const target = ReactDOM.findDOMNode(this.refs.target);
-    const parent = ReactDOM.findDOMNode(this.refs.parent);
+    const anchor = ReactDOM.findDOMNode(this.refs.anchor);
+
+    const rect = target.getBoundingClientRect();
+    const arect = anchor.getBoundingClientRect();
 
     this.setState({
       targetProperties: {
-        top: target.offsetTop - parent.offsetTop,
-        left: target.offsetLeft - parent.offsetLeft,
-        height: target.offsetHeight,
-        width: target.offsetWidth,
+        top: rect.top - arect.top,
+        left: rect.left - arect.left,
+        width: rect.width,
+        height: rect.height,
       }
     });
   }
 
   updateParentProperties() {
     const parent = ReactDOM.findDOMNode(this.refs.parent);
+    const anchor = ReactDOM.findDOMNode(this.refs.anchor);
+
+    const rect = parent.getBoundingClientRect();
+    const arect = anchor.getBoundingClientRect();
+
+    const scrollerWidth = parent.offsetWidth - parent.clientWidth;
+    const scrollerHeight = parent.offsetHeight - parent.clientHeight;
 
     this.setState({
       parentProperties: {
-        top: parent.offsetTop,
-        left: parent.offsetLeft,
-        height: parent.offsetHeight,
-        width: parent.offsetWidth,
-        scrollTop: parent.scrollTop,
-        scrollLeft: parent.scrollLeft,
+        top: rect.top - arect.top,
+        left: rect.left - arect.left,
+        width: rect.width - scrollerWidth,
+        height: rect.height - scrollerHeight,
       }
     });
   }
@@ -54,7 +62,8 @@ class FlowTipDemo extends React.Component {
       width: 800,
       height: 500,
       marginLeft: 50,
-      position: "relative"
+      position: "relative",
+      overflow: "auto",
     };
 
     const flowtipProperties = {
@@ -71,15 +80,25 @@ class FlowTipDemo extends React.Component {
       targetAlignOffset: 0
     };
 
+    const anchorProperties = {
+      position: "relative",
+      top: "50px",
+      left: "100px",
+    };
+
     return (
       <div style={style} className="flowtipDemo">
         <h1>FlowTip.React Demo</h1>
         <div style={demoAreaStyle} className="flowtipDemoArea" ref="parent">
-          <FlowTip target={this.state.targetProperties} parent={this.state.parentProperties} {...flowtipProperties}>
-            <b>Holy Shit!</b>
-            <br />
-            FlowTip as React Component
-          </FlowTip>
+          <div ref="anchor" style={anchorProperties}>
+            anchor
+            <FlowTip target={this.state.targetProperties} parent={this.state.parentProperties} {...flowtipProperties}>
+              <b>Holy Shit!</b>
+              <br />
+              FlowTip as React Component
+            </FlowTip>
+          </div>
+          <div style={{height: "700px"}}/>
         </div>
         <FlowTipDemoTarget onTargetMove={this.handleTargetMove.bind(this)} ref="target" />
       </div>

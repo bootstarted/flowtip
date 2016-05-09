@@ -49,8 +49,7 @@ To include an instance of FlowTip in your component:
 </FlowTip>
 ```
 
-The `target` and `parent` properties specifies the position and dimension of the tooltip's
-target and parent, and for `parent` scroll positions should be included as well:
+The `target` and `parent` properties specifies the position and dimension of the tooltip's target and parent as calculated by `getBoundingClientRect()`:
 
 ```
 targetProperties = {
@@ -58,8 +57,7 @@ targetProperties = {
 };
 
 parentProperties = {
-  top: ##, left: ##, width: ##, height: ##,
-  scrollTop: ##, scrollLeft: ##
+  top: ##, left: ##, width: ##, height: ##
 };
 ```
 

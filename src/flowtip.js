@@ -53,17 +53,17 @@ export default class Flowtip extends React.Component {
   }
 
   fitsInRegion(region, parent, target) {
-    const position = this.calculatePosition(parent, target);
+    const position = this.calculatePosition(parent, target, false);
     const rootDimension = this.rootDimension();
 
     if (region === "top") {
-      return position.top - this.props.edgeOffset >= 0;
+      return position.top - this.props.edgeOffset >= parent.top;
     } else if (region === "bottom") {
-      return position.top + rootDimension.height + this.props.edgeOffset <= parent.height;
+      return position.top + rootDimension.height + this.props.edgeOffset <= parent.top + parent.height;
     } else if (region === "left") {
-      return position.left -this.props.edgeOffset >= 0;
+      return position.left - this.props.edgeOffset >= parent.left;
     } else if (region === "right") {
-      return position.left + rootDimension.width + this.props.edgeOffset <= parent.width;
+      return position.left + rootDimension.width + this.props.edgeOffset <= parent.left + parent.width;
     }
   }
 
@@ -246,7 +246,7 @@ export default class Flowtip extends React.Component {
     return pivot + effectiveOffset + this.targetAlignmentOffset(region);
   }
 
-  calculatePosition(parent, target) {
+  calculatePosition(parent, target, clamp = true) {
     const region = this.state.region;
     const hasTail = this.props.hasTail;
     const rootDimension = this.rootDimension();
@@ -294,20 +294,21 @@ export default class Flowtip extends React.Component {
       position.left = target.left + target.width + effectiveTargetOffset;
     }
 
-    if (position.left < this.props.edgeOffset) {
-      position.left = this.props.edgeOffset;
-    } else if (position.left + rootDimension.width > parent.width - this.props.edgeOffset) {
-      position.left = parent.width - rootDimension.width - this.props.edgeOffset;
-    }
-    if (position.top < this.props.edgeOffset) {
-      position.top = this.props.edgeOffset;
-    } else if (position.top + rootDimension.height > parent.height - this.props.edgeOffset) {
-      position.top = parent.height - rootDimension.height - this.props.edgeOffset;
+    if (clamp) {
+      if (position.left < parent.left + this.props.edgeOffset) {
+        position.left = parent.left + this.props.edgeOffset;
+      } else if (position.left + rootDimension.width > parent.left + parent.width - this.props.edgeOffset) {
+        position.left = parent.left + parent.width - rootDimension.width - this.props.edgeOffset;
+      }
+      if (position.top < parent.top + this.props.edgeOffset) {
+        position.top = parent.top + this.props.edgeOffset;
+      } else if (position.top + rootDimension.height > parent.top + parent.height - this.props.edgeOffset) {
+        position.top = parent.top + parent.height - rootDimension.height - this.props.edgeOffset;
+      }
     }
 
-
-    position.top = Math.round(position.top) + parent.scrollTop;
-    position.left = Math.round(position.left) + parent.scrollLeft;
+    position.top = Math.round(position.top);
+    position.left = Math.round(position.left);
 
     if (hasTail) {
       if (region === "top") {
@@ -364,15 +365,15 @@ export default class Flowtip extends React.Component {
     // Edge detection - rotate
     let rotateOptions;
     if (region === "top" || region === "bottom") {
-      if ((parent.width) - (target.left + (target.width / 2)) - this.props.edgeOffset < this.props.rotationOffset) {
+      if ((parent.left + parent.width) - (target.left + (target.width / 2)) - this.props.edgeOffset < this.props.rotationOffset) {
         rotateOptions = region === "top" ? ["left", "bottom"] : ["left", "top"];
-      } else if (target.left + (target.width / 2) - this.props.edgeOffset < this.props.rotationOffset) {
+      } else if (target.left + (target.width / 2) - this.props.edgeOffset < parent.left + this.props.rotationOffset) {
         rotateOptions = region === "top" ? ["right", "bottom"] : ["right", "top"];
       }
     } else if (region === "left" || region === "right") {
-      if ((parent.height) - (target.top + (target.height / 2)) - this.props.edgeOffset < this.props.rotationOffset) {
+      if ((parent.top + parent.height) - (target.top + (target.height / 2)) - this.props.edgeOffset < this.props.rotationOffset) {
         rotateOptions = region === "left" ? ["top", "right"] : ["top", "left"];
-      } else if (target.top + (target.height / 2) - this.props.edgeOffset < this.props.rotationOffset) {
+      } else if (target.top + (target.height / 2) - this.props.edgeOffset < parent.top + this.props.rotationOffset) {
         rotateOptions = region === "left" ? ["bottom", "right"] : ["bottom", "left"];
       }
     }
