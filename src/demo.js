@@ -58,6 +58,8 @@ class FlowTipDemo extends React.Component {
     };
 
     const flowtipProperties = {
+      className: "flowtip-root",
+      tailClassName: "flowtip-tail",
       width: 200,
       height: 80,
       persevere: false,

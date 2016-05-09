@@ -30,10 +30,8 @@ export default class FlowtipTail extends React.Component {
       left: this.props.left
     };
 
-    const classNames = `flowtip-tail ${this.props.className}`
-
     return (
-      <div style={style} className={classNames}></div>
+      <div style={style} className={this.props.className}/>
     );
   }
 }
