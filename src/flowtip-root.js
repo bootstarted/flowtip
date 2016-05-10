@@ -3,7 +3,6 @@ import ReactDOM from "react-dom"
 import { pick, extend } from "./utils";
 
 import FlowtipTail from "./flowtip-tail";
-import FlowtipContent from "./flowtip-content";
 
 export default class FlowtopRoot extends React.Component {
   static defaultProps = {
@@ -45,12 +44,6 @@ export default class FlowtopRoot extends React.Component {
       height: this.props.height
     };
 
-    const classNames = `flowtip-root ${this.props.className}`
-
-    const contentProperties = {
-      className: this.props.contentClassName
-    };
-
     const tailProperties = extend({
       className: this.props.tailClassName
     }, pick(this.props.tail, [
@@ -58,10 +51,8 @@ export default class FlowtopRoot extends React.Component {
     ]));
 
     return (
-      <div style={style} className={classNames} ref="root">
-        <FlowtipContent {...contentProperties}>
-          {this.props.children}
-        </FlowtipContent>
+      <div style={style} className={this.props.className} ref="root">
+        {this.props.children}
         <FlowtipTail ref="tail" {...tailProperties} />
       </div>
     );

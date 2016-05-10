@@ -7,7 +7,6 @@ import FlowtipRoot from "./flowtip-root";
 export default class Flowtip extends React.Component {
   static defaultProps = {
     className: "",
-    contentClassName: "",
     tailClassName: "",
     hasTail: true,
     region: "top",
