@@ -88,24 +88,34 @@ class FlowTipDemo extends React.Component {
 }
 
 class FlowTipDemoTarget extends React.Component {
-  state = { posX: 0, posY: 0 };
+  state = { posX: 0, posY: 0, active: true };
 
   handleMouseMove(ev) {
+    if (!this.state.active) {
+      return;
+    }
+
     const position = {
       posX: ev.pageX - 10,
-      posY: ev.pageY - 10
+      posY: ev.pageY - 20
     };
 
     this.setState(position);
     this.props.onTargetMove(position);
   }
 
+  handleMouseClick() {
+    this.setState({active: !this.state.active});
+  }
+
   componentDidMount() {
     window.addEventListener("mousemove", this.handleMouseMove.bind(this));
+    window.addEventListener("click", this.handleMouseClick.bind(this));
   }
 
   componentWillUnmount() {
     window.removeEventListener("mousemove", this.handleMouseMove.bind(this));
+    window.removeEventListener("click", this.handleMouseClick.bind(this));
   }
 
   render() {
