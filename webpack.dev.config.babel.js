@@ -1,12 +1,11 @@
 import path from "path";
-import WebpackNotifierPlugin from "webpack-notifier";
 
 const config = {
   target: "web",
   entry: {
     app: [
       "webpack-dev-server/client?http://0.0.0.0:8080",,
-      "./src/demo.js"
+      "./demo/demo.js"
     ]
   },
   output: {
@@ -18,11 +17,9 @@ const config = {
   },
   resolve: {
     alias: {},
+    fallback: [path.join(__dirname, "node_modules")],
     extensions: ["", ".js"] // allow require without extension
   },
-  plugins: [
-    new WebpackNotifierPlugin({ title: "flowtip" })
-  ],
   module: {
     preLoaders: [
       { test: /\.js$/, exclude: /node_modules/, loader: "eslint" }
@@ -34,4 +31,3 @@ const config = {
 };
 
 export default config;
-
