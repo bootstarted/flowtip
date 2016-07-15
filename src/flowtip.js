@@ -418,7 +418,7 @@ export default class Flowtip extends React.Component {
     rootProperties.tail.height = rootProperties.tail.height || this.props.tailHeight;
 
     return (
-      <div style={style} clgassName="flowtip">
+      <div style={style} className="flowtip">
         <FlowtipRoot ref="root" {...rootProperties}>
           {this.props.children}
         </FlowtipRoot>
