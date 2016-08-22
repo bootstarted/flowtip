@@ -1,4 +1,4 @@
-/* global getComputedStyle window screen */
+/* global getComputedStyle window */
 import {createElement, Component} from 'react';
 import ReactDOM from 'react-dom';
 
