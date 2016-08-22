@@ -120,8 +120,14 @@ export default (Content, Tail) => {
       if (this.props.clamp) {
         parent.left = Math.max(parent.left, 0);
         parent.top = Math.max(parent.top, 0);
-        parent.height = Math.min(parent.height, screen.height - parent.top);
-        parent.width = Math.min(parent.width, screen.width - parent.left);
+        parent.height = Math.min(
+          parent.height,
+          window.innerHeight - parent.top
+        );
+        parent.width = Math.min(
+          parent.width,
+          window.innerWidth - parent.left
+        );
       }
       parent.width -= scrollerWidth;
       parent.height -= scrollerHeight;
