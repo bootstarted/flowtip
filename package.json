@@ -23,27 +23,35 @@
     "prepublish": "npm run build",
     "build": "./node_modules/.bin/babel -s inline -d ./lib ./src --source-maps true",
     "lint": "eslint src",
-    "test": "npm run lint"
+    "spec": "NODE_ENV=test ./node_modules/.bin/_mocha -r adana-dump --compilers js:babel-core/register -R spec --recursive test/spec/**/*.spec.js",
+    "test": "npm run lint && npm run spec"
   },
   "peerDepenencies": {
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3"
+    "react": "^0.14 || ^15.0.0",
+    "react-dom": "^0.14 || ^15.0.0"
   },
   "devDependencies": {
+    "adana-cli": "^0.1.1",
+    "adana-dump": "^0.1.0",
+    "adana-format-lcov": "^0.1.1",
     "babel-cli": "^6.7.7",
     "babel-core": "^6.7.7",
     "babel-loader": "^6.2.4",
     "babel-preset-metalab": "^0.2.1",
+    "chai": "^3.5.0",
+    "enzyme": "^2.4.1",
     "eslint": "^2.10.2",
     "eslint-config-metalab": "^4.0.1",
     "eslint-loader": "^1.2.0",
     "eslint-plugin-filenames": "^0.2.0",
-    "eslint-plugin-lodash-fp": "^1.2.0",
     "eslint-plugin-import": "^1.6.0",
+    "eslint-plugin-lodash-fp": "^1.2.0",
     "eslint-plugin-react": "^5.1.1",
+    "mocha": "^3.0.2",
     "path": "^0.12.7",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
+    "react": "^15.3.1",
+    "react-addons-test-utils": "^15.3.1",
+    "react-dom": "^15.3.1",
     "webpack": "^1.12.11",
     "webpack-dev-server": "^1.14.1"
   },
