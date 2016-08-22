@@ -2,6 +2,12 @@
 
 *A flexible, adaptable and easy to use tooltip component for React.js*
 
+![build status](http://img.shields.io/travis/metalabdesign/flowtip/master.svg?style=flat)
+![coverage](http://img.shields.io/coveralls/metalabdesign/flowtip/master.svg?style=flat)
+![license](http://img.shields.io/npm/l/flowtip.svg?style=flat)
+![version](http://img.shields.io/npm/v/flowtip.svg?style=flat)
+![downloads](http://img.shields.io/npm/dm/flowtip.svg?style=flat)
+
 Looking for the non-React.js version? It's in the [legacy](https://github.com/qiushihe/flowtip/tree/legacy) branch.
 
 At its core, `FlowTip` is a set of calculations that ensure.
