@@ -86,7 +86,8 @@ export default (Content, Tail) => {
     }
 
     getParentElement() {
-      return getBoundingParent(this.getAnchorElement());
+      const {parentClass} = this.props;
+      return getBoundingParent(this.getAnchorElement(), parentClass);
     }
 
     getAnchorRect() {
