@@ -22,6 +22,7 @@ const MyFlowTip = flowtip(
 class FlowTipDemo extends Component {
   state = {
     target: {top: 0, left: 0, width: 0, height: 0},
+    clamp: true,
   };
 
   componentDidMount() {
@@ -38,6 +39,12 @@ class FlowTipDemo extends Component {
     this.updateTargetProperties();
   }
 
+  handleClampClick(e) {
+    this.setState({
+      clamp: e.target.checked === true,
+    });
+  }
+
   render() {
     const flowtipProperties = {
       targetOffset: 10,
@@ -47,12 +54,22 @@ class FlowTipDemo extends Component {
       rootAlignOffset: 0,
       targetAlign: 'center',
       targetAlignOffset: 0,
+      clamp: this.state.clamp,
     };
 
     return (
       <div className='flowtipDemo'>
         <h1>FlowTip.React Demo</h1>
         <div style={{height: '200px'}}/>
+        <div className='flowtipClamp'>
+          <label htmlFor='clampCheckbox'>Clamp</label>
+          <input
+            id='clampCheckbox'
+            type='checkbox'
+            checked={this.state.clamp}
+            onChange={this.handleClampClick.bind(this)}
+          />
+        </div>
         <div className='flowtipDemoArea leparent'>
           <div style={{position: 'relative', marginLeft: 120, marginTop: 140}}>
             Potato
