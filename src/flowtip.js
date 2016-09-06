@@ -19,6 +19,7 @@ export default class Flowtip extends Component {
     tail: {width: 0, height: 0},
     content: {width: 0, height: 0},
     region: 'top',
+    clamp: true,
     targetOffset: 0,
     edgeOffset: 30,
     tailOffset: 10,
@@ -422,7 +423,12 @@ export default class Flowtip extends Component {
     const target = applyAnchor(this.props.anchor, this.props.target);
 
     const region = this.calculateRegion(parent, target);
-    const contentPosition = this.calculatePosition(region, parent, target);
+    const contentPosition = this.calculatePosition(
+      region,
+      parent,
+      target,
+      this.props.clamp
+    );
 
     const tailPosition = this.calculateTailPosition(
       region,
