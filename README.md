@@ -211,3 +211,11 @@ Target alignment refers to the alignment of the pivot relative to the target of 
 ### Root Alignment
 
 Root alignment refers to the alignment of the tooltip's root relative to the pivot. See `rootAlign` and `rootAlignOffset`.
+
+## Clamping
+
+By default the tooltip is "clamped" to its parent. Meaning even if the target leaves the viewport, the tooltip would never leave the viewport. The clamping behaviour can be controlled via the `clamp` property.
+
+When `clamp` is `true`, the flyout will always remains in the parent even if the target is out of the parent.
+
+When `clamp` is `false`, the flyout will always attatch itself to the target, even if it’s outside the parent, but it will make a best effort to be in the parent.
