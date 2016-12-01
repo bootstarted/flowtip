@@ -6,6 +6,14 @@ import FlowTip from './flowtip';
 import ResizeObserver from 'react-resize-observer';
 
 export default (Content, Tail) => {
+  if (typeof(Content) !== 'function') {
+    throw new TypeError('Content component is not a function.');
+  }
+
+  if (typeof(Tail) !== 'function') {
+    throw new TypeError('Tail component is not a function.');
+  }
+
   return class FlowTipDOM extends Component {
     static defaultProps = {
       clamp: true,
