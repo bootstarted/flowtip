@@ -29,12 +29,6 @@ class FlowTipDemo extends Component {
     this.updateTargetProperties();
   }
 
-  updateTargetProperties() {
-    this.setState({
-      target: ReactDOM.findDOMNode(this.refs.target).getBoundingClientRect(),
-    });
-  }
-
   handleTargetMove() {
     this.updateTargetProperties();
   }
@@ -42,6 +36,12 @@ class FlowTipDemo extends Component {
   handleClampClick(e) {
     this.setState({
       clamp: e.target.checked === true,
+    });
+  }
+
+  updateTargetProperties() {
+    this.setState({
+      target: ReactDOM.findDOMNode(this.refs.target).getBoundingClientRect(),
     });
   }
 
@@ -99,6 +99,16 @@ class FlowTipDemo extends Component {
 class FlowTipDemoTarget extends Component {
   state = {posX: 0, posY: 0, active: true};
 
+  componentDidMount() {
+    window.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    window.addEventListener('click', this.handleMouseClick.bind(this));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+    window.removeEventListener('click', this.handleMouseClick.bind(this));
+  }
+
   handleMouseMove(ev) {
     if (!this.state.active) {
       return;
@@ -115,16 +125,6 @@ class FlowTipDemoTarget extends Component {
 
   handleMouseClick() {
     this.setState({active: !this.state.active});
-  }
-
-  componentDidMount() {
-    window.addEventListener('mousemove', this.handleMouseMove.bind(this));
-    window.addEventListener('click', this.handleMouseClick.bind(this));
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('mousemove', this.handleMouseMove.bind(this));
-    window.removeEventListener('click', this.handleMouseClick.bind(this));
   }
 
   render() {

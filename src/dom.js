@@ -1,70 +1,20 @@
-/* global getComputedStyle window */
+/* global window */
 import {createElement, Component} from 'react';
 import ReactDOM from 'react-dom';
 
 import FlowTip from './flowtip';
 import ResizeObserver from 'react-resize-observer';
 
-/**
- * Find the closest node that will control the positioning of the FlowTip™
- * content.
- * @param   {Node} _node Initial node to search from.
- * @returns {Node} The anchor parent.
- */
-const getAnchorParent = (_node) => {
-  let node = _node.parentNode;
-  const isParentNode = (node) => {
-    const style = getComputedStyle(node);
-    return style && style.position !== 'static';
-  };
-
-  while (node) {
-    if (isParentNode(node) || node.tagName === 'BODY') {
-      return node;
-    }
-    node = node.parentNode;
-  }
-  return node;
-};
-
-/**
- * Find the closest node that should enclose the FlowTip™'s content. Basically
- * the nearest thing with scrollbars.
- * @param   {[type]} _node       [description]
- * @param   {[type]} parentClass =             null [description]
- * @returns {[type]}             [description]
- */
-const getBoundingParent = (_node, parentClass = null) => {
-  let node = _node.parentNode;
-  const scrollishStyle = (style) => [
-    'auto',
-    'hidden',
-    'scroll',
-  ].indexOf(style) !== -1;
-
-  const isParentNode = (node) => {
-    const style = getComputedStyle(node);
-    if (parentClass) {
-      return node.className.indexOf(parentClass) !== -1;
-    } else if (style) {
-      return scrollishStyle(style.overflow) ||
-        scrollishStyle(style.overflowX) ||
-        scrollishStyle(style.overflowY);
-    }
-    return false;
-  };
-
-  while (node) {
-    if (isParentNode(node) || node.tagName === 'BODY') {
-      return node;
-    }
-    node = node.parentNode;
-  }
-  return node;
-};
-
 export default (Content, Tail) => {
-  return class MyFlowTip extends Component {
+  if (typeof(Content) !== 'function') {
+    throw new TypeError('Content component is not a function.');
+  }
+
+  if (typeof(Tail) !== 'function') {
+    throw new TypeError('Tail component is not a function.');
+  }
+
+  return class FlowTipDOM extends Component {
     static defaultProps = {
       clamp: true,
     };
@@ -81,13 +31,75 @@ export default (Content, Tail) => {
       this.handleScroll = this.handleScroll.bind(this);
     }
 
+    getWindow() {
+      return window;
+    }
+
+    /**
+     * Find the closest node that will control the positioning of the FlowTip™
+     * content.
+     * @param   {Node} _node Initial node to search from.
+     * @returns {Node} The anchor parent.
+     */
+    getAnchorParent(_node) {
+      let node = _node.parentNode;
+      const isParentNode = (node) => {
+        const style = this.getWindow().getComputedStyle(node);
+        return style && style.position !== 'static';
+      };
+
+      while (node) {
+        if (isParentNode(node) || node.tagName === 'BODY') {
+          return node;
+        }
+        node = node.parentNode;
+      }
+      return node;
+    }
+
+    /**
+     * Find the closest node that should enclose the FlowTip™'s content.
+     * Basically the nearest thing with scrollbars.
+     * @param   {[type]} _node       [description]
+     * @param   {[type]} parentClass =             null [description]
+     * @returns {[type]}             [description]
+     */
+    getBoundingParent(_node, parentClass = null) {
+      let node = _node.parentNode;
+      const scrollishStyle = (style) => [
+        'auto',
+        'hidden',
+        'scroll',
+      ].indexOf(style) !== -1;
+
+      const isParentNode = (node) => {
+        const style = this.getWindow().getComputedStyle(node);
+        if (parentClass) {
+          return node.className.indexOf(parentClass) !== -1;
+        } else if (style) {
+          return scrollishStyle(style.overflow) ||
+            scrollishStyle(style.overflowX) ||
+            scrollishStyle(style.overflowY);
+        }
+        return false;
+      };
+
+      while (node) {
+        if (isParentNode(node) || node.tagName === 'BODY') {
+          return node;
+        }
+        node = node.parentNode;
+      }
+      return node;
+    }
+
     getAnchorElement() {
-      return getAnchorParent(ReactDOM.findDOMNode(this.refs.flowtip));
+      return this.getAnchorParent(ReactDOM.findDOMNode(this.refs.flowtip));
     }
 
     getParentElement() {
       const {parentClass} = this.props;
-      return getBoundingParent(this.getAnchorElement(), parentClass);
+      return this.getBoundingParent(this.getAnchorElement(), parentClass);
     }
 
     getAnchorRect() {
@@ -123,11 +135,11 @@ export default (Content, Tail) => {
         parent.top = Math.max(parent.top, 0);
         parent.height = Math.min(
           parent.height,
-          window.innerHeight - parent.top
+          this.getWindow().innerHeight - parent.top
         );
         parent.width = Math.min(
           parent.width,
-          window.innerWidth - parent.left
+          this.getWindow().innerWidth - parent.left
         );
       }
       parent.width -= scrollerWidth;
@@ -150,13 +162,13 @@ export default (Content, Tail) => {
     componentDidMount() {
       const parent = this.getParentElement();
       this.updateState();
-      window.addEventListener('scroll', this.handleScroll);
+      this.getWindow().addEventListener('scroll', this.handleScroll);
       parent.addEventListener('scroll', this.handleScroll);
     }
 
     componentWillUnmount() {
       const parent = this.getParentElement();
-      window.removeEventListener('scroll', this.handleScroll);
+      this.getWindow().removeEventListener('scroll', this.handleScroll);
       parent.removeEventListener('scroll', this.handleScroll);
     }
 

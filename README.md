@@ -47,19 +47,22 @@ To include an instance of FlowTip in your component:
 ```javascript
 import flowtip from 'flowtip/lib/dom';
 
-// Generate a FlowTip™ with the tail and content you want.
-const MyFlowTip = flowtip({
-  tail: toClass(({style, region}) => (
-    <div className={`flowtip-tail flowtip-tail-${region}`} style={style}/>
-  )),
-  content: toClass(({style, region, children}) => (
-    <div className={`flowtip-root flowtip-root-${region}`} style={style}>
-      {children}
-    </div>
-  )),
-});
+// Define the FlowTip content component
+const ContentComponent = ({style, region, children}) => (
+  <div className={`flowtip-root flowtip-root-${region}`} style={style}>
+    {children}
+  </div>
+);
 
-// Use your new FlowTip™.
+// Define the FlowTip tail component
+const TailComponent = ({style, region}) => (
+  <div className={`flowtip-tail flowtip-tail-${region}`} style={style} />
+);
+
+// Generate a FlowTip™ component with the content and tail components.
+const MyFlowTip = flowtip(ContentComponent, TailComponent);
+
+// Render the FlowTip™ component.
 const target = {
   top: 5,
   left: 5,
@@ -199,7 +202,7 @@ The tooltip will be squeezed to an adjacent region if the root of the tooltip ge
 
 ## Alignments
 
-Tool tip's alignments are divided into **root alignment** and **target alignment**, each with a corresponding **offset** attribute that controls the direction of the alignment and offset amount.
+Tooltip's alignments are divided into **root alignment** and **target alignment**, each with a corresponding **offset** attribute that controls the direction of the alignment and offset amount.
 
 ### Target Alignment
 
@@ -208,3 +211,11 @@ Target alignment refers to the alignment of the pivot relative to the target of 
 ### Root Alignment
 
 Root alignment refers to the alignment of the tooltip's root relative to the pivot. See `rootAlign` and `rootAlignOffset`.
+
+## Clamping
+
+By default the tooltip is "clamped" to its parent. Meaning even if the target leaves the viewport, the tooltip would never leave the viewport. The clamping behaviour can be controlled via the `clamp` property.
+
+When `clamp` is `true`, the flyout will always remains in the parent even if the target is out of the parent.
+
+When `clamp` is `false`, the flyout will always attatch itself to the target, even if it’s outside the parent, but it will make a best effort to be in the parent.
