@@ -47,19 +47,22 @@ To include an instance of FlowTip in your component:
 ```javascript
 import flowtip from 'flowtip/lib/dom';
 
-// Generate a FlowTip™ with the tail and content you want.
-const MyFlowTip = flowtip({
-  tail: toClass(({style, region}) => (
-    <div className={`flowtip-tail flowtip-tail-${region}`} style={style}/>
-  )),
-  content: toClass(({style, region, children}) => (
-    <div className={`flowtip-root flowtip-root-${region}`} style={style}>
-      {children}
-    </div>
-  )),
-});
+// Define the FlowTip content component
+const ContentComponent = ({style, region, children}) => (
+  <div className={`flowtip-root flowtip-root-${region}`} style={style}>
+    {children}
+  </div>
+);
 
-// Use your new FlowTip™.
+// Define the FlowTip tail component
+const TailComponent = ({style, region}) => (
+  <div className={`flowtip-tail flowtip-tail-${region}`} style={style} />
+);
+
+// Generate a FlowTip™ component with the content and tail components.
+const MyFlowTip = flowtip(ContentComponent, TailComponent);
+
+// Render the FlowTip™ component.
 const target = {
   top: 5,
   left: 5,
@@ -199,7 +202,7 @@ The tooltip will be squeezed to an adjacent region if the root of the tooltip ge
 
 ## Alignments
 
-Tool tip's alignments are divided into **root alignment** and **target alignment**, each with a corresponding **offset** attribute that controls the direction of the alignment and offset amount.
+Tooltip's alignments are divided into **root alignment** and **target alignment**, each with a corresponding **offset** attribute that controls the direction of the alignment and offset amount.
 
 ### Target Alignment
 
