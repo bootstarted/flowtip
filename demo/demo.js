@@ -138,7 +138,7 @@ class FlowTipDemoTarget extends Component {
     };
 
     return (
-      <div style={style} className='flowtipDemoTarget'></div>
+      <div style={style} className='flowtipDemoTarget' />
     );
   }
 }

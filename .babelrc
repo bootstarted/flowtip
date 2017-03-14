@@ -1,3 +1,9 @@
 {
-  "presets": ["metalab"]
+    "presets": [
+        ["metalab", {
+            "targets": {
+                "node": 4,
+            },
+        }]
+    ]
 }
