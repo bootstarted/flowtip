@@ -75,7 +75,7 @@ export default class Flowtip extends Component {
   }
 
   availableAndFitsIn([region, ...regions], regionParameter) {
-    if (!regions || regions.length <= 0) {
+    if (!region) {
       return this.props.region;
     }
 
@@ -395,6 +395,7 @@ export default class Flowtip extends Component {
     }
 
     if (rotation) {
+      rotation.push(region);
       region = this.availableAndFitsIn(rotation, regionParameter);
     }
 
