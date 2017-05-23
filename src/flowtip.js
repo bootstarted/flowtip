@@ -354,12 +354,12 @@ export default class Flowtip extends Component {
 
     // Edge detection - squeeze
     if (
-      (['top', 'bottom'].indexOf !== region) &&
+      (region === 'top' || region === 'bottom') &&
       !regionParameter.top.fits && !regionParameter.bottom.fits
     ) {
       region = this.availableAndFitsIn(['left', 'right'], regionParameter);
     } else if (
-      (['left', 'right'].indexOf !== region) &&
+      (region === 'left' || region === 'right') &&
       !regionParameter.left.fits && !regionParameter.right.fits
     ) {
       region = this.availableAndFitsIn(['top', 'bottom'], regionParameter);
