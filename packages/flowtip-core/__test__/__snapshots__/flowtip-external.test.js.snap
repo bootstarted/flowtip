@@ -1,0 +1,1081 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flowtip external result lower bottom-left quadrant should return \`top\` 1`] = `
+"
+  external
+  top
+
+t            ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┆                                       ┆
+t            ┌─────────┐                             ┆
+t            │         │                             ┆
+t         ┰  └─────────┘                             ┆
+t            ┆                                       ┆
+t            └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+t  
+t  
+t  
+t  ┏━━━┓
+t  ┃   ┃
+t  ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result lower bottom-left quadrant with \`bottom\` constrain disabled and \`left\` constrain disabled should return \`top\` 1`] = `
+"
+  external
+  top
+
+t               ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t               ┆                                       ┆
+t  ┌─────────┐  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+t  │         │
+t  └────┰────┘
+t  
+t     ┏━━━┓
+t     ┃   ┃
+t     ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result lower bottom-left quadrant with \`bottom\` constrain disabled should return \`right\` 1`] = `
+"
+  external
+  right
+
+r            ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+r  
+r  
+r  
+r  ┏━━━┓         ┌─────────┐
+r  ┃   ┃         ┥         │
+r  ┗━━━┛         └─────────┘
+  "
+`;
+
+exports[`flowtip external result lower bottom-left quadrant with \`top\` region disabled should return \`right\` 1`] = `
+"
+  external
+  right
+
+r            ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆   ┌─────────┐                         ┆
+r            ┆   │         │                         ┆
+r            └┄┄┄└─────────┘┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+r  
+r                ┥
+r  
+r  ┏━━━┓
+r  ┃   ┃
+r  ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result lower bottom-right quadrant should return \`top\` 1`] = `
+"
+  external
+  top
+
+t  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                             ┌─────────┐
+t  ┆                             │         │
+t  ┆                             └─────────┘ ┰
+t  ┆                                       ┆
+t  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+t  
+t  
+t  
+t                                             ┏━━━┓
+t                                             ┃   ┃
+t                                             ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result lower bottom-right quadrant with \`bottom\` constrain disabled and \`right\` constrain disabled should return \`top\` 1`] = `
+"
+  external
+  top
+
+t  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┌─────────┐
+t                                          │         │
+t                                          └────┰────┘
+t  
+t                                             ┏━━━┓
+t                                             ┃   ┃
+t                                             ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result lower bottom-right quadrant with \`bottom\` constrain disabled should return \`left\` 1`] = `
+"
+  external
+  left
+
+l  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+l  
+l  
+l  
+l                            ┌─────────┐      ┏━━━┓
+l                            │         ┝      ┃   ┃
+l                            └─────────┘      ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result lower bottom-right quadrant with \`top\` region disabled should return \`left\` 1`] = `
+"
+  external
+  left
+
+l  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                         ┌─────────┐   ┆
+l  ┆                         │         │   ┆
+l  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄└─────────┘┄┄┄┘
+l  
+l                                      ┝
+l  
+l                                             ┏━━━┓
+l                                             ┃   ┃
+l                                             ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result lower top-left quadrant should return \`right\` 1`] = `
+"
+  external
+  right
+
+r  ┏━━━┓
+r  ┃   ┃
+r  ┗━━━┛              ┥
+r                 ┌┄┄┄┌─────────┐┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+r                 ┆   │         │                         ┆
+r                 ┆   └─────────┘                         ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result lower top-left quadrant with \`left\` constrain disabled and \`top\` constrain disabled should return \`right\` 1`] = `
+"
+  external
+  right
+
+r  ┏━━━┓   ┌─────────┐
+r  ┃   ┃   ┥         │
+r  ┗━━━┛   │         │
+r          └─────────┘┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result lower top-left quadrant with \`left\` constrain disabled should return \`bottom\` 1`] = `
+"
+  external
+  bottom
+
+b     ┏━━━┓
+b     ┃   ┃
+b     ┗━━━┛
+b                    ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b                    ┆                                       ┆
+b  ┌────┸────┐       ┆                                       ┆
+b  │         │       ┆                                       ┆
+b  └─────────┘       ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    ┆                                       ┆
+b                    └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result lower top-left quadrant with \`right\` region disabled should return \`bottom\` 1`] = `
+"
+  external
+  bottom
+
+b  ┏━━━┓
+b  ┃   ┃
+b  ┗━━━┛
+b                 ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b                 ┆                                       ┆
+b            ┸    ┌─────────┐                             ┆
+b                 │         │                             ┆
+b                 └─────────┘                             ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 ┆                                       ┆
+b                 └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result lower top-right quadrant should return \`left\` 1`] = `
+"
+  external
+  left
+
+l                                                         ┏━━━┓
+l                                                         ┃   ┃
+l                                      ┝                  ┗━━━┛
+l  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┌─────────┐┄┄┄┐
+l  ┆                         │         │   ┆
+l  ┆                         └─────────┘   ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result lower top-right quadrant with \`left\` region disabled should return \`bottom\` 1`] = `
+"
+  external
+  bottom
+
+b                                                         ┏━━━┓
+b                                                         ┃   ┃
+b                                                         ┗━━━┛
+b  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b  ┆                                       ┆
+b  ┆                             ┌─────────┐       ┸
+b  ┆                             │         │
+b  ┆                             └─────────┘
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result lower top-right quadrant with \`right\` constrain disabled and \`top\` constrain disabled should return \`left\` 1`] = `
+"
+  external
+  left
+
+l                                           ┌─────────┐   ┏━━━┓
+l                                           │         ┝   ┃   ┃
+l                                           │         │   ┗━━━┛
+l  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐└─────────┘
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result lower top-right quadrant with \`right\` constrain disabled should return \`bottom\` 1`] = `
+"
+  external
+  bottom
+
+b                                                         ┏━━━┓
+b                                                         ┃   ┃
+b                                                         ┗━━━┛
+b  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b  ┆                                       ┆
+b  ┆                                       ┆           ┌────┸────┐
+b  ┆                                       ┆           │         │
+b  ┆                                       ┆           └─────────┘
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result upper bottom-left quadrant should return \`right\` 1`] = `
+"
+  external
+  right
+
+r                 ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆   ┌─────────┐                         ┆
+r                 ┆   │         │                         ┆
+r                 └┄┄┄└─────────┘┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+r  ┏━━━┓              ┥
+r  ┃   ┃
+r  ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result upper bottom-left quadrant with \`left\` constrain disabled and \`bottom\` constrain disabled should return \`right\` 1`] = `
+"
+  external
+  right
+
+r                 ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+r  ┏━━━┓   ┌─────────┐
+r  ┃   ┃   ┥         │
+r  ┗━━━┛   └─────────┘
+  "
+`;
+
+exports[`flowtip external result upper bottom-left quadrant with \`left\` constrain disabled should return \`top\` 1`] = `
+"
+  external
+  top
+
+t                    ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t                    ┆                                       ┆
+t  ┌─────────┐       ┆                                       ┆
+t  │         │       ┆                                       ┆
+t  └────┰────┘       ┆                                       ┆
+t                    ┆                                       ┆
+t                    └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+t     ┏━━━┓
+t     ┃   ┃
+t     ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result upper bottom-left quadrant with \`right\` region disabled should return \`right\` 1`] = `
+"
+  external
+  top
+
+t                 ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┌─────────┐                             ┆
+t                 │         │                             ┆
+t            ┰    └─────────┘                             ┆
+t                 ┆                                       ┆
+t                 └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+t  ┏━━━┓
+t  ┃   ┃
+t  ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result upper bottom-right quadrant should return \`left\` 1`] = `
+"
+  external
+  left
+
+l  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                         ┌─────────┐   ┆
+l  ┆                         │         │   ┆
+l  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄└─────────┘┄┄┄┘
+l                                      ┝             ┏━━━┓
+l                                                    ┃   ┃
+l                                                    ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result upper bottom-right quadrant with \`left\` region disabled should return \`left\` 1`] = `
+"
+  external
+  top
+
+t  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                             ┌─────────┐
+t  ┆                             │         │
+t  ┆                             └─────────┘    ┰
+t  ┆                                       ┆
+t  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+t                                                    ┏━━━┓
+t                                                    ┃   ┃
+t                                                    ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result upper bottom-right quadrant with \`right\` constrain disabled and \`bottom\` constrain disabled should return \`left\` 1`] = `
+"
+  external
+  left
+
+l  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+l                                      ┌─────────┐   ┏━━━┓
+l                                      │         ┝   ┃   ┃
+l                                      └─────────┘   ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result upper bottom-right quadrant with \`right\` constrain disabled should return \`top\` 1`] = `
+"
+  external
+  top
+
+t  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆      ┌─────────┐
+t  ┆                                       ┆      │         │
+t  ┆                                       ┆      └────┰────┘
+t  ┆                                       ┆
+t  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+t                                                    ┏━━━┓
+t                                                    ┃   ┃
+t                                                    ┗━━━┛
+  "
+`;
+
+exports[`flowtip external result upper top-left quadrant should return \`bottom\` 1`] = `
+"
+  external
+  bottom
+
+b  ┏━━━┓
+b  ┃   ┃
+b  ┗━━━┛
+b  
+b  
+b  
+b            ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b            ┆                                       ┆
+b         ┸  ┌─────────┐                             ┆
+b            │         │                             ┆
+b            │         │                             ┆
+b            └─────────┘                             ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result upper top-left quadrant with \`bottom\` region disabled should return \`right\` 1`] = `
+"
+  external
+  right
+
+r  ┏━━━┓
+r  ┃   ┃
+r  ┗━━━┛
+r  
+r                ┥
+r  
+r            ┌┄┄┄┌─────────┐┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+r            ┆   │         │                         ┆
+r            ┆   │         │                         ┆
+r            ┆   └─────────┘                         ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result upper top-left quadrant with \`top\` constrain disabled and \`left\` constrain disabled should return \`bottom\` 1`] = `
+"
+  external
+  bottom
+
+b     ┏━━━┓
+b     ┃   ┃
+b     ┗━━━┛
+b  
+b  ┌────┸────┐
+b  │         │
+b  │         │  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b  └─────────┘  ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               ┆                                       ┆
+b               └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result upper top-left quadrant with \`top\` constrain disabled should return \`right\` 1`] = `
+"
+  external
+  right
+
+r  ┏━━━┓         ┌─────────┐
+r  ┃   ┃         ┥         │
+r  ┗━━━┛         │         │
+r                └─────────┘
+r  
+r  
+r            ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            ┆                                       ┆
+r            └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result upper top-right quadrant should return \`bottom\` 1`] = `
+"
+  external
+  bottom
+
+b                                               ┏━━━┓
+b                                               ┃   ┃
+b                                               ┗━━━┛
+b  
+b  
+b  
+b  
+b  
+b  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b  ┆                                       ┆
+b  ┆                             ┌─────────┐  ┸
+b  ┆                             │         │
+b  ┆                             └─────────┘
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result upper top-right quadrant with \`top\` constrain disabled and \`right\` constrain disabled should return \`bottom\` 1`] = `
+"
+  external
+  bottom
+
+b                                               ┏━━━┓
+b                                               ┃   ┃
+b                                               ┗━━━┛
+b  
+b                                            ┌────┸────┐
+b                                            │         │
+b                                            │         │
+b                                            └─────────┘
+b  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result upper top-right quadrant with \`top\` constrain disabled should return \`left\` 1`] = `
+"
+  external
+  left
+
+l                            ┌─────────┐        ┏━━━┓
+l                            │         ┝        ┃   ┃
+l                            │         │        ┗━━━┛
+l                            └─────────┘
+l  
+l  
+l  
+l  
+l  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip external result upper top-right quadrant with \`top\` region disabled should return \`left\` 1`] = `
+"
+  external
+  left
+
+l                                               ┏━━━┓
+l                                               ┃   ┃
+l                                               ┗━━━┛
+l  
+l  
+l                                      ┝
+l  
+l  
+l  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┌─────────┐┄┄┄┐
+l  ┆                         │         │   ┆
+l  ┆                         └─────────┘   ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;

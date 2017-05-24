@@ -1,0 +1,369 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flowtip ideal result at external bottom should return \`top\` 1`] = `
+"
+  ideal
+  top
+
+t  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆             ┌─────────┐               ┆
+t  ┆             │         │               ┆
+t  ┆             └────┰────┘               ┆
+t  ┆                                       ┆
+t  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+t  
+t  
+t                   ┏━━━┓
+t                   ┃   ┃
+t                   ┗━━━┛
+  "
+`;
+
+exports[`flowtip ideal result at external left should return \`right\` 1`] = `
+"
+  ideal
+  right
+
+r                 ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r  ┏━━━┓          ┆   ┌─────────┐                         ┆
+r  ┃   ┃          ┆   ┥         │                         ┆
+r  ┗━━━┛          ┆   └─────────┘                         ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 ┆                                       ┆
+r                 └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip ideal result at external right should return \`left\` 1`] = `
+"
+  ideal
+  left
+
+l  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                         ┌─────────┐   ┆    ┏━━━┓
+l  ┆                         │         ┝   ┆    ┃   ┃
+l  ┆                         └─────────┘   ┆    ┗━━━┛
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip ideal result at external top should return \`bottom\` 1`] = `
+"
+  ideal
+  bottom
+
+b                   ┏━━━┓
+b                   ┃   ┃
+b                   ┗━━━┛
+b  
+b  
+b  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b  ┆                                       ┆
+b  ┆             ┌────┸────┐               ┆
+b  ┆             │         │               ┆
+b  ┆             │         │               ┆
+b  ┆             └─────────┘               ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip ideal result at internal bottom should return \`top\` 1`] = `
+"
+  ideal
+  top
+
+t  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆             ┌─────────┐               ┆
+t  ┆             │         │               ┆
+t  ┆             │         │               ┆
+t  ┆             └────┰────┘               ┆
+t  ┆                                       ┆
+t  ┆                ┏━━━┓                  ┆
+t  ┆                ┃   ┃                  ┆
+t  ┆                ┗━━━┛                  ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip ideal result at internal left should return \`right\` 1`] = `
+"
+  ideal
+  right
+
+r  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆    ┏━━━┓   ┌─────────┐                ┆
+r  ┆    ┃   ┃   ┥         │                ┆
+r  ┆    ┗━━━┛   └─────────┘                ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip ideal result at internal right should return \`left\` 1`] = `
+"
+  ideal
+  left
+
+l  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆               ┌─────────┐   ┏━━━┓     ┆
+l  ┆               │         ┝   ┃   ┃     ┆
+l  ┆               └─────────┘   ┗━━━┛     ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  ┆                                       ┆
+l  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip ideal result at internal top should return \`bottom\` 1`] = `
+"
+  ideal
+  bottom
+
+b  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                ┏━━━┓                  ┆
+b  ┆                ┃   ┃                  ┆
+b  ┆                ┗━━━┛                  ┆
+b  ┆                                       ┆
+b  ┆             ┌────┸────┐               ┆
+b  ┆             │         │               ┆
+b  ┆             │         │               ┆
+b  ┆             └─────────┘               ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip ideal result with oversized content should center horizontally 1`] = `
+"
+  ideal
+  bottom
+
+b            ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b            ┆                                       ┆
+b            ┆   ┏━━━┓                               ┆
+b            ┆   ┃   ┃                               ┆
+b            ┆   ┗━━━┛                               ┆
+b            ┆                                       ┆
+b  ┌───────────────┸───────────────────────────────────────────┐
+b  │         ┆                                       ┆         │
+b  │         ┆                                       ┆         │
+b  └───────────────────────────────────────────────────────────┘
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            ┆                                       ┆
+b            └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip ideal result with oversized content should center vertically 1`] = `
+"
+  ideal
+  right
+
+r              ┌─────────┐
+r              │         │
+r              │         │
+r              │         │
+r              │         │
+r  ┌┄┄┄┄┄┄┄┄┄┄┄│┄┄┄┄┄┄┄┄┄│┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+r  ┆           │         │                 ┆
+r  ┆   ┏━━━┓   │         │                 ┆
+r  ┆   ┃   ┃   ┥         │                 ┆
+r  ┆   ┗━━━┛   │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  ┆           │         │                 ┆
+r  └┄┄┄┄┄┄┄┄┄┄┄│┄┄┄┄┄┄┄┄┄│┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+r              │         │
+r              │         │
+r              │         │
+r              │         │
+r              └─────────┘
+  "
+`;
+
+exports[`flowtip ideal result with region config should override \`default\` reason 1`] = `
+"
+  ideal
+  bottom
+
+b  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                ┏━━━┓                  ┆
+b  ┆                ┃   ┃                  ┆
+b  ┆                ┗━━━┛                  ┆
+b  ┆                                       ┆
+b  ┆             ┌────┸────┐               ┆
+b  ┆             │         │               ┆
+b  ┆             │         │               ┆
+b  ┆             └─────────┘               ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip ideal result with region config should return \`inverted\` reason 1`] = `
+"
+  ideal
+  bottom
+
+b  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                ┏━━━┓                  ┆
+b  ┆                ┃   ┃                  ┆
+b  ┆                ┗━━━┛                  ┆
+b  ┆                                       ┆
+b  ┆             ┌────┸────┐               ┆
+b  ┆             │         │               ┆
+b  ┆             │         │               ┆
+b  ┆             └─────────┘               ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  ┆                                       ┆
+b  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;

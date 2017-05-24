@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flowtip inverted result can be disabled 1`] = `
+"
+  ideal
+  right
+
+r  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆    ┏━━━┓   ┌─────────┐                ┆
+r  ┆    ┃   ┃   ┥         │                ┆
+r  ┆    ┗━━━┛   └─────────┘                ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  ┆                                       ┆
+r  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip inverted result should have highest priority 1`] = `
+"
+  inverted
+  top
+
+t  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆ ┌─────────┐                           ┆
+t  ┆ │         │                           ┆
+t  ┆ └────┰────┘                           ┆
+t  ┆                                       ┆
+t  ┆    ┏━━━┓                              ┆
+t  ┆    ┃   ┃                              ┆
+t  ┆    ┗━━━┛                              ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
