@@ -75,7 +75,7 @@ export default class Flowtip extends Component {
   }
 
   availableAndFitsIn([region, ...regions], regionParameter) {
-    if (!regions || regions.length <= 0) {
+    if (!region) {
       return this.props.region;
     }
 
@@ -350,52 +350,6 @@ export default class Flowtip extends Component {
         'top',
         'bottom',
       ], regionParameter);
-    }
-
-    // Edge detection - squeeze
-    if (
-      (region === 'top' || region === 'bottom') &&
-      !regionParameter.top.fits && !regionParameter.bottom.fits
-    ) {
-      region = this.availableAndFitsIn(['left', 'right'], regionParameter);
-    } else if (
-      (region === 'left' || region === 'right') &&
-      !regionParameter.left.fits && !regionParameter.right.fits
-    ) {
-      region = this.availableAndFitsIn(['top', 'bottom'], regionParameter);
-    }
-
-    // Edge detection - rotate
-    let rotation;
-    if (region === 'top' || region === 'bottom') {
-      if (
-        (parent.left + parent.width) -
-        (target.left + (target.width / 2)) - this.props.edgeOffset <
-        this.props.rotationOffset
-      ) {
-        rotation = region === 'top' ? ['left', 'bottom'] : ['left', 'top'];
-      } else if (
-        target.left + (target.width / 2) - this.props.edgeOffset <
-        parent.left + this.props.rotationOffset
-      ) {
-        rotation = region === 'top' ? ['right', 'bottom'] : ['right', 'top'];
-      }
-    } else if (region === 'left' || region === 'right') {
-      if (
-        (parent.top + parent.height) - (target.top + (target.height / 2)) -
-        this.props.edgeOffset < this.props.rotationOffset
-      ) {
-        rotation = region === 'left' ? ['top', 'right'] : ['top', 'left'];
-      } else if (
-        target.top + (target.height / 2) - this.props.edgeOffset <
-        parent.top + this.props.rotationOffset
-      ) {
-        rotation = region === 'left' ? ['bottom', 'right'] : ['bottom', 'left'];
-      }
-    }
-
-    if (rotation) {
-      region = this.availableAndFitsIn(rotation, regionParameter);
     }
 
     return region;
