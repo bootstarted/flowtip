@@ -29,16 +29,16 @@
     "prepublish": "npm run clean && npm run copy && npm run build"
   },
   "dependencies": {
-    "react-resize-observer": "^0.2.0",
-    "flowtip-core": "5.0.0",
-    "fbjs": "^0.8.12"
+    "fbjs": "^0.8.12",
+    "flowtip-core": "^5.0.0",
+    "react-resize-observer": "^0.2.0"
   },
   "devDependencies": {
     "enzyme": "^2.9.1",
     "jest-enzyme": "^3.7.0",
     "react": "^15.6.1",
-    "react-test-renderer": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react-dom": "^15.6.1",
+    "react-test-renderer": "^15.6.1"
   },
   "peerDependencies": {
     "react": ">=0.14"
