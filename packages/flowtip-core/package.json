@@ -1,0 +1,31 @@
+{
+  "name": "flowtip-core",
+  "description": "A flexible, adaptable, and easy to use tooltip positioning algorithm.",
+  "version": "5.0.0",
+  "author": "Neal Granger <neal@nealg.com>",
+  "main": "./lib",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/metalabdesign/flowtip.git"
+  },
+  "keywords": [
+    "tooltip",
+    "position",
+    "flowtip",
+    "algorithm"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/qiushihe/metalabdesign/issues"
+  },
+  "homepage": "https://github.com/metalabdesign/flowtip/tree/master/packages/flowtip-react-dom",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "clean": "../../node_modules/.bin/rimraf lib",
+    "build": "../../node_modules/.bin/babel --copy-files -s -d lib src",
+    "copy": "../../node_modules/.bin/ncp src lib && ../../node_modules/.bin/renamer --regex --find '$' --replace '.flow' 'lib/**/*.js'",
+    "prepublish": "npm run clean && npm run copy && npm run build"
+  }
+}

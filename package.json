@@ -1,62 +1,41 @@
 {
-  "name": "flowtip",
-  "version": "4.3.0",
-  "description": "A flexible, adaptable and easy to use tooltip positioning library.",
-  "main": "lib/flowtip.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/qiushihe/flowtip.git"
-  },
-  "keywords": [
-    "tooltip",
-    "position",
-    "flowtip"
-  ],
-  "author": "Billy He <qiushihe@me.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/qiushihe/flowtip/issues"
-  },
-  "homepage": "https://github.com/qiushihe/flowtip",
+  "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --devtool eval --progress --colors --content-base demo --host 0.0.0.0 --history-api-fallback --config webpack.dev.config.babel.js",
-    "prepublish": "npm run build",
-    "build": "./node_modules/.bin/babel -s inline -d ./lib ./src --source-maps true",
-    "lint": "eslint src",
-    "spec": "NODE_ENV=test ./node_modules/.bin/_mocha -r adana-dump --compilers js:babel-core/register -R spec --recursive test/spec/**/*.spec.js",
-    "test": "npm run lint && npm run spec"
+    "flow": "./node_modules/.bin/flow",
+    "lerna": "./node_modules/.bin/lerna",
+    "lint": "./node_modules/.bin/eslint .",
+    "postinstall": "./node_modules/.bin/lerna bootstrap",
+    "test": "npm run lint --silent && npm run flow --silent && npm run unit --silent",
+    "unit": "./node_modules/.bin/jest --coverage",
+    "unit:watch": "npm run unit -- --watch"
   },
-  "peerDepenencies": {
-    "react": "^0.14 || ^15.0.0",
-    "react-dom": "^0.14 || ^15.0.0"
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "lib/"
+    ],
+    "coveragePathIgnorePatterns": [
+      "__test__/"
+    ]
   },
   "devDependencies": {
-    "adana-cli": "^0.1.1",
-    "adana-dump": "^0.1.0",
-    "adana-format-lcov": "^0.1.1",
-    "babel-cli": "^6.7.7",
-    "babel-core": "^6.7.7",
-    "babel-loader": "^6.2.4",
-    "babel-preset-metalab": "^0.2.1",
-    "chai": "^3.5.0",
-    "enzyme": "^2.4.1",
-    "eslint": "^2.10.2",
-    "eslint-config-metalab": "^4.0.1",
-    "eslint-loader": "^1.2.0",
-    "eslint-plugin-filenames": "^0.2.0",
-    "eslint-plugin-import": "^1.6.0",
-    "eslint-plugin-lodash-fp": "^1.2.0",
-    "eslint-plugin-react": "^5.1.1",
-    "mocha": "^3.0.2",
-    "path": "^0.12.7",
-    "react": "^15.5.1",
-    "react-addons-test-utils": "^15.5.1",
-    "react-dom": "^15.5.1",
-    "sinon": "^1.17.6",
-    "webpack": "^1.12.11",
-    "webpack-dev-server": "^1.14.1"
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "eslint": "^4.5.0",
+    "eslint-config-metalab": "^7.0.1",
+    "flow-bin": "^0.53.1",
+    "jest": "^20.0.4",
+    "lerna": "^2.1.1",
+    "ncp": "^2.0.0",
+    "renamer": "^0.6.1",
+    "rimraf": "^2.6.1"
   },
-  "dependencies": {
-    "react-resize-observer": "^0.1.0"
+  "devEngines": {
+    "node": "8",
+    "npm": "5"
   }
 }

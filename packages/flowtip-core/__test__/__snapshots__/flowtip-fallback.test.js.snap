@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flowtip fallback result should _always_ return a region 1`] = `
+"
+  fallback
+  top
+
+t                 ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┌─────────┐                             ┆
+t                 │         │                             ┆
+t            ┰    └─────────┘                             ┆
+t                 ┆                                       ┆
+t  ┏━━━┓          ┆                                       ┆
+t  ┃   ┃          ┆                                       ┆
+t  ┗━━━┛          ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 ┆                                       ┆
+t                 └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
+
+exports[`flowtip fallback result should return a region 1`] = `
+"
+  fallback
+  left
+
+l                 ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l  ┏━━━┓          ┌─────────┐                             ┆
+l  ┃   ┃          │         ┝                             ┆
+l  ┗━━━┛          └─────────┘                             ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 ┆                                       ┆
+l                 └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;

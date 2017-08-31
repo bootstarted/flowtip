@@ -1,0 +1,11 @@
+[ignore]
+.*/node_modules/conventional-changelog-core/.*\.json$
+.*/node_modules/enzyme-matchers/src
+
+[include]
+
+[libs]
+<PROJECT_ROOT>/flow-typed
+
+[options]
+emoji=true

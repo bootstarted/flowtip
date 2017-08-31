@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flowtip default result should have highest priority 1`] = `
+"
+  default
+  top
+
+t  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+t  ┆             ┌─────────┐               ┆
+t  ┆             │         │               ┆
+t  ┆             └────┰────┘               ┆
+t  ┆                                       ┆
+t  ┆                ┏━━━┓                  ┆
+t  ┆                ┃   ┃                  ┆
+t  ┆                ┗━━━┛                  ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  ┆                                       ┆
+t  └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+  "
+`;
