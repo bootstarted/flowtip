@@ -1,4 +1,4 @@
-/* global window */
+/* global window,Node */
 import {createElement, Component} from 'react';
 import ReactDOM from 'react-dom';
 
@@ -35,6 +35,19 @@ export default (Content, Tail) => {
       return window;
     }
 
+    getElementNode() {
+      // only IE has Node as an object, most everyone else has it as a function
+      return (typeof Node === 'function' || typeof Node === 'object') &&
+        typeof Node.ELEMENT_NODE === 'number' ?  Node.ELEMENT_NODE : null;
+    }
+
+    getDerivedStyle(node) {
+      if (!(node && node.nodeType === this.getElementNode())) {
+        return null;
+      }
+      return this.getWindow().getComputedStyle(node);
+    }
+
     /**
      * Find the closest node that will control the positioning of the FlowTip™
      * content.
@@ -44,7 +57,7 @@ export default (Content, Tail) => {
     getAnchorParent(_node) {
       let node = _node.parentNode;
       const isParentNode = (node) => {
-        const style = this.getWindow().getComputedStyle(node);
+        const style = this.getDerivedStyle(node);
         return style && style.position !== 'static';
       };
 
@@ -73,7 +86,7 @@ export default (Content, Tail) => {
       ].indexOf(style) !== -1;
 
       const isParentNode = (node) => {
-        const style = this.getWindow().getComputedStyle(node);
+        const style = this.getDerivedStyle(node);
         if (parentClass) {
           return node.className.indexOf(parentClass) !== -1;
         } else if (style) {
