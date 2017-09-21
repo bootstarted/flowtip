@@ -1,6 +1,6 @@
 {
   "name": "flowtip",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "description": "A flexible, adaptable and easy to use tooltip positioning library.",
   "main": "lib/flowtip.js",
   "repository": {
