@@ -65,10 +65,11 @@ describe('FlowTip DOM', () => {
       const component = getComponent(FlowTipComponent, (<span>Test</span>));
       const instance = component.instance();
 
+      const computedStyle = {position: "relative", overflow: "auto"};
       const dummyWindow = {
         addEventListener: sandbox.stub(),
         removeEventListener: sandbox.stub(),
-        getComputedStyle: () => ({position: "relative", overflow: "auto"}),
+        getComputedStyle: () => (computedStyle),
         innerHeight: 1000,
         innerWidth: 2000
       };
@@ -91,6 +92,7 @@ describe('FlowTip DOM', () => {
       };
 
       sandbox.stub(FlowTipComponent.prototype, "getWindow").returns(dummyWindow);
+      sandbox.stub(FlowTipComponent.prototype, "getDerivedStyle").returns(computedStyle);
       sandbox.stub(FlowTipComponent.prototype, "getAnchorElement").returns(dummyAnchor);
 
       instance.componentDidMount();
@@ -104,6 +106,36 @@ describe('FlowTip DOM', () => {
       expect(instance.state.anchor).to.have.property('left', 20);
       expect(instance.state.anchor).to.have.property('width', 30);
       expect(instance.state.anchor).to.have.property('height', 40);
+    });
+  });
+
+  describe('getDerivedStyle', () => {
+    it('should return styles for an HTML Element', () => {
+      const computedStyle = {position: "relative", overflow: "auto"};
+      const dummyWindow = {
+        addEventListener: sandbox.stub(),
+        removeEventListener: sandbox.stub(),
+        getComputedStyle: () => (computedStyle),
+        innerHeight: 756,
+        innerWidth: 1028
+      };
+
+      const FlowTipComponent = getComponentClass(ContentComponent, TailComponent);
+      const component = getComponent(FlowTipComponent, (<span>Test</span>));
+      const instance = component.instance();
+
+      sandbox.stub(FlowTipComponent.prototype, "getWindow").returns(dummyWindow);
+      sandbox.stub(FlowTipComponent.prototype, "getElementNode").returns(3);
+      const doc = {
+        nodeType: 9 // Node.DOCUMENT_NODE
+      };
+      const docElement = {
+        nodeType: 3 // Node.ELEMENT_NODE
+      }
+
+      expect(instance.getDerivedStyle(doc)).to.be.null;
+      expect(instance.getDerivedStyle(docElement)).not.to.be.null;
+      expect(instance.getDerivedStyle(docElement)).to.deep.equal(computedStyle);
     });
   });
 });
