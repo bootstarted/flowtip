@@ -8,7 +8,7 @@ FlowTip has 3 required config values (`target`, `content`, and `bounds` as [DOMR
 
 ```js
 const config = {
-  rect: {top: 10, left: 100, width: 100, height: 20},
+  target: {top: 10, left: 100, width: 100, height: 20},
   content: {width: 250, height: 200},
   bounds: {top: 0, left: 0, width: 1200, height: 800},
   // Optional config values.
