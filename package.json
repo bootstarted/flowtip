@@ -27,8 +27,8 @@
     "test": "npm run lint && npm run spec"
   },
   "peerDepenencies": {
-    "react": "^0.14 || ^15.0.0",
-    "react-dom": "^0.14 || ^15.0.0"
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   },
   "devDependencies": {
     "adana-cli": "^0.1.1",
@@ -39,7 +39,8 @@
     "babel-loader": "^6.2.4",
     "babel-preset-metalab": "^0.2.1",
     "chai": "^3.5.0",
-    "enzyme": "^2.4.1",
+    "enzyme": "^3.0.0",
+    "enzyme-adapter-react-16": "^1.1.0",
     "eslint": "^2.10.2",
     "eslint-config-metalab": "^4.0.1",
     "eslint-loader": "^1.2.0",
@@ -49,9 +50,8 @@
     "eslint-plugin-react": "^5.1.1",
     "mocha": "^3.0.2",
     "path": "^0.12.7",
-    "react": "^15.5.1",
-    "react-addons-test-utils": "^15.5.1",
-    "react-dom": "^15.5.1",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "sinon": "^1.17.6",
     "webpack": "^1.12.11",
     "webpack-dev-server": "^1.14.1"
