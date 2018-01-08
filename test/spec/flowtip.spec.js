@@ -1,7 +1,10 @@
 import {createElement} from 'react';
-import {shallow} from 'enzyme';
+import {shallow, configure} from 'enzyme';
 import {expect} from 'chai';
 import FlowTip from '../../src/flowtip';
+
+import Adapter from 'enzyme-adapter-react-16';
+configure({ adapter: new Adapter(), disableLifecycleMethods: true });
 
 describe('FlowTip', () => {
   it('should keep flyout in the desired region if possible', () => {

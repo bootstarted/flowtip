@@ -1,10 +1,13 @@
 import {createElement} from 'react';
 import sinon from 'sinon';
-import {shallow} from 'enzyme';
+import {shallow, configure} from 'enzyme';
 import {expect} from 'chai';
 
 import FlowTip from '../../src/flowtip';
 import FlowTipDOM from '../../src/dom';
+
+import Adapter from 'enzyme-adapter-react-16';
+configure({ adapter: new Adapter(), disableLifecycleMethods: true });
 
 describe('FlowTip DOM', () => {
   const ContentComponent = () => (
