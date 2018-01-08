@@ -27,8 +27,8 @@
     "test": "npm run lint && npm run spec"
   },
   "peerDepenencies": {
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0"
+    "react": "^0.14 || ^15.0.0 || ^16.0.0",
+    "react-dom": "^0.14 || ^15.0.0 || ^16.0.0"
   },
   "devDependencies": {
     "adana-cli": "^0.1.1",
