@@ -325,7 +325,7 @@ This results in apparently unnecessary reposition events. When `sticky` is true,
 
 The desired margin between the positioned content tail and the target.
 
-### `targetOffset`: number
+### `edgeOffset`: number
 
 *optional*, *default: `0`*
 
