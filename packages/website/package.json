@@ -1,0 +1,39 @@
+{
+  "private": true,
+  "name": "website",
+  "license": "MIT",
+  "scripts": {
+    "lint": "../../node_modules/.bin/eslint .",
+    "flow": "../../node_modules/.bin/flow",
+    "test": "npm run lint --silent && npm run flow --silent",
+    "start": "./script/serve.js",
+    "build:client": "./node_modules/.bin/webpack --config ./config/clientPages.babel.js",
+    "build:render": "./node_modules/.bin/webpack --config ./config/render.babel.js",
+    "build": "npm run build:render && npm run build:client"
+  },
+  "dependencies": {
+    "flowtip-core": "^5.0.0",
+    "flowtip-react-dom": "^5.0.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-resize-observer": "^0.2.0",
+    "react-router-dom": "^4.2.2",
+    "webpack-dev-middleware": "^3.0.1"
+  },
+  "devDependencies": {
+    "babel-loader": "^8.0.0-beta.2",
+    "case-sensitive-paths-webpack-plugin": "^2.1.2",
+    "clean-webpack-plugin": "^0.1.18",
+    "eval": "^0.1.2",
+    "find-nearest-file": "^1.1.0",
+    "koa-compressor": "^1.0.3",
+    "koa-logger": "^3.1.0",
+    "react-helmet": "^5.2.0",
+    "react-hot-loader": "^4.0.0",
+    "source-map-loader": "^0.2.3",
+    "webpack": "^4.1.0",
+    "webpack-cli": "^2.0.10",
+    "webpack-node-externals": "^1.6.0",
+    "webpack-serve": "^0.2.0"
+  }
+}

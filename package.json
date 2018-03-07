@@ -1,24 +1,27 @@
 {
   "private": true,
+  "name": "flowtip-packages",
   "scripts": {
     "flow": "./node_modules/.bin/flow",
     "lerna": "./node_modules/.bin/lerna",
     "lint": "./node_modules/.bin/eslint .",
     "format": "./node_modules/.bin/prettier --write '**/*.js'",
-    "postinstall": "./node_modules/.bin/lerna bootstrap",
-    "test": "npm run lint --silent && npm run flow --silent && npm run spec --silent",
-    "spec": "./node_modules/.bin/jest --runInBand=${SPEC_SERIAL:-$CI} --coverage=${SPEC_COVERAGE:-$CI}",
-    "spec:watch": "npm run spec -- --watch"
+    "prepare": "./node_modules/.bin/lerna bootstrap",
+    "start": "cd ./packages/website && npm start"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.40",
     "@babel/core": "^7.0.0-beta.40",
     "@babel/plugin-proposal-class-properties": "^7.0.0-beta.40",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.40",
     "@babel/preset-env": "^7.0.0-beta.40",
     "@babel/preset-flow": "^7.0.0-beta.40",
     "@babel/preset-react": "^7.0.0-beta.40",
+    "@babel/register": "^7.0.0-beta.40",
+    "@std/esm": "^0.25.2",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^22.4.1",
+    "babel-plugin-dev-expression": "^0.2.1",
     "eslint": "^4.18.2",
     "eslint-config-metalab": "^8.0.0",
     "eslint-plugin-prettier": "^2.6.0",

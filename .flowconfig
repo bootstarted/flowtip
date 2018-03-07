@@ -2,6 +2,7 @@
 0.67.1
 
 [include]
+<PROJECT_ROOT>/**/node_modules
 
 [lints]
 all=error
@@ -13,3 +14,4 @@ all=error
 emoji=true
 include_warnings=true
 suppress_comment=\\(.\\|\n\\)*\\$ExpectError
+module.ignore_non_literal_requires=true
