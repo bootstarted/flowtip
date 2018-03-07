@@ -1,14 +1,17 @@
 // @flow
 
-// eslint-disable-next-line no-use-before-define
-export type RectLike = Rect | ClientRect | {
-  top: number,
-  left: number,
-  width: number,
-  height: number,
-  bottom?: number,
-  right?: number,
-};
+export type RectLike =
+  // eslint-disable-next-line no-use-before-define
+  | Rect
+  | ClientRect
+  | {
+      top: number,
+      left: number,
+      width: number,
+      height: number,
+      bottom?: number,
+      right?: number,
+    };
 
 class Rect {
   top: number;
@@ -89,14 +92,16 @@ class Rect {
       return true;
     }
 
-    if ((a === null || a === undefined) || (b === null || b === undefined)) {
+    if (a === null || a === undefined || b === null || b === undefined) {
       return false;
     }
 
-    return a.left === b.left &&
+    return (
+      a.left === b.left &&
       a.top === b.top &&
       a.width === b.width &&
-      a.height === b.height;
+      a.height === b.height
+    );
   }
 
   constructor(left: number, top: number, width: number, height: number): void {

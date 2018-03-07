@@ -8,7 +8,7 @@ const areEqualDimensions = (a: ?Dimensions, b: ?Dimensions): boolean => {
     return true;
   }
 
-  if ((a === null || a === undefined) || (b === null || b === undefined)) {
+  if (a === null || a === undefined || b === null || b === undefined) {
     return false;
   }
 

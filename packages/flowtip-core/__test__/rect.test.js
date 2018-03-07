@@ -25,13 +25,15 @@ describe('Rect', () => {
     });
 
     it('should true with two equivalent rects', () => {
-      expect(Rect.areEqual(new Rect(1, 2, 3, 4), new Rect(1, 2, 3, 4)))
-        .toBe(true);
+      expect(Rect.areEqual(new Rect(1, 2, 3, 4), new Rect(1, 2, 3, 4))).toBe(
+        true,
+      );
     });
 
     it('should true with two different rects', () => {
-      expect(Rect.areEqual(new Rect(1, 2, 3, 4), new Rect(4, 3, 2, 1)))
-        .toBe(false);
+      expect(Rect.areEqual(new Rect(1, 2, 3, 4), new Rect(4, 3, 2, 1))).toBe(
+        false,
+      );
     });
   });
 });

@@ -55,9 +55,9 @@ export type Props = {
   /** Minimum distance between content react and boundary edge. */
   edgeOffset: number,
   /**
-    * Prevent the tail from getting within this distance of the corner of
-    * the content.
-    */
+   * Prevent the tail from getting within this distance of the corner of
+   * the content.
+   */
   tailOffset: number,
   /** Relative alignment of content rect and target rect. */
   align: Align,
@@ -77,11 +77,13 @@ export type Props = {
   constrainBottom: boolean,
   /** Constrain the content at the bottom boundary. */
   constrainLeft: boolean,
-  content: React.ComponentType<{
-    style: Style,
-    result: Result,
-    children?: React.Node,
-  }> | string,
+  content:
+    | React.ComponentType<{
+        style: Style,
+        result: Result,
+        children?: React.Node,
+      }>
+    | string,
   tail?: React.ComponentType<{
     style: Style,
     result: Result,
@@ -317,7 +319,9 @@ class FlowTip extends React.Component<Props, State> {
     let result = null;
 
     if (
-      bounds && target && content &&
+      bounds &&
+      target &&
+      content &&
       (typeof nextProps.Tail !== 'function' || tail)
     ) {
       const config = {
@@ -376,10 +380,8 @@ class FlowTip extends React.Component<Props, State> {
       !areEqualDimensions(this.state.content, this._nextContent) ||
       !areEqualDimensions(this.state.tail, this._nextTail) ||
       !Rect.areEqual(this.state.containingBlock, this._nextContainingBlock) ||
-
       !Rect.areEqual(this.state.bounds, this._nextBounds) ||
       !Rect.areEqual(this.props.target, nextProps.target) ||
-
       this.props.region !== nextProps.region ||
       this.props.sticky !== nextProps.sticky ||
       this.props.targetOffset !== nextProps.targetOffset ||
@@ -583,7 +585,7 @@ class FlowTip extends React.Component<Props, State> {
 
     return (
       <Tail result={result} style={tailStyle}>
-        <ResizeObserver onResize={this._handleTailSize}/>
+        <ResizeObserver onResize={this._handleTailSize} />
       </Tail>
     );
   }
@@ -611,7 +613,7 @@ class FlowTip extends React.Component<Props, State> {
 
     return (
       <Content {...contentProps}>
-        <ResizeObserver onResize={this._handleContentSize}/>
+        <ResizeObserver onResize={this._handleContentSize} />
         {children}
         {this.renderTail(result)}
       </Content>

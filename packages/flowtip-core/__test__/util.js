@@ -113,10 +113,14 @@ export const drawResult = (config, result) => {
     drawScaled(canvas, _rect.left, _rect.top + overlapCenter, tail.left);
   }
 
+  const printed = printCanvas(canvas)
+    .split('\n')
+    .join(`\n${region[0]}  `);
+
   return `
   ${reason}
   ${region}
 
-${region[0]}  ${printCanvas(canvas).split('\n').join(`\n${region[0]}  `)}
+${region[0]}  ${printed}
   `;
 };

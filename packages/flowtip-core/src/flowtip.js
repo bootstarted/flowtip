@@ -123,7 +123,8 @@ function constrainLeft(config: _Config, region: Region, rect: Rect): number {
 
   // Center align the content rect if is wider than the bounds rect.
   if (
-    constrain.left && constrain.right &&
+    constrain.left &&
+    constrain.right &&
     rect.width + rightOffset + leftOffset > bounds.width
   ) {
     return bounds.left + (bounds.width - rect.width) / 2;
@@ -162,7 +163,8 @@ function constrainTop(config: _Config, region: Region, rect: Rect): number {
 
   // Center align the content rect if is taller than the bounds rect.
   if (
-    constrain.top && constrain.bottom &&
+    constrain.top &&
+    constrain.bottom &&
     rect.height + topOffset + bottomOffset > bounds.height
   ) {
     return bounds.top + (bounds.height - rect.height) / 2;
@@ -304,17 +306,17 @@ function getValidRegions(config: _Config): _Regions {
   const leftRegion = getRegionClip(config, LEFT);
 
   const topClips =
-    !constrain.left && topRegion.left ||
-    !constrain.right && topRegion.right;
+    (!constrain.left && topRegion.left) ||
+    (!constrain.right && topRegion.right);
   const rightClips =
-    !constrain.top && rightRegion.top ||
-    !constrain.bottom && rightRegion.bottom;
+    (!constrain.top && rightRegion.top) ||
+    (!constrain.bottom && rightRegion.bottom);
   const bottomClips =
-    !constrain.left && bottomRegion.left ||
-    !constrain.right && rightRegion.bottom;
+    (!constrain.left && bottomRegion.left) ||
+    (!constrain.right && rightRegion.bottom);
   const leftClips =
-    !constrain.top && topRegion.top ||
-    !constrain.bottom && leftRegion.bottom;
+    (!constrain.top && topRegion.top) ||
+    (!constrain.bottom && leftRegion.bottom);
 
   // A region is considered valid if the margin is large enough to fit the
   // side of the content rect and if there is enough linear overlap as defined
@@ -459,13 +461,10 @@ function getIdealRegion(config: _Config, valid: _Regions): ?Region {
 function getExternalRegion(config: _Config): ?Region {
   const {target, constrain, bounds, disabled} = config;
 
-  const atTop =
-    target.top + target.height / 2 <
-    bounds.top + bounds.height / 2;
+  const atTop = target.top + target.height / 2 < bounds.top + bounds.height / 2;
 
   const atLeft =
-    target.left + target.width / 2 <
-    bounds.left + bounds.width / 2;
+    target.left + target.width / 2 < bounds.left + bounds.width / 2;
 
   const atBottom = !atTop;
   const atRight = !atLeft;
@@ -542,12 +541,12 @@ function getExternalRegion(config: _Config): ?Region {
  * @returns {string} The inverse region.
  */
 function invertRegion(region: Region): Region {
-  return ({
+  return {
     top: BOTTOM,
     bottom: TOP,
     left: RIGHT,
     right: LEFT,
-  })[region];
+  }[region];
 }
 
 /**
@@ -618,8 +617,9 @@ function getFallbackRegion(config: _Config): Region {
   // If the default region is not set or is disabled, pick the first enabled
   // region.
   if (typeof fallback !== 'string' || config.disabled[fallback]) {
-    fallback = Object.keys(config.disabled)
-      .find((region) => !config.disabled[region]);
+    fallback = Object.keys(config.disabled).find(
+      (region) => !config.disabled[region],
+    );
   }
 
   // ALL OF THE REGIONS ARE DISABLED ಠ_ಠ
@@ -772,7 +772,7 @@ function getOverlap(region: Region, intersect: Rect): number {
  */
 function getCenter(region: Region, rect: Rect, intersect: Rect): number {
   if (region === TOP || region === BOTTOM) {
-    return  intersect.left + intersect.width / 2 - rect.left;
+    return intersect.left + intersect.width / 2 - rect.left;
   }
 
   // Region is left or right;
