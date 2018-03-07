@@ -1,6 +1,5 @@
-[ignore]
-.*/node_modules/conventional-changelog-core/.*\.json$
-.*/node_modules/enzyme-matchers/src
+[version]
+0.67.1
 
 [include]
 
@@ -9,3 +8,5 @@
 
 [options]
 emoji=true
+include_warnings=true
+suppress_comment=\\(.\\|\n\\)*\\$ExpectError
