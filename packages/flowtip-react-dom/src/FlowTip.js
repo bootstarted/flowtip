@@ -15,7 +15,6 @@ import flowtip, {
 
 import type {RectLike, Region, Align, Dimensions, Result} from 'flowtip-core';
 
-import omit from './util/omit';
 import singleWarning from './util/singleWarning';
 import getContainingBlock from './util/getContainingBlock';
 
@@ -32,28 +31,6 @@ const REMOVED_PROPS = [
   'rootAlignOffset',
   'hideInDisabledRegions',
 ];
-
-const FLOWTIP_PROPS = [
-  'target',
-  'bounds',
-  'region',
-  'sticky',
-  'targetOffset',
-  'edgeOffset',
-  'tailOffset',
-  'align',
-  'topDisabled',
-  'rightDisabled',
-  'bottomDisabled',
-  'leftDisabled',
-  'constrainTop',
-  'constrainRight',
-  'constrainBottom',
-  'constrainLeft',
-  'content',
-  'tail',
-];
-
 // Static `flowtip` layout calculation result mock for use during initial client
 // side render or on server render where DOM feedback is not possible.
 const STATIC_RESULT: Result = {
@@ -124,6 +101,32 @@ export type Props = {
     children?: React.Node,
   }>,
   children?: React.Node,
+};
+
+const omitFlowtipProps = (props: Props) => {
+  const {
+    target: _target,
+    bounds: _bounds,
+    region: _region,
+    sticky: _sticky,
+    targetOffset: _targetOffset,
+    edgeOffset: _edgeOffset,
+    tailOffset: _tailOffset,
+    align: _align,
+    topDisabled: _topDisabled,
+    rightDisabled: _rightDisabled,
+    bottomDisabled: _bottomDisabled,
+    leftDisabled: _leftDisabled,
+    constrainTop: _constrainTop,
+    constrainRight: _constrainRight,
+    constrainBottom: _constrainBottom,
+    constrainLeft: _constrainLeft,
+    content: _content,
+    tail: _tail,
+    ...rest
+  } = props;
+
+  return rest;
 };
 
 class FlowTip extends React.Component<Props, State> {
@@ -615,7 +618,7 @@ class FlowTip extends React.Component<Props, State> {
     const {children, content: Content} = this.props;
 
     const contentProps = {
-      ...omit(FLOWTIP_PROPS, this.props),
+      ...omitFlowtipProps(this.props),
       style: this._getContentStyle(result),
     };
 
