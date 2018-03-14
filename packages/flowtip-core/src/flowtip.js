@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable complexity */
 import Rect from './Rect';
 import type {RectLike} from './Rect';
 

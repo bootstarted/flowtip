@@ -26,6 +26,6 @@
     "clean": "../../node_modules/.bin/rimraf lib",
     "build": "../../node_modules/.bin/babel --copy-files -s -d lib src",
     "copy": "../../node_modules/.bin/ncp src lib && ../../node_modules/.bin/renamer --regex --find '$' --replace '.flow' 'lib/**/*.js'",
-    "prepublish": "npm run clean && npm run copy && npm run build"
+    "prepare": "npm run clean && npm run copy && npm run build"
   }
 }

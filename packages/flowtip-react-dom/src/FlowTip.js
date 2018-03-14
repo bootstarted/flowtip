@@ -113,9 +113,17 @@ export type Props = {
   constrainBottom: boolean,
   /** Constrain the content at the bottom boundary. */
   constrainLeft: boolean,
-  content: React.ComponentType<{style: Object, result: Result}> | string,
-  tail?: React.ComponentType<{style: Object, result: Result}>,
-  children?: any,
+  content: React.ComponentType<{
+    style: Object,
+    result: Result,
+    children?: React.Node,
+  }> | string,
+  tail?: React.ComponentType<{
+    style: Object,
+    result: Result,
+    children?: React.Node,
+  }>,
+  children?: React.Node,
 };
 
 class FlowTip extends React.Component<Props, State> {
@@ -374,7 +382,7 @@ class FlowTip extends React.Component<Props, State> {
    * @param   {Object} nextProps - FlowTip props.
    * @returns {void}
    */
-  _updateState(nextProps: Props): void { // eslint-disable-line complexity
+  _updateState(nextProps: Props): void {
     if (!this._isMounted) return;
 
     // Only trigger a state update if the dynamic measurements have changed

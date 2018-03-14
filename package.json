@@ -5,9 +5,32 @@
     "lerna": "./node_modules/.bin/lerna",
     "lint": "./node_modules/.bin/eslint .",
     "postinstall": "./node_modules/.bin/lerna bootstrap",
-    "test": "npm run lint --silent && npm run flow --silent && npm run unit --silent",
-    "unit": "./node_modules/.bin/jest --coverage",
-    "unit:watch": "npm run unit -- --watch"
+    "test": "npm run lint --silent && npm run flow --silent && npm run spec --silent",
+    "spec": "./node_modules/.bin/jest --runInBand=${SPEC_SERIAL:-$CI} --coverage=${SPEC_COVERAGE:-$CI}",
+    "spec:watch": "npm run spec -- --watch"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.40",
+    "@babel/core": "^7.0.0-beta.40",
+    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.40",
+    "@babel/preset-env": "^7.0.0-beta.40",
+    "@babel/preset-flow": "^7.0.0-beta.40",
+    "@babel/preset-react": "^7.0.0-beta.40",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^22.4.1",
+    "eslint": "^4.18.2",
+    "eslint-config-metalab": "^8.0.0",
+    "flow-bin": "^0.67.1",
+    "jest": "^22.4.2",
+    "lerna": "^2.9.0",
+    "ncp": "^2.0.0",
+    "regenerator-runtime": "^0.11.1",
+    "renamer": "^0.6.1",
+    "rimraf": "^2.6.2"
+  },
+  "devEngines": {
+    "node": "9",
+    "npm": "5"
   },
   "jest": {
     "modulePathIgnorePatterns": [
@@ -15,27 +38,18 @@
     ],
     "coveragePathIgnorePatterns": [
       "__test__/"
-    ]
+    ],
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
   },
-  "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^7.2.3",
-    "babel-preset-env": "^1.6.0",
-    "babel-preset-es2017": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-2": "^6.24.1",
-    "eslint": "^4.5.0",
-    "eslint-config-metalab": "^7.0.1",
-    "flow-bin": "^0.53.1",
-    "jest": "^20.0.4",
-    "lerna": "^2.1.1",
-    "ncp": "^2.0.0",
-    "renamer": "^0.6.1",
-    "rimraf": "^2.6.1"
-  },
-  "devEngines": {
-    "node": "8",
-    "npm": "5"
+  "browserslist": [
+    "last 2 versions",
+    "safari >= 7",
+    "ie >= 10",
+    "> 1%"
+  ],
+  "dependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.40"
   }
 }
