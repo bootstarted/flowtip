@@ -190,7 +190,7 @@ function constrainTop(config: _Config, region: Region, rect: Rect): number {
  * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
  * @returns {bool} True if the content will be constrained.
  */
-function getRegionClip(config: _Config, region: Region): Regions {
+function getRegionClip(config: _Config, region: Region): _Regions {
   const {bounds} = config;
   const rect = getRect(config, region);
 
@@ -794,16 +794,27 @@ function normalizeAlign(align: ?Align): number {
   return 0.5;
 }
 
-const defaults = (rawConfig: Config): _Config => (({
-  offset: 0,
-  overlap: 0,
-  ...rawConfig,
-  align: normalizeAlign(rawConfig.align),
-  bounds: Rect.from(rawConfig.bounds),
-  target: Rect.from(rawConfig.target),
-  disabled: {...noRegions, ...rawConfig.disabled},
-  constrain: {...allRegions, ...rawConfig.constrain},
-}: any): _Config);
+const defaults = ({
+  offset = 0,
+  overlap = 0,
+  align,
+  region,
+  bounds,
+  target,
+  content,
+  disabled,
+  constrain,
+}: Config = {}): _Config => ({
+  offset,
+  overlap,
+  align: normalizeAlign(align),
+  region,
+  bounds: Rect.from(bounds),
+  target: Rect.from(target),
+  content,
+  disabled: {...noRegions, ...disabled},
+  constrain: {...allRegions, ...constrain},
+});
 
 /**
  * Calculate a Flowtip layout result.

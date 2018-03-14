@@ -3,6 +3,9 @@
 
 [include]
 
+[lints]
+all=error
+
 [libs]
 <PROJECT_ROOT>/flow-typed
 
