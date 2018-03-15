@@ -1,7 +1,7 @@
 {
   "name": "flowtip-core",
   "description": "A flexible, adaptable, and easy to use tooltip positioning algorithm.",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "author": "Neal Granger <neal@nealg.com>",
   "main": "./lib",
   "repository": {

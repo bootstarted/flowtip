@@ -1,7 +1,7 @@
 {
   "name": "flowtip-react-dom",
   "description": "A flexible, adaptable, and easy to use tooltip positioning library for React.",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "author": "Neal Granger <neal@nealg.com>",
   "main": "./lib",
   "repository": {
@@ -29,7 +29,7 @@
     "prepare": "npm run clean && npm run copy && npm run build"
   },
   "dependencies": {
-    "flowtip-core": "^5.0.0",
+    "flowtip-core": "^5.1.0",
     "react-resize-observer": "^0.2.1"
   },
   "devDependencies": {
