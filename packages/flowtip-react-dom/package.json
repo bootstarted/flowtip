@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "flowtip-core": "^5.0.0",
-    "react-resize-observer": "^0.2.0"
+    "react-resize-observer": "^0.2.1"
   },
   "devDependencies": {
     "enzyme": "^2.9.1",

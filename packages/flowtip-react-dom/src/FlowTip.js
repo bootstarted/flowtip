@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import {findDOMNode} from 'react-dom';
 import ResizeObserver from 'react-resize-observer';
 
 import flowtip, {
@@ -15,6 +14,7 @@ import flowtip, {
 import type {RectLike, Region, Align, Dimensions, Result} from 'flowtip-core';
 
 import getContainingBlock from './util/getContainingBlock';
+import findDOMNode from './util/findDOMNode';
 
 // Static `flowtip` layout calculation result mock for use during initial client
 // side render or on server render where DOM feedback is not possible.
