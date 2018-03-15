@@ -14,6 +14,8 @@ import flowtip, {
 import type {RectLike, Region, Align, Dimensions, Result} from 'flowtip-core';
 
 import getContainingBlock from './util/getContainingBlock';
+import getClippingBlock from './util/getClippingBlock';
+import getContentRect from './util/getContentRect';
 import findDOMNode from './util/findDOMNode';
 
 // Static `flowtip` layout calculation result mock for use during initial client
@@ -30,8 +32,8 @@ const STATIC_RESULT: Result = {
 };
 
 export type State = {
-  containingBlock: RectLike,
-  bounds: RectLike | null,
+  containingBlock: Rect,
+  bounds: Rect | null,
   content: Dimensions | null,
   tail: Dimensions | null,
   result: Result | null,
@@ -140,11 +142,12 @@ class FlowTip extends React.Component<Props, State> {
 
   _nextContent: Dimensions | null = null;
   _nextTail: Dimensions | null = null;
-  _nextContainingBlock: RectLike = Rect.zero;
-  _nextBounds: RectLike | null = Rect.zero;
+  _nextContainingBlock: Rect = Rect.zero;
+  _nextBounds: Rect | null = null;
   _lastRegion: Region | void;
   _isMounted: boolean = false;
   _containingBlockNode: HTMLElement | null = null;
+  _clippingBlockNode: HTMLElement | null = null;
   _node: HTMLElement | null = null;
   state = this._getState(this.props);
 
@@ -153,7 +156,7 @@ class FlowTip extends React.Component<Props, State> {
   _handleScroll = this._handleScroll.bind(this);
 
   // ===========================================================================
-  // Lifecycle Methods.
+  // Lifecycle Methods
   // ===========================================================================
   componentDidMount(): void {
     this._isMounted = true;
@@ -169,6 +172,7 @@ class FlowTip extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props): void {
+    this._nextContainingBlock = this._getContainingBlockRect();
     this._nextBounds = this._getBoundsRect(nextProps);
 
     this._updateState(nextProps);
@@ -182,6 +186,7 @@ class FlowTip extends React.Component<Props, State> {
     this._isMounted = false;
 
     this._containingBlockNode = null;
+    this._clippingBlockNode = null;
     this._node = null;
 
     window.removeEventListener('scroll', this._handleScroll);
@@ -189,7 +194,7 @@ class FlowTip extends React.Component<Props, State> {
   }
 
   // ===========================================================================
-  // State Management.
+  // State Management
   // ===========================================================================
 
   _getLastRegion(nextProps: Props): Region | void {
@@ -402,59 +407,89 @@ class FlowTip extends React.Component<Props, State> {
   }
 
   // ===========================================================================
-  // DOM Measurement Methods.
+  // DOM Measurement Methods
   // ===========================================================================
 
-  _getBoundsRect(nextProps: Props): RectLike | null {
-    const viewport = new Rect(
-      0,
-      0,
-      window.document.documentElement.clientWidth,
-      window.document.documentElement.clientHeight,
-    );
+  _getBoundsRect(nextProps: Props): Rect | null {
+    const viewportRect = new Rect(0, 0, window.innerWidth, window.innerHeight);
 
-    const bounds = Rect.grow(
-      nextProps.bounds ? Rect.intersect(viewport, nextProps.bounds) : viewport,
-      -nextProps.edgeOffset,
-    );
+    const processBounds = (boundsRect: RectLike) => {
+      const visibleBounds = Rect.grow(
+        Rect.intersect(viewportRect, boundsRect),
+        -nextProps.edgeOffset,
+      );
 
-    // A rect with neagitve dimensions doesn't make sense here.
-    // Returning null disable rendering of any content.
-    if (bounds.width >= 0 && bounds.height >= 0) {
-      return bounds;
+      // A rect with negative dimensions doesn't make sense here.
+      // Returning null will disable rendering content.
+      if (visibleBounds.width < 0 || visibleBounds.height < 0) {
+        return Rect.zero;
+      }
+
+      return visibleBounds;
+    };
+
+    if (nextProps.bounds) {
+      return processBounds(nextProps.bounds);
+    }
+
+    if (document.body && this._clippingBlockNode === document.documentElement) {
+      return processBounds(
+        new Rect(
+          -document.body.scrollLeft,
+          -document.body.scrollTop,
+          document.body.scrollWidth,
+          document.body.scrollHeight,
+        ),
+      );
+    }
+
+    if (this._clippingBlockNode) {
+      return processBounds(getContentRect(this._clippingBlockNode));
     }
 
     return null;
   }
 
-  _getContainingBlockRect(): RectLike {
-    if (!this._containingBlockNode) return Rect.zero;
-    return Rect.from(this._containingBlockNode.getBoundingClientRect());
+  _getContainingBlockRect(): Rect {
+    if (!this._containingBlockNode) {
+      return Rect.zero;
+    }
+
+    if (
+      document.body &&
+      this._containingBlockNode === document.documentElement
+    ) {
+      return new Rect(
+        -document.body.scrollLeft,
+        -document.body.scrollTop,
+        document.body.scrollWidth,
+        document.body.scrollHeight,
+      );
+    }
+
+    return getContentRect(this._containingBlockNode);
   }
 
   // ===========================================================================
-  // DOM Element Accessors.
+  // DOM Element Accessors
   // ===========================================================================
 
   _updateDOMNodes(): void {
     const node = findDOMNode(this);
-    this._node = node instanceof HTMLElement ? node : null;
 
-    const block = this._node && getContainingBlock(this._node.parentNode);
-    if (block) {
-      this._containingBlockNode = block;
-    } else {
-      // Refine nullable `document.body`.
-      // see: https://stackoverflow.com/questions/42377663
-      if (document.body === null) {
-        throw new Error('document.body is null');
-      }
-      this._containingBlockNode = document.body;
+    if (node instanceof HTMLElement) {
+      this._node = node;
+
+      this._containingBlockNode =
+        getContainingBlock(node.parentNode) || document.documentElement;
+
+      this._clippingBlockNode =
+        getClippingBlock(node.parentNode) || document.documentElement;
     }
   }
 
   // ===========================================================================
-  // Event Handlers.
+  // Event Handlers
   // ===========================================================================
 
   /**
@@ -501,7 +536,7 @@ class FlowTip extends React.Component<Props, State> {
   }
 
   // ===========================================================================
-  // Render Methods.
+  // Render Methods
   // ===========================================================================
 
   /**

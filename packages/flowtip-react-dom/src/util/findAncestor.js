@@ -1,7 +1,7 @@
 // @flow
 
 const findAncestor = (
-  callback: (node: Node) => boolean,
+  callback: (node: HTMLElement) => boolean,
   node: ?Node,
 ): HTMLElement | null => {
   let current = node;

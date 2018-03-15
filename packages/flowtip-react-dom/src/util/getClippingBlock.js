@@ -2,16 +2,16 @@
 
 import findAncestor from './findAncestor';
 
-const getContainingBlock = (node: ?Node): HTMLElement | null => {
+const getClippingBlock = (node: ?Node): HTMLElement | null => {
   const result = findAncestor((node) => {
     if (node === document.documentElement) return true;
 
     const style = getComputedStyle(node);
 
-    return style.position && style.position !== 'static';
+    return style.overflow && style.overflow !== 'visible';
   }, node);
 
   return result;
 };
 
-export default getContainingBlock;
+export default getClippingBlock;
