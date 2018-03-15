@@ -37,6 +37,8 @@ export type State = {
   result: Result | null,
 };
 
+type Style = {[string]: string | number};
+
 export type Props = {
   /** DOMRect (or similar shaped object) of target position. */
   target: RectLike | null,
@@ -76,12 +78,12 @@ export type Props = {
   /** Constrain the content at the bottom boundary. */
   constrainLeft: boolean,
   content: React.ComponentType<{
-    style: Object,
+    style: Style,
     result: Result,
     children?: React.Node,
   }> | string,
   tail?: React.ComponentType<{
-    style: Object,
+    style: Style,
     result: Result,
     children?: React.Node,
   }>,
@@ -314,7 +316,10 @@ class FlowTip extends React.Component<Props, State> {
 
     let result = null;
 
-    if (bounds && target && content && (!nextProps.Tail || tail)) {
+    if (
+      bounds && target && content &&
+      (typeof nextProps.Tail !== 'function' || tail)
+    ) {
       const config = {
         offset: this._getOffset(nextProps),
         overlap: this._getOverlap(nextProps),
@@ -504,12 +509,12 @@ class FlowTip extends React.Component<Props, State> {
    * @param   {Object} result - A `flowtip` layout result.
    * @returns {Object} Content position style.
    */
-  _getContentStyle(result: Result): Object {
+  _getContentStyle(result: Result): Style {
     const {containingBlock} = this.state;
 
     // Hide the result with css clip - preserving its ability to be measured -
     // when working with a static layout result mock.
-    if (!result || result._static) {
+    if (!result || result._static === true) {
       return {
         position: 'absolute',
         clip: 'rect(0 0 0 0)',
@@ -530,7 +535,7 @@ class FlowTip extends React.Component<Props, State> {
    * @param   {Object} result - A `flowtip` layout result.
    * @returns {Object} Tail position style.
    */
-  _getTailStyle(result: Result): Object {
+  _getTailStyle(result: Result): Style {
     const {tailOffset} = this.props;
     const {tail} = this.state;
 
@@ -540,7 +545,7 @@ class FlowTip extends React.Component<Props, State> {
 
     const tailAttached = result.offset >= this._getOffset(this.props);
 
-    const style: Object = {
+    const style: Style = {
       position: 'absolute',
       visibility: tailAttached ? 'visible' : 'hidden',
     };
