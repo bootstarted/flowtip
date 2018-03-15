@@ -67,12 +67,12 @@ class FlowTipExample extends React.Component {
 }
 
 .flowtip-tail-top,
-.flowtip-tail-right {
+.flowtip-tail-bottom {
   width: 20px;
   height: 10px;
 }
 
-.flowtip-tail-bottom,
+.flowtip-tail-right,
 .flowtip-tail-left {
   width: 10px;
   height: 20px;
@@ -89,25 +89,25 @@ class FlowTipExample extends React.Component {
 .flowtip-tail-top::before {
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-bottom: 20px solid white;
+  border-top: 10px solid white;
 }
 
 .flowtip-tail-right::before {
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
-  border-left: 20px solid white;
+  border-right: 10px solid white;
 }
 
 .flowtip-tail-bottom::before {
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-top: 20px solid white;
+  border-bottom: 10px solid white;
 }
 
 .flowtip-tail-left::before {
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
-  border-right: 20px solid white;
+  border-left: 10px solid white;
 }
 ```
 
