@@ -29,7 +29,6 @@
     "prepare": "npm run clean && npm run copy && npm run build"
   },
   "dependencies": {
-    "fbjs": "^0.8.12",
     "flowtip-core": "^5.0.0",
     "react-resize-observer": "^0.2.0"
   },

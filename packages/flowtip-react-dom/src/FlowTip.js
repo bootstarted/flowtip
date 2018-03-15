@@ -2,7 +2,6 @@
 import * as React from 'react';
 import {findDOMNode} from 'react-dom';
 import ResizeObserver from 'react-resize-observer';
-import invariant from 'fbjs/lib/invariant';
 
 import flowtip, {
   RIGHT,
@@ -15,22 +14,8 @@ import flowtip, {
 
 import type {RectLike, Region, Align, Dimensions, Result} from 'flowtip-core';
 
-import singleWarning from './util/singleWarning';
 import getContainingBlock from './util/getContainingBlock';
 
-const REMOVED_PROPS = [
-  'anchor',
-  'width',
-  'height',
-  'offset',
-  'clamp',
-  'rotationOffset',
-  'targetAlign',
-  'targetAlignOffset',
-  'rootAlign',
-  'rootAlignOffset',
-  'hideInDisabledRegions',
-];
 // Static `flowtip` layout calculation result mock for use during initial client
 // side render or on server render where DOM feedback is not possible.
 const STATIC_RESULT: Result = {
@@ -166,15 +151,6 @@ class FlowTip extends React.Component<Props, State> {
   // ===========================================================================
   // Lifecycle Methods.
   // ===========================================================================
-  componentWillMount(): void {
-    REMOVED_PROPS.forEach((prop) => singleWarning(
-      `${prop}_deprecated`,
-      !this.props.hasOwnProperty(prop),
-      'React FlowTip `%s` prop is has been removed in this version.',
-      prop,
-    ));
-  }
-
   componentDidMount(): void {
     this._isMounted = true;
 
@@ -463,7 +439,9 @@ class FlowTip extends React.Component<Props, State> {
     } else {
       // Refine nullable `document.body`.
       // see: https://stackoverflow.com/questions/42377663
-      invariant(document.body !== null, 'document.body is null');
+      if (document.body === null) {
+        throw new Error('document.body is null');
+      }
       this._containingBlockNode = document.body;
     }
   }
