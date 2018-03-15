@@ -19,18 +19,21 @@ const {region, rect} = flowtip(config);
 
 ## Config
 
-### `target`: object 
-*required*
+### `target`: object
+
+_required_
 
 The measured position of the target element as a [DOMRect-shaped] object.
 
-### `content`: object 
-*required*
+### `content`: object
+
+_required_
 
 The measured width and height of the tooltip content. as a [dimensions] object.
 
-### `bounds`: object 
-*required*
+### `bounds`: object
+
+_required_
 
 The measured position of the available layout area for the tooltip content as a [DOMRect-shaped] object. This defines the outer collision boundaries referenced by the `constrain` option.
 
@@ -38,7 +41,7 @@ The measured position of the available layout area for the tooltip content as a 
 
 ### `region`: string
 
-*optional*
+_optional_
 
 The preferred region in which the tooltip will appear at first relative to its target. Possibly values are: `top`, `bottom`, `left`, and `right`.
 
@@ -46,7 +49,7 @@ The preferred region in which the tooltip will appear at first relative to its t
 
 ### `offset`: number
 
-*optional*, *default: `0`*
+_optional_, _default: `0`_
 
 The desired distance between the positioned content and the target.
 
@@ -54,7 +57,7 @@ Since the layout algorithm does not factor the size of an indicator triangle ele
 
 ### `overlap`: number
 
-*optional*, *default: `0`*
+_optional_, _default: `0`_
 
 The minimum overlap along an edge for each region to be considered valid.
 
@@ -64,13 +67,13 @@ If you are rendering an indicator triangle, this should be the minimum linear ov
 
 ### `align`: string | number
 
-*optional*, *default: `center`*
+_optional_, _default: `center`_
 
 Linear alignment between the positioned content and the target. Possible values are a number in the range of `0` to `1`, or one of `start`, `center`, and `end` (aliases for `0`, `0.5`, and `1` respectively).
 
 ### `disabled`: object
 
-*optional*, *default: `{top: false, left: false, bottom: false, right: false}`*
+_optional_, _default: `{top: false, left: false, bottom: false, right: false}`_
 
 Map of boolean values denoting particular regions as disabled.
 
@@ -88,7 +91,7 @@ flowtip({
 
 ### `constrain`: object
 
-*optional*, *default: `{top: true, left: true, bottom: true, right: true}`*
+_optional_, _default: `{top: true, left: true, bottom: true, right: true}`_
 
 Map of boolean values denoting particular boundary edges should constrain the positioned tooltip.
 
@@ -100,5 +103,5 @@ While `flowtip-core` has no dependency on the DOM, it is designed to be directly
 
 The absolute reference frame of the measurements does not have an impact on the calculation - as long as all measurements are relative to the same frame everything will work out.
 
-[DOMRect-shaped]: #rect-interface
+[domrect-shaped]: #rect-interface
 [dimensions]: #rect-interface

@@ -19,15 +19,17 @@ import React from 'react';
 import FlowTip from 'flowtip-react-dom';
 import ResizeObserver from 'react-resize-observer';
 
-const Content = ({result, children, style}) =>
-  <div className='flowtip-content' style={style}>
+const Content = ({result, children, style}) => (
+  <div className="flowtip-content" style={style}>
     {children}
-  </div>;
+  </div>
+);
 
-const Tail = ({result, children, style}) =>
-  <div className={`flowtip-tail-${result.region}`} style={style} >
+const Tail = ({result, children, style}) => (
+  <div className={`flowtip-tail-${result.region}`} style={style}>
     {children}
-  </div>;
+  </div>
+);
 
 class FlowTipExample extends React.Component {
   state = {flowTipOpen: false, target: null};
@@ -39,20 +41,19 @@ class FlowTipExample extends React.Component {
   render() {
     return (
       <div>
-        <button onClick={this._toggleFowTip}>
-          <ResizeObserver onReflow={this._handleTargetReflow}/>
+        <button onClick={this._toggleFlowTip}>
+          <ResizeObserver onReflow={this._handleTargetReflow} />
           Activate FlowTip
         </button>
-        {!!this.state.flowTipOpen &&
+        {!!this.state.flowTipOpen && (
           <FlowTip target={this.state.target} content={Content} tail={Tail}>
             FlowTip Content
           </FlowTip>
-        }
+        )}
       </div>
     );
   }
-};
-
+}
 ```
 
 <details>
@@ -81,7 +82,7 @@ class FlowTipExample extends React.Component {
 .flowtip-tail-right::before,
 .flowtip-tail-bottom::before,
 .flowtip-tail-left::before {
-  content: "";
+  content: '';
   display: block;
 }
 
@@ -133,10 +134,11 @@ When a `tail` component is provided, FlowTip renders it as a child of the `conte
 Reference `result.region` in your `tail` component to style it in the correct orientation:
 
 ```jsx
-const Tail = ({result, children, style}) =>
-  <div className={`flowtip-tail-${result.region}`} style={style} >
+const Tail = ({result, children, style}) => (
+  <div className={`flowtip-tail-${result.region}`} style={style}>
     {children}
-  </div>;
+  </div>
+);
 ```
 
 The `result` object contains additional information useful for advanced styling tasks. `result.offset` represents the current distance between the content and the target. `result.reason` contains a string value (either `default`, `inverted`, `ideal`, `external`, or `fallback`) describing the current state of the layout calculation. Checking if the `reason` value is equal to `external` is a way to detect if the tail is "detached" from the target - a case where you may want to hide it.
@@ -190,23 +192,23 @@ FlowTip uses [`react-resize-observer`] to measure the dimensions of the rendered
 Content Border Example:
 
 ```jsx
-const Tail = ({result, children, style}) =>
-  <div className={`flowtip-tail-${result.region}`} style={style} >
+const Tail = ({result, children, style}) => (
+  <div className={`flowtip-tail-${result.region}`} style={style}>
     {children}
-  </div>;
+  </div>
+);
 
-const StyledFlowTip = ({children, ...props}) =>
+const StyledFlowTip = ({children, ...props}) => (
   <FlowTip tail={Tail} {...props}>
-    <div className="flowtip-content">
-      {children}
-    </div>
+    <div className="flowtip-content">{children}</div>
   </FlowTip>
+);
 
 // Rendering StyledFlowTip component:
-{!!this.state.flowTipOpen &&
-  <StyledFlowTip target={this.state.target}>
-    FlowTip Content
-  </StyledFlowTip>
+{
+  !!this.state.flowTipOpen && (
+    <StyledFlowTip target={this.state.target}>FlowTip Content</StyledFlowTip>
+  );
 }
 ```
 
@@ -236,9 +238,9 @@ import FlowTip from 'flowtip-react-dom';
 import ResizeObserver from 'react-resize-observer';
 import FocusTrap from 'focus-trap-react';
 
-const Content = ({result, children, style, onClose}) =>
+const Content = ({result, children, style, onClose}) => (
   <FocusTrap
-    className='flowtip-content'
+    className="flowtip-content"
     style={style}
     focusTrapOptions={{
       onDeactivate: onClose,
@@ -247,12 +249,14 @@ const Content = ({result, children, style, onClose}) =>
     }}
   >
     {children}
-  </FocusTrap>;
+  </FocusTrap>
+);
 
-const Tail = ({result, children, style}) =>
-  <div className={`flowtip-tail-${result.region}`} style={style} >
+const Tail = ({result, children, style}) => (
+  <div className={`flowtip-tail-${result.region}`} style={style}>
     {children}
-  </div>;
+  </div>
+);
 
 class FlowTipExample extends React.Component {
   state = {flowTipOpen: false, target: null};
@@ -266,10 +270,10 @@ class FlowTipExample extends React.Component {
     return (
       <div>
         <button onClick={this._openFlowTip}>
-          <ResizeObserver onReflow={this._handleTargetReflow}/>
+          <ResizeObserver onReflow={this._handleTargetReflow} />
           Activate FlowTip
         </button>
-        {!!this.state.flowTipOpen &&
+        {!!this.state.flowTipOpen && (
           <FlowTip
             target={this.state.target}
             content={Content}
@@ -278,18 +282,18 @@ class FlowTipExample extends React.Component {
           >
             FlowTip Content
           </FlowTip>
-        }
+        )}
       </div>
     );
   }
-};
+}
 ```
 
 ## Component Props
 
 ### `target`: object | null
 
-*required*
+_required_
 
 The measured position of the target element as a [DOMRect-shaped] object.
 
@@ -297,7 +301,7 @@ The measured position of the target element as a [DOMRect-shaped] object.
 
 ### `bounds`: object
 
-*optional*
+_optional_
 
 The measured position of the available layout area for the tooltip content as a [DOMRect-shaped] object. This defines the outer collision boundaries referenced by the `constrain` prop.
 
@@ -305,7 +309,7 @@ The measured position of the available layout area for the tooltip content as a 
 
 ### `region`: string
 
-*optional*
+_optional_
 
 The preferred region in which the tooltip will appear at first relative to its target. Possibly values are: `top`, `bottom`, `left`, and `right`.
 
@@ -313,7 +317,7 @@ The preferred region in which the tooltip will appear at first relative to its t
 
 ### `sticky`: boolean
 
-*optional*, *default: `false`*
+_optional_, _default: `false`_
 
 Disabling `sticky` will make the component reposition its content to occupy whatever the current ideal region is - regardless of its current position.
 
@@ -321,19 +325,19 @@ This results in apparently unnecessary reposition events. When `sticky` is true,
 
 ### `targetOffset`: number
 
-*optional*, *default: `0`*
+_optional_, _default: `0`_
 
 The desired margin between the positioned content tail and the target.
 
 ### `edgeOffset`: number
 
-*optional*, *default: `0`*
+_optional_, _default: `0`_
 
 The minimum margin between the positioned content and the boundary. A positive value will prevent the content from touching the boundary edge, a negative value will allow the content to overflow the boundary before a collision is detected.
 
 ### `tailOffset`: number
 
-*optional*, *default: `0`*
+_optional_, _default: `0`_
 
 The minimum distance between the tail and corner of the content along an edge.
 
@@ -341,55 +345,55 @@ The minimum distance between the tail and corner of the content along an edge.
 
 ### `align`: string | number
 
-*optional*, *default: `center`*
+_optional_, _default: `center`_
 
 Linear alignment between the positioned content and the target. Possible values are a number in the range of `0` to `1`, or one of `start`, `center`, and `end` (aliases for `0`, `0.5`, and `1` respectively).
 
 ### `topDisabled`: boolean
 
-*optional*, *default: `false`*
+_optional_, _default: `false`_
 
 Disable rendering the content above the target.
 
 ### `rightDisabled`: boolean
 
-*optional*, *default: `false`*
+_optional_, _default: `false`_
 
 Disable rendering the content to the right of the target.
 
 ### `bottomDisabled`: boolean
 
-*optional*, *default: `false`*
+_optional_, _default: `false`_
 
 Disable rendering the content below the target.
 
 ### `leftDisabled`: boolean
 
-*optional*, *default: `false`*
+_optional_, _default: `false`_
 
 Disable rendering the content to the left of the target.
 
 ### `constrainTop`: object
 
-*optional*, *default: `true`*
+_optional_, _default: `true`_
 
 Disable rendering the content outside the bounds area in the top region.
 
 ### `constrainRight`: object
 
-*optional*, *default: `true`*
+_optional_, _default: `true`_
 
 Disable rendering the content outside the bounds area in the right region.
 
 ### `constrainBottom`: object
 
-*optional*, *default: `true`*
+_optional_, _default: `true`_
 
 Disable rendering the content outside the bounds area in the bottom region.
 
 ### `constrainLeft`: object
 
-*optional*, *default: `true`*
+_optional_, _default: `true`_
 
 Disable rendering the content outside the bounds area in the left region.
 
@@ -397,13 +401,13 @@ Content: ReactClass<{style: Object, result: Result}>,
 
 ### `content`: function | string
 
-*optional*, *default: `div`*
+_optional_, _default: `div`_
 
 A React Class or stateless component responsible for rendering the tooltip content.
 
 FlowTip renders this component with `children`, `style`, and `result` props. The `children` and `style` props must be passed to its root HTML tag element for content positioning to work.
 
-Example `Content` component: 
+Example `Content` component:
 
 ```jsx
 const Content = ({result, children, style}) =>
@@ -420,13 +424,13 @@ const Content = ({result, children, style}) =>
 
 ### `tail`: function
 
-*optional*
+_optional_
 
 An optional React Class or stateless component responsible for rendering the tail content.
 
 FlowTip renders this component with `children`, `style`, and `result` props. The `children` and `style` props must be passed to its root HTML tag element for tail positioning to work.
 
-Example `Tail` component: 
+Example `Tail` component:
 
 ```jsx
 const Tail = ({result, children, style}) =>
@@ -440,14 +444,13 @@ const Tail = ({result, children, style}) =>
 
 ## Rect Interface
 
-While `flowtip-core` has no dependency on the DOM, it is designed to be directly compatible with DOMRect instances returned from `getClientBoundingRect()` calls. Any object that satisfies the DOMRect object interface `top: number, left: number,  width: number, height: number, bottom?: number, right?: number` can be used.
+While `flowtip-core` has no dependency on the DOM, it is designed to be directly compatible with DOMRect instances returned from `getClientBoundingRect()` calls. Any object that satisfies the DOMRect object interface `top: number, left: number, width: number, height: number, bottom?: number, right?: number` can be used.
 
 The absolute reference frame of the measurements does not have an impact on the calculation - as long as all measurements are relative to the same frame.
 
-[DOMRect-shaped]: #rect-interface
+[domrect-shaped]: #rect-interface
 [dimensions]: #rect-interface
-
-[React DOM]: https://facebook.github.io/react/docs/react-dom.html
+[react dom]: https://facebook.github.io/react/docs/react-dom.html
 [`react-resize-observer`]: https://github.com/metalabdesign/react-resize-observer
 [`focus-trap-react`]: https://github.com/davidtheclark/focus-trap-react
 [`react-resize-observer`]: https://github.com/metalabdesign/react-resize-observer
