@@ -1,0 +1,4 @@
+env:
+  node: true
+rules:
+  metalab/filenames/match-exported: 0

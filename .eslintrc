@@ -5,13 +5,22 @@ plugins:
   - prettier
 rules:
   complexity: 0
+  indent: 0
   jsx-quotes:
     - 2
     - prefer-double
   prettier/prettier: 2
+  max-len:
+    - 2
+    -
+      ignorePattern: '^#!'
   metalab/flowtype/space-after-type-colon: 0
+  metalab/react/prefer-stateless-function: 0
 overrides:
   -
     files: "*.test.js"
     env:
       jest: true
+globals:
+  __DEV__: false
+  module: false
