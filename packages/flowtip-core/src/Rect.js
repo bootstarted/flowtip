@@ -83,7 +83,7 @@ class Rect {
    *
    * @param   {object} [a] A rect-like object.
    * @param   {object} [b] A rect-like object.
-   * @returns {boolean} A Rect instance.
+   * @returns {boolean} True if rects are equal.
    */
   static areEqual(a: ?RectLike, b: ?RectLike): boolean {
     if (a === b) return true;
