@@ -2,13 +2,13 @@
   "private": true,
   "scripts": {
     "flow": "./node_modules/.bin/flow",
+    "format": "./node_modules/.bin/prettier --write '**/*.js'",
     "lerna": "./node_modules/.bin/lerna",
     "lint": "./node_modules/.bin/eslint .",
-    "format": "./node_modules/.bin/prettier --write '**/*.js'",
-    "postinstall": "./node_modules/.bin/lerna bootstrap",
-    "test": "npm run lint --silent && npm run flow --silent && npm run spec --silent",
+    "prepare": "./node_modules/.bin/lerna bootstrap",
     "spec": "./node_modules/.bin/jest --runInBand=${SPEC_SERIAL:-$CI} --coverage=${SPEC_COVERAGE:-$CI}",
-    "spec:watch": "npm run spec -- --watch"
+    "spec:watch": "npm run spec -- --watch",
+    "test": "npm run flow --silent && npm run lint --slient && npm run spec --silent"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.40",
@@ -19,6 +19,9 @@
     "@babel/preset-react": "^7.0.0-beta.40",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^22.4.1",
+    "babel-plugin-module-resolver": "^3.1.0",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^4.18.2",
     "eslint-config-metalab": "^8.0.0",
     "eslint-plugin-prettier": "^2.6.0",
@@ -27,6 +30,8 @@
     "lerna": "^2.9.0",
     "ncp": "^2.0.0",
     "prettier": "^1.11.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "regenerator-runtime": "^0.11.1",
     "renamer": "^0.6.1",
     "rimraf": "^2.6.2"
@@ -44,7 +49,10 @@
     ],
     "transform": {
       "^.+\\.jsx?$": "babel-jest"
-    }
+    },
+    "setupFiles": [
+      "./__test__/setup.js"
+    ]
   },
   "browserslist": [
     "last 2 versions",

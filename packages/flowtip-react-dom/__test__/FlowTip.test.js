@@ -14,15 +14,11 @@ describe('Flowtip', () => {
     it('should equal the `Content` DOM node', () => {
       document.body.innerHTML = renderToStaticMarkup(<div id="root" />);
 
-      const wrapper = mount(<Flowtip content={'foobar'} target={rect} />, {
+      const wrapper = mount(<Flowtip content={Content} target={rect} />, {
         attachTo: document.getElementById('root'),
       });
 
-      const instance = wrapper.instance();
-      const content = wrapper.find('foobar').get(0);
-
-      expect(content).toBeTruthy();
-      expect(instance._node).toEqual(content);
+      expect(wrapper.find(Content).length).toEqual(1);
       wrapper.unmount();
     });
   });

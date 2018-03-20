@@ -3,6 +3,9 @@
 
 [include]
 
+[ignore]
+<PROJECT_ROOT>/packages/\(flowtip-core\|flowtip-react-dom\)/lib/.*\.js.flow$
+
 [lints]
 all=error
 
@@ -13,3 +16,9 @@ all=error
 emoji=true
 include_warnings=true
 suppress_comment=\\(.\\|\n\\)*\\$ExpectError
+
+# Map requests to `lib` folder in each package to `src`. This makes flow
+# reference the src files and prevents the need for running the prepare script
+# when flow-checking changes across packages.
+module.name_mapper='^\(flowtip-core\|flowtip-react-dom\)/lib\($\|/.*$\)' -> '<PROJECT_ROOT>/packages/\1/src\2'
+module.name_mapper='^\(flowtip-core\|flowtip-react-dom\)$' -> '<PROJECT_ROOT>/packages/\1/src'
