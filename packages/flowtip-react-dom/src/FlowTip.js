@@ -331,6 +331,7 @@ class FlowTip extends React.Component<Props, State> {
     ) {
       const config = {
         offset: this._getOffset(nextProps),
+        edgeOffset: nextProps.edgeOffset,
         overlap: this._getOverlap(nextProps),
         align: nextProps.align,
         region: this._getRegion(nextProps),
@@ -414,10 +415,7 @@ class FlowTip extends React.Component<Props, State> {
     const viewportRect = new Rect(0, 0, window.innerWidth, window.innerHeight);
 
     const processBounds = (boundsRect: RectLike) => {
-      const visibleBounds = Rect.grow(
-        Rect.intersect(viewportRect, boundsRect),
-        -nextProps.edgeOffset,
-      );
+      const visibleBounds = Rect.intersect(viewportRect, boundsRect);
 
       // A rect with negative dimensions doesn't make sense here.
       // Returning null will disable rendering content.
