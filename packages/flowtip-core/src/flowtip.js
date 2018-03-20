@@ -96,7 +96,7 @@ function getRect(config: _Config, region: Region): Rect {
     if (region === LEFT) {
       left = target.left - content.width - offset;
     } else {
-      // Region is bottom.
+      // Region is right.
       left = target.right + offset;
     }
   }
@@ -189,8 +189,8 @@ function constrainTop(config: _Config, region: Region, rect: Rect): number {
  * region.
  *
  * @param   {Object} config FlowTip layout config object.
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @returns {bool} True if the content will be constrained.
+ * @param   {string} region A region (`top`, `right`, `bottom`, or `left`)
+ * @returns {Object} Clipped regions (`{top, right, bottom, left}`).
  */
 function getRegionClip(config: _Config, region: Region): _Regions {
   const {bounds} = config;
@@ -413,7 +413,7 @@ function getIdealRegion(config: _Config, valid: _Regions): ?Region {
  *                     \              |              /
  *                       \            |            /
  *                         \__________|__________/
- *              top-right  | \        |        / | top-right
+ *               top-left  | \        |        / | top-right
  *  left       lower half  |   \      |      /   | lower half         right
  *  quadrant               |     \    |    /     |                 quadrant
  *  returns   -------------|------+---+---+------|--------------    returns
@@ -442,7 +442,7 @@ function getIdealRegion(config: _Config, valid: _Regions): ?Region {
  *
  *                       \            |            /
  *                         \__________|__________/
- *              top-right  | \        |        / | top-right
+ *               top-left  | \        |        / | top-right
  *  left       lower half  |   \      |      /   | lower half         right
  *  quadrant               |     \    |    /     |                 quadrant
  *  returns   -------------|------+---+---+------|--------------    returns
