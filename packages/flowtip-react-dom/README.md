@@ -111,7 +111,7 @@ class FlowTipExample extends React.Component {
 }
 ```
 
-See [Styling Flowtip](#styling-flowtip) for more details.
+See [Styling FlowTip](#styling-flowtip) for more details.
 
 </details>
 
