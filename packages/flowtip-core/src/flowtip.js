@@ -207,7 +207,7 @@ function getRegionClip(config: _Config, region: Region): _Regions {
     top: rect.top + topOffset < bounds.top,
     right: bounds.right < rect.right + rightOffset,
     bottom: bounds.bottom < rect.bottom + bottomOffset,
-    left: rect.left + leftOffset < bounds.top,
+    left: rect.left + leftOffset < bounds.left,
   };
 }
 
