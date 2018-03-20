@@ -104,6 +104,16 @@ class Rect {
     );
   }
 
+  /**
+   * Determine if a rect-like object has valid positive area.
+   *
+   * @param   {Object} [rect] A rect-like object.
+   * @returns {boolean} True if the rect has a positive area.
+   */
+  static isValid(rect: RectLike): boolean {
+    return rect.width >= 0 && rect.height >= 0;
+  }
+
   constructor(left: number, top: number, width: number, height: number): void {
     this.left = left;
     this.top = top;

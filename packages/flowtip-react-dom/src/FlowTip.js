@@ -1,26 +1,25 @@
 // @flow
+
 import * as React from 'react';
-import ResizeObserver from 'react-resize-observer';
+import flowtip, {CENTER, Rect, areEqualDimensions} from 'flowtip-core';
+import type {RectLike, Region, Dimensions, Result} from 'flowtip-core';
 
-import flowtip, {
-  RIGHT,
-  LEFT,
-  CENTER,
-  Rect,
-  areEqualDimensions,
-  getClampedTailPosition,
-} from 'flowtip-core';
-
-import type {RectLike, Region, Align, Dimensions, Result} from 'flowtip-core';
-
-import getContainingBlock from './util/getContainingBlock';
-import getClippingBlock from './util/getClippingBlock';
-import getContentRect from './util/getContentRect';
+import type {Props, State} from './types';
 import findDOMNode from './util/findDOMNode';
+import {
+  getBorders,
+  getContainingBlock,
+  getClippingBlock,
+  getContentRect,
+} from './util/dom';
+import {getRegion, getOverlap, getOffset} from './util/state';
+import defaultRender from './defaultRender';
 
 // Static `flowtip` layout calculation result mock for use during initial client
 // side render or on server render where DOM feedback is not possible.
 const STATIC_RESULT: Result = {
+  bounds: Rect.zero,
+  target: Rect.zero,
   region: 'bottom',
   reason: 'default',
   rect: Rect.zero,
@@ -29,95 +28,6 @@ const STATIC_RESULT: Result = {
   overlap: 0,
   overlapCenter: 0,
   _static: true,
-};
-
-export type State = {
-  containingBlock: Rect,
-  bounds: Rect | null,
-  content: Dimensions | null,
-  tail: Dimensions | null,
-  result: Result | null,
-};
-
-type Style = {[string]: string | number};
-
-export type Props = {
-  /** DOMRect (or similar shaped object) of target position. */
-  target: RectLike | null,
-  /**
-    DOMRect (or similar shaped object) of content boundary.
-   */
-  bounds: RectLike | null,
-  /** Default region the content should unless otherwise constrained. */
-  region: Region | void,
-  /** Retain the previous rendered region unless otherwise constrained. */
-  sticky: boolean,
-  /** Offset between target rect and tail. */
-  targetOffset: number,
-  /** Minimum distance between content react and boundary edge. */
-  edgeOffset: number,
-  /**
-   * Prevent the tail from getting within this distance of the corner of
-   * the content.
-   */
-  tailOffset: number,
-  /** Relative alignment of content rect and target rect. */
-  align: Align,
-  /** Disable the top region. */
-  topDisabled: boolean,
-  /** Disable the right region. */
-  rightDisabled: boolean,
-  /** Disable the bottom region. */
-  bottomDisabled: boolean,
-  /** Disable the left region. */
-  leftDisabled: boolean,
-  /** Constrain the content at the top boundary. */
-  constrainTop: boolean,
-  /** Constrain the content at the top boundary. */
-  constrainRight: boolean,
-  /** Constrain the content at the right boundary. */
-  constrainBottom: boolean,
-  /** Constrain the content at the bottom boundary. */
-  constrainLeft: boolean,
-  content:
-    | React.ComponentType<{
-        style: Style,
-        result: Result,
-        children?: React.Node,
-      }>
-    | string,
-  tail?: React.ComponentType<{
-    style: Style,
-    result: Result,
-    children?: React.Node,
-  }>,
-  children?: React.Node,
-};
-
-const omitFlowtipProps = (props: Props) => {
-  const {
-    target: _target,
-    bounds: _bounds,
-    region: _region,
-    sticky: _sticky,
-    targetOffset: _targetOffset,
-    edgeOffset: _edgeOffset,
-    tailOffset: _tailOffset,
-    align: _align,
-    topDisabled: _topDisabled,
-    rightDisabled: _rightDisabled,
-    bottomDisabled: _bottomDisabled,
-    leftDisabled: _leftDisabled,
-    constrainTop: _constrainTop,
-    constrainRight: _constrainRight,
-    constrainBottom: _constrainBottom,
-    constrainLeft: _constrainLeft,
-    content: _content,
-    tail: _tail,
-    ...rest
-  } = props;
-
-  return rest;
 };
 
 class FlowTip extends React.Component<Props, State> {
@@ -137,7 +47,7 @@ class FlowTip extends React.Component<Props, State> {
     constrainRight: true,
     constrainBottom: true,
     constrainLeft: true,
-    content: 'div',
+    render: defaultRender,
   };
 
   _nextContent: Dimensions | null = null;
@@ -149,15 +59,17 @@ class FlowTip extends React.Component<Props, State> {
   _containingBlockNode: HTMLElement | null = null;
   _clippingBlockNode: HTMLElement | null = null;
   _node: HTMLElement | null = null;
-  state = this._getState(this.props);
+  state = {
+    containingBlock: Rect.zero,
+    bounds: null,
+    content: null,
+    contentBorders: null,
+    tail: null,
+    result: STATIC_RESULT,
+  };
 
-  _handleContentSize = this._handleContentSize.bind(this);
-  _handleTailSize = this._handleTailSize.bind(this);
-  _handleScroll = this._handleScroll.bind(this);
+  // Lifecycle Methods =========================================================
 
-  // ===========================================================================
-  // Lifecycle Methods
-  // ===========================================================================
   componentDidMount(): void {
     this._isMounted = true;
 
@@ -193,112 +105,7 @@ class FlowTip extends React.Component<Props, State> {
     window.removeEventListener('resize', this._handleScroll);
   }
 
-  // ===========================================================================
-  // State Management
-  // ===========================================================================
-
-  _getLastRegion(nextProps: Props): Region | void {
-    return this._lastRegion || nextProps.region;
-  }
-
-  _getRegion(nextProps: Props): Region | void {
-    // Feed the current region in as the default if `sticky` is true.
-    // This makes the component stay in its region until it meets a
-    // boundary edge and must change.
-    return nextProps.sticky ? this._getLastRegion(nextProps) : nextProps.region;
-  }
-
-  /**
-   * Get the dimension of the tail perpendicular to the attached edge of the
-   * content rect.
-   *
-   * Note: `props` are passed in as an argument to allow using this method from
-   * within `componentWillReceiveProps`.
-   *
-   * @param   {Object} nextProps - FlowTip props.
-   * @returns {number} Tail length.
-   */
-  _getTailLength(nextProps: Props): number {
-    const lastRegion = this._getLastRegion(nextProps);
-
-    if (this._nextTail) {
-      // Swap the width and height into "base" and "length" to create
-      // measurements that are agnostic to tail orientation.
-      if (lastRegion === LEFT || lastRegion === RIGHT) {
-        return this._nextTail.width;
-      }
-      // Either lastRegion is top or bottom - or it is undefined, which means
-      // the tail was rendered using the static dummy result that uses the
-      // bottom region.
-      return this._nextTail.height;
-    }
-
-    return 0;
-  }
-
-  /**
-   * Get the offset between the target and the content rect.
-   *
-   * The flowtip layout calculation does not factor the dimensions of the tail.
-   * This method encodes the tail dimension into the `offset` parameter.
-   *
-   * Note: `props` are passed in as an argument to allow using this method from
-   * within `componentWillReceiveProps`.
-   *
-   * @param   {Object} nextProps - FlowTip props.
-   * @returns {number} Tail length.
-   */
-  _getOffset(nextProps: Props) {
-    // Ensure that the there is `targetOffset` amount of space between the
-    // tail and the target rect.
-    return nextProps.targetOffset + this._getTailLength(nextProps);
-  }
-
-  /**
-   * Get the dimension of the tail parallel to the attached edge of the content
-   * rect.
-   *
-   * Note: `props` are passed in as an argument to allow using this method from
-   * within `componentWillReceiveProps`.
-   *
-   * @param   {Object} nextProps - FlowTip props.
-   * @returns {number} Tail base size.
-   */
-  _getTailBase(nextProps: Props): number {
-    const lastRegion = this._getLastRegion(nextProps);
-
-    if (this._nextTail) {
-      // Swap the width and height into "base" and "length" to create
-      // measurements that are agnostic to tail orientation.
-      if (lastRegion === LEFT || lastRegion === RIGHT) {
-        return this._nextTail.height;
-      }
-      // Either lastRegion is top or bottom - or it is undefined, which means
-      // the tail was rendered using the static dummy result that uses the
-      // bottom region
-      return this._nextTail.width;
-    }
-
-    return 0;
-  }
-
-  /**
-   * Get current minimum linear overlap value.
-   *
-   * Overlap ensures that there is always enough room to render a tail that
-   * points to the target rect. This will force the content to enter a
-   * different region if there is not enough room. The `tailOffset` value
-   * is the minumun distance between the tail and the content corner.
-   *
-   * Note: `props` are passed in as an argument to allow using this method from
-   * within `componentWillReceiveProps`.
-   *
-   * @param   {Object} nextProps - FlowTip props.
-   * @returns {number} Minimum linear overlap.
-   */
-  _getOverlap(nextProps: Props): number {
-    return nextProps.tailOffset + this._getTailBase(nextProps) / 2;
-  }
+  // State Management ==========================================================
 
   /**
    * Get the next state.
@@ -321,7 +128,7 @@ class FlowTip extends React.Component<Props, State> {
     const tail = this._nextTail;
     const target = nextProps.target;
 
-    let result = null;
+    let result = STATIC_RESULT;
 
     if (
       bounds &&
@@ -329,12 +136,25 @@ class FlowTip extends React.Component<Props, State> {
       content &&
       (typeof nextProps.Tail !== 'function' || tail)
     ) {
+      const intermediateState = {
+        ...this.state,
+        bounds,
+        containingBlock,
+        tail,
+        content,
+      };
+
+      const offset = getOffset(nextProps, intermediateState);
+      const overlap = getOverlap(nextProps, intermediateState);
+      const region = getRegion(nextProps, intermediateState);
+      const {edgeOffset = offset, align} = nextProps;
+
       const config = {
-        offset: this._getOffset(nextProps),
-        edgeOffset: nextProps.edgeOffset,
-        overlap: this._getOverlap(nextProps),
-        align: nextProps.align,
-        region: this._getRegion(nextProps),
+        offset,
+        edgeOffset,
+        overlap,
+        align,
+        region,
         bounds,
         target,
         content,
@@ -353,16 +173,16 @@ class FlowTip extends React.Component<Props, State> {
       };
 
       result = flowtip(config);
-
-      this._lastRegion = result.region;
     }
+
+    const contentBorders = this._node ? getBorders(this._node) : null;
 
     return {
       containingBlock,
       bounds,
       content,
+      contentBorders,
       tail,
-
       result,
     };
   }
@@ -407,9 +227,7 @@ class FlowTip extends React.Component<Props, State> {
     }
   }
 
-  // ===========================================================================
-  // DOM Measurement Methods
-  // ===========================================================================
+  // DOM Measurement Methods ===================================================
 
   _getBoundsRect(nextProps: Props): Rect | null {
     const viewportRect = new Rect(0, 0, window.innerWidth, window.innerHeight);
@@ -417,13 +235,7 @@ class FlowTip extends React.Component<Props, State> {
     const processBounds = (boundsRect: RectLike) => {
       const visibleBounds = Rect.intersect(viewportRect, boundsRect);
 
-      // A rect with negative dimensions doesn't make sense here.
-      // Returning null will disable rendering content.
-      if (visibleBounds.width < 0 || visibleBounds.height < 0) {
-        return Rect.zero;
-      }
-
-      return visibleBounds;
+      return Rect.isValid(visibleBounds) ? visibleBounds : null;
     };
 
     if (nextProps.bounds) {
@@ -468,9 +280,7 @@ class FlowTip extends React.Component<Props, State> {
     return getContentRect(this._containingBlockNode);
   }
 
-  // ===========================================================================
-  // DOM Element Accessors
-  // ===========================================================================
+  // DOM Element Accessors =====================================================
 
   _updateDOMNodes(): void {
     const node = findDOMNode(this);
@@ -478,17 +288,13 @@ class FlowTip extends React.Component<Props, State> {
     if (node instanceof HTMLElement) {
       this._node = node;
 
-      this._containingBlockNode =
-        getContainingBlock(node.parentNode) || document.documentElement;
+      this._containingBlockNode = getContainingBlock(node.parentNode);
 
-      this._clippingBlockNode =
-        getClippingBlock(node.parentNode) || document.documentElement;
+      this._clippingBlockNode = getClippingBlock(node.parentNode);
     }
   }
 
-  // ===========================================================================
-  // Event Handlers
-  // ===========================================================================
+  // Event Handlers ============================================================
 
   /**
    * Content `ResizeObserver` handler.
@@ -496,13 +302,13 @@ class FlowTip extends React.Component<Props, State> {
    * Responds to changes in the dimensions of the rendered content and updates
    * the cached `_nextContent` rect and triggers a state update.
    *
-   * @param   {Object} rect - DOMRect instance.
+   * @param   {Object} rect - Object with `width` and `height` properties.
    * @returns {void}
    */
-  _handleContentSize(rect: ClientRect): void {
+  _handleContentSize = (rect: Dimensions) => {
     this._nextContent = {width: rect.width, height: rect.height};
     this._updateState(this.props);
-  }
+  };
 
   /**
    *
@@ -511,13 +317,13 @@ class FlowTip extends React.Component<Props, State> {
    * Responds to changes in the dimensions of the rendered tail element and
    * updates the cached `_nextContent` rect and triggers a state update.
    *
-   * @param   {Object} rect - DOMRect instance.
+   * @param   {Object} rect - Object with `width` and `height` properties.
    * @returns {void}
    */
-  _handleTailSize(rect: ClientRect): void {
+  _handleTailSize = (rect: Dimensions) => {
     this._nextTail = {width: rect.width, height: rect.height};
     this._updateState(this.props);
-  }
+  };
 
   /**
    * Window scroll handler.
@@ -527,142 +333,19 @@ class FlowTip extends React.Component<Props, State> {
    *
    * @returns {void}
    */
-  _handleScroll(): void {
+  _handleScroll = () => {
     this._nextContainingBlock = this._getContainingBlockRect();
     this._nextBounds = this._getBoundsRect(this.props);
     this._updateState(this.props);
-  }
-
-  // ===========================================================================
-  // Render Methods
-  // ===========================================================================
-
-  /**
-   * Get the content element position style based on the current layout result
-   * in the state.
-   *
-   * @param   {Object} result - A `flowtip` layout result.
-   * @returns {Object} Content position style.
-   */
-  _getContentStyle(result: Result): Style {
-    const {containingBlock} = this.state;
-
-    // Hide the result with css clip - preserving its ability to be measured -
-    // when working with a static layout result mock.
-    if (!result || result._static === true) {
-      return {
-        position: 'absolute',
-        clip: 'rect(0 0 0 0)',
-      };
-    }
-
-    return {
-      position: 'absolute',
-      top: Math.round(result.rect.top - containingBlock.top),
-      left: Math.round(result.rect.left - containingBlock.left),
-    };
-  }
-
-  /**
-   * Get the tail element position style based on the current layout result in
-   * the state.
-   *
-   * @param   {Object} result - A `flowtip` layout result.
-   * @returns {Object} Tail position style.
-   */
-  _getTailStyle(result: Result): Style {
-    const {tailOffset} = this.props;
-    const {tail} = this.state;
-
-    if (!result) return {position: 'absolute'};
-
-    const {region} = result;
-
-    const tailAttached = result.offset >= this._getOffset(this.props);
-
-    const style: Style = {
-      position: 'absolute',
-      visibility: tailAttached ? 'visible' : 'hidden',
-    };
-
-    if (tail) {
-      const position = getClampedTailPosition(result, tail, tailOffset);
-
-      // Position the tail at the opposite edge of the region. i.e. if region is
-      // `right` the style will be `right: 100%`, which will place the tail
-      // at left edge.
-      style[region] = '100%';
-
-      if (region === RIGHT || region === LEFT) {
-        style.top = position;
-      } else {
-        style.left = position;
-      }
-    }
-
-    return style;
-  }
-
-  /**
-   * Render the tail element. A `ResizeObserver` is inserted to allow measuring
-   * the dimensions of the rendered content.
-   *
-   * @param   {Object} result - A `flowtip` layout result.
-   * @returns {Object|null} Rendered element.
-   */
-  renderTail(result: Result): React.Node {
-    if (!this.props.tail) return null;
-
-    const {tail: Tail} = this.props;
-    const tailStyle = this._getTailStyle(result);
-
-    return (
-      <Tail result={result} style={tailStyle}>
-        <ResizeObserver onResize={this._handleTailSize} />
-      </Tail>
-    );
-  }
-
-  /**
-   * Render the content element. A `ResizeObserver` is inserted before the other
-   * children to allow measuring the dimensions of the rendered content.
-   *
-   * @param   {Object} result - A `flowtip` layout result.
-   * @returns {Object|null} Rendered element.
-   */
-  renderContent(result: Result): React.Node {
-    if (!this.props.content) return null;
-
-    const {children, content: Content} = this.props;
-
-    const contentProps = {
-      ...omitFlowtipProps(this.props),
-      style: this._getContentStyle(result),
-    };
-
-    if (typeof Content === 'function') {
-      contentProps.result = result;
-    }
-
-    return (
-      <Content {...contentProps}>
-        <ResizeObserver onResize={this._handleContentSize} />
-        {children}
-        {this.renderTail(result)}
-      </Content>
-    );
-  }
+  };
 
   render(): React.Node {
-    if (this.state.result) {
-      return this.renderContent(this.state.result);
-    }
-
-    if (this.props.content) {
-      return this.renderContent(STATIC_RESULT);
-    }
-
-    return null;
+    return this.props.render({
+      onTailSize: this._handleTailSize,
+      onContentSize: this._handleContentSize,
+      state: this.state,
+      props: this.props,
+    });
   }
 }
 

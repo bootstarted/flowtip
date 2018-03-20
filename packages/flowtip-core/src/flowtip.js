@@ -14,6 +14,8 @@ type _Regions = {
 };
 export type Regions = $Shape<_Regions>;
 export type Result = {
+  bounds: Rect,
+  target: Rect,
   region: Region,
   reason: Reason,
   rect: Rect,
@@ -884,6 +886,8 @@ function flowtip(config: Config): Result {
   const overlapCenter = getCenter(region, rect, intersect);
 
   return {
+    bounds: finalConfig.bounds,
+    target: finalConfig.target,
     region,
     reason,
     rect,
