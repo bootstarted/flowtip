@@ -70,7 +70,7 @@ export const END: Align = 'end';
  * the end (right or bottom). A value of 0.5 will center align it in every
  * orientation.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
  * @returns {object} A rect object.
  */
@@ -108,7 +108,7 @@ function getRect(config: _Config, region: Region): Rect {
  * Get the updated left position of the content rect with boundary constraints
  * applied.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
  * @param   {object} rect A content rect object.
  * @returns {number} A new left position for the content rect.
@@ -148,7 +148,7 @@ function constrainLeft(config: _Config, region: Region, rect: Rect): number {
  * Get the updated top position of the content rect with boundary constraints
  * applied.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
  * @param   {object} rect A content rect object.
  * @returns {number} A new top position for the content rect.
@@ -188,7 +188,7 @@ function constrainTop(config: _Config, region: Region, rect: Rect): number {
  * Check if the content will be clipped by the boundary edge if placed in a
  * region.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
  * @returns {bool} True if the content will be constrained.
  */
@@ -276,7 +276,7 @@ function getRegionClip(config: _Config, region: Region): _Regions {
  * > Insufficient intersection at the left, the top and bottom regions are
  * > not considered valid. Only the right region is valid.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @returns {Object} Valid regions (`{top, right, bottom, left}`).
  */
 function getValidRegions(config: _Config): _Regions {
@@ -357,7 +357,7 @@ function getValidRegions(config: _Config): _Regions {
  * > Although all regions are valid, the region with largest available space
  * > (right) returned as the ideal region.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
@@ -455,7 +455,7 @@ function getIdealRegion(config: _Config, valid: _Regions): ?Region {
  *            indefinitely |                     |  indefinitely
  *                         |                     |
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
 function getExternalRegion(config: _Config): ?Region {
@@ -558,7 +558,7 @@ function invertRegion(region: Region): Region {
  * target, inverting it will cause it to appear to flip, which is more visually
  * appealing.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
@@ -583,7 +583,7 @@ function getDefaultRegion(config: _Config, valid: _Regions): ?Region {
  * target, inverting it will cause it to appear to flip, which is more visually
  * appealing.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
@@ -606,7 +606,7 @@ function getInvertDefaultRegion(config: _Config, valid: _Regions): ?Region {
  * result in the content rect getting inadvertently clipped with the
  * bounds rect or the target rect, but there is nothing else we can do.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string} A region (`top`, `right`, `bottom`, or `left`).
  */
@@ -633,7 +633,7 @@ function getFallbackRegion(config: _Config): Region {
 /**
  * Get the current region that should be occupied by the content rect.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {array} Array containing region and reason.
  */
@@ -674,7 +674,7 @@ function getRegion(config: _Config, valid: _Regions): [Region, Reason] {
  * Get the updated left position of the content rect with boundary constraints
  * applied.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
  * @param   {object} rect A content rect object.
  * @returns {object} A repositioned content rect.
@@ -693,7 +693,7 @@ function constrainRect(config: _Config, region: Region, rect: Rect): Rect {
  * If the content rect intersects the target rect, the returned value is
  * negative.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
  * @param   {object} rect A content rect object.
  * @returns {number} Distance between target and content.
@@ -817,9 +817,9 @@ const defaults = ({
 });
 
 /**
- * Calculate a Flowtip layout result.
+ * Calculate a FlowTip layout result.
  *
- * @param   {Object} config Flowtip layout config object.
+ * @param   {Object} config FlowTip layout config object.
  * @param   {object} config.target A rect representing the target element.
  * @param   {object} config.content A rect representing the content element.
  * @param   {string} [config.region] The default region
@@ -831,7 +831,7 @@ const defaults = ({
  * @param   {number} [config.offset=0] Target-content offset.
  * @param   {number} [config.overlap=0] Min target-content liner overlap.
  * @param   {number} [config.align=0.5] Target-content align factor.
- * @returns {Object} Flowtip layout result object.
+ * @returns {Object} FlowTip layout result object.
  */
 const flowtip = (config: Config): Result => {
   const finalConfig = defaults(config);
