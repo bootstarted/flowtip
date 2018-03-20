@@ -12,12 +12,7 @@ type _Regions = {
   bottom: boolean,
   left: boolean,
 };
-export type Regions = {
-  top?: boolean,
-  right?: boolean,
-  bottom?: boolean,
-  left?: boolean,
-};
+export type Regions = $Shape<_Regions>;
 export type Result = {
   region: Region,
   reason: Reason,
@@ -28,26 +23,28 @@ export type Result = {
   overlapCenter: number,
 };
 type _Config = {
+  offset: number,
+  overlap: number,
+  edgeOffset: number,
+  align: number,
+  region?: Region,
   bounds: Rect,
   target: Rect,
   content: Dimensions,
-  region?: Region,
   disabled: _Regions,
   constrain: _Regions,
-  offset: number,
-  overlap: number,
-  align: number,
 };
 export type Config = {
   offset?: number,
   overlap?: number,
+  edgeOffset?: number,
   align?: Align,
   region?: Region,
   bounds: RectLike | Rect,
   target: RectLike | Rect,
   content: Dimensions,
-  disabled?: _Regions,
-  constrain?: _Regions,
+  disabled?: Regions,
+  constrain?: Regions,
 };
 
 export const TOP: Region = 'top';
@@ -105,40 +102,63 @@ function getRect(config: _Config, region: Region): Rect {
 }
 
 /**
+ * Calculate the final effective bounds of the positioned content rect for a
+ * given region.
+ *
+ * This calculation uses the maximum of the target offset and edge offset config
+ * values as the offset along the edge of the content facing the target. This
+ * prevents the content from being offset from the boundary edge by both offset
+ * amounts (the target offset is used to provide space for an indicator triangle
+ * and only applies in the direction facing the target).
+ *
+ * @param   {Object} config FlowTip layout config object.
+ * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
+ * @returns {object} A rect object
+ */
+function getOffsetBounds(config: _Config, region: Region): Rect {
+  const {bounds, edgeOffset, offset} = config;
+  const maxOffset = Math.max(offset, edgeOffset);
+
+  const left = bounds.left + (region === RIGHT ? maxOffset : edgeOffset);
+  const top = bounds.top + (region === BOTTOM ? maxOffset : edgeOffset);
+  const right = bounds.right - (region === LEFT ? maxOffset : edgeOffset);
+  const bottom = bounds.bottom - (region === TOP ? maxOffset : edgeOffset);
+
+  return new Rect(left, top, right - left, bottom - top);
+}
+
+/**
  * Get the updated left position of the content rect with boundary constraints
  * applied.
  *
  * @param   {Object} config FlowTip layout config object.
  * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
+ * @param   {object} offsetBounds A final bounds rect for the current region.
  * @param   {object} rect A content rect object.
  * @returns {number} A new left position for the content rect.
  */
-function constrainLeft(config: _Config, region: Region, rect: Rect): number {
+function constrainLeft(
+  config: _Config,
+  region: Region,
+  offsetBounds: Rect,
+  rect: Rect,
+): number {
   const {constrain, bounds} = config;
 
-  // When the content rect is in a horizontal region, factor the offset between
-  // it and the target rect into the calculation.
-  const rightOffset = region === LEFT ? config.offset : 0;
-  const leftOffset = region === RIGHT ? config.offset : 0;
-
   // Center align the content rect if is wider than the bounds rect.
-  if (
-    constrain.left &&
-    constrain.right &&
-    rect.width + rightOffset + leftOffset > bounds.width
-  ) {
+  if (constrain.left && constrain.right && rect.width > offsetBounds.width) {
     return bounds.left + (bounds.width - rect.width) / 2;
   }
 
   // If either the left or right edge of the content rect is outside the bounds
   // rect, position it on the edge. Only one of these cases can be true since
   // the content is not wider than the bounds.
-  if (constrain.left && rect.left - leftOffset < bounds.left) {
-    return bounds.left + leftOffset;
+  if (constrain.left && rect.left < offsetBounds.left) {
+    return offsetBounds.left;
   }
 
-  if (constrain.right && rect.right + rightOffset > bounds.right) {
-    return bounds.right - rightOffset - rect.width;
+  if (constrain.right && rect.right > offsetBounds.left + offsetBounds.width) {
+    return offsetBounds.right - rect.width;
   }
 
   return rect.left;
@@ -150,35 +170,32 @@ function constrainLeft(config: _Config, region: Region, rect: Rect): number {
  *
  * @param   {Object} config FlowTip layout config object.
  * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
+ * @param   {object} offsetBounds A final bounds rect for the current region.
  * @param   {object} rect A content rect object.
  * @returns {number} A new top position for the content rect.
  */
-function constrainTop(config: _Config, region: Region, rect: Rect): number {
+function constrainTop(
+  config: _Config,
+  region: Region,
+  offsetBounds: Rect,
+  rect: Rect,
+): number {
   const {constrain, bounds} = config;
 
-  // When the content rect is in a vertical region, factor the offset between
-  // it and the target rect into the calculation.
-  const topOffset = region === BOTTOM ? config.offset : 0;
-  const bottomOffset = region === TOP ? config.offset : 0;
-
   // Center align the content rect if is taller than the bounds rect.
-  if (
-    constrain.top &&
-    constrain.bottom &&
-    rect.height + topOffset + bottomOffset > bounds.height
-  ) {
+  if (constrain.top && constrain.bottom && rect.height > offsetBounds.height) {
     return bounds.top + (bounds.height - rect.height) / 2;
   }
 
   // If either the left or right edge of the content rect is outside the bounds
   // rect, position it on the edge. Only one of these cases can be true since
   // the content is not taller than the bounds.
-  if (constrain.top && rect.top - topOffset < bounds.top) {
-    return bounds.top + topOffset;
+  if (constrain.top && rect.top < offsetBounds.top) {
+    return offsetBounds.top;
   }
 
-  if (constrain.bottom && rect.bottom + bottomOffset > bounds.bottom) {
-    return bounds.bottom - bottomOffset - rect.height;
+  if (constrain.bottom && rect.bottom > offsetBounds.bottom) {
+    return offsetBounds.bottom - rect.height;
   }
 
   return rect.top;
@@ -193,21 +210,14 @@ function constrainTop(config: _Config, region: Region, rect: Rect): number {
  * @returns {Object} Clipped regions (`{top, right, bottom, left}`).
  */
 function getRegionClip(config: _Config, region: Region): _Regions {
-  const {bounds} = config;
   const rect = getRect(config, region);
-
-  // Factor the offset between the content rect and the target rect into the
-  // calculation when in each region.
-  const topOffset = region === BOTTOM ? config.offset : 0;
-  const rightOffset = region === LEFT ? config.offset : 0;
-  const bottomOffset = region === TOP ? config.offset : 0;
-  const leftOffset = region === RIGHT ? config.offset : 0;
+  const offsetBounds = getOffsetBounds(config, region);
 
   return {
-    top: rect.top + topOffset < bounds.top,
-    right: bounds.right < rect.right + rightOffset,
-    bottom: bounds.bottom < rect.bottom + bottomOffset,
-    left: rect.left + leftOffset < bounds.left,
+    top: rect.top < offsetBounds.top,
+    right: offsetBounds.right < rect.right,
+    bottom: offsetBounds.bottom < rect.bottom,
+    left: rect.left < offsetBounds.left,
   };
 }
 
@@ -280,25 +290,35 @@ function getRegionClip(config: _Config, region: Region): _Regions {
  * @returns {Object} Valid regions (`{top, right, bottom, left}`).
  */
 function getValidRegions(config: _Config): _Regions {
-  const {target, overlap, bounds, content, constrain} = config;
+  const {
+    target,
+    overlap,
+    offset,
+    edgeOffset,
+    bounds,
+    content,
+    constrain,
+  } = config;
 
-  // This value is true if `config.overlap` amount of the target rect intersects
+  const offsetBounds = Rect.grow(bounds, -edgeOffset);
+
+  // This value is true if `overlap` amount of the target rect intersects
   // the bounds rect in the horizontal direction.
-  const leftRightOverlap =
-    bounds.right - target.left >= overlap &&
-    target.right - bounds.left >= overlap;
+  const topBottomValid =
+    offsetBounds.right - target.left >= overlap &&
+    target.right - offsetBounds.left >= overlap;
 
   // This value is true if `overlap` amount of the target rect intersects
   // the bounds rect in the vertical direction.
-  const topBottomOverlap =
-    bounds.bottom - target.top >= overlap &&
-    target.bottom - bounds.top >= overlap;
+  const leftRightValid =
+    offsetBounds.bottom - target.top >= overlap &&
+    target.bottom - offsetBounds.top >= overlap;
 
   // Calculate the available space in each region.
-  const topMargin = target.top - bounds.top - config.offset;
-  const rightMargin = bounds.right - target.right - config.offset;
-  const bottomMargin = bounds.bottom - target.bottom - config.offset;
-  const leftMargin = target.left - bounds.left - config.offset;
+  const topMargin = target.top - offsetBounds.top - offset;
+  const rightMargin = offsetBounds.right - target.right - offset;
+  const bottomMargin = offsetBounds.bottom - target.bottom - offset;
+  const leftMargin = target.left - offsetBounds.left - offset;
 
   const topRegion = getRegionClip(config, TOP);
   const rightRegion = getRegionClip(config, RIGHT);
@@ -323,10 +343,10 @@ function getValidRegions(config: _Config): _Regions {
   // in the config. The overlap check ensures that a region is valid only if
   // there is room to render a caret.
   return {
-    top: !topClips && leftRightOverlap && topMargin >= content.height,
-    right: !rightClips && topBottomOverlap && rightMargin >= content.width,
-    bottom: !bottomClips && leftRightOverlap && bottomMargin >= content.height,
-    left: !leftClips && topBottomOverlap && leftMargin >= content.width,
+    top: !topClips && topBottomValid && topMargin >= content.height,
+    right: !rightClips && leftRightValid && rightMargin >= content.width,
+    bottom: !bottomClips && topBottomValid && bottomMargin >= content.height,
+    left: !leftClips && leftRightValid && leftMargin >= content.width,
   };
 }
 
@@ -459,20 +479,23 @@ function getIdealRegion(config: _Config, valid: _Regions): ?Region {
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
 function getExternalRegion(config: _Config): ?Region {
-  const {target, constrain, bounds, disabled} = config;
+  const {target, constrain, bounds, edgeOffset, disabled} = config;
 
-  const atTop = target.top + target.height / 2 < bounds.top + bounds.height / 2;
+  const offsetBounds = Rect.grow(bounds, -edgeOffset);
+
+  const atTop =
+    target.top + target.height / 2 < offsetBounds.top + offsetBounds.height / 2;
 
   const atLeft =
-    target.left + target.width / 2 < bounds.left + bounds.width / 2;
+    target.left + target.width / 2 < offsetBounds.left + offsetBounds.width / 2;
 
   const atBottom = !atTop;
   const atRight = !atLeft;
 
-  const topDist = bounds.top - target.bottom;
-  const rightDist = target.left - bounds.right;
-  const bottomDist = target.top - bounds.bottom;
-  const leftDist = bounds.left - target.right;
+  const topDist = offsetBounds.top - target.bottom;
+  const rightDist = target.left - offsetBounds.right;
+  const bottomDist = target.top - offsetBounds.bottom;
+  const leftDist = offsetBounds.left - target.right;
 
   const upperTopLeft = atTop && atLeft && topDist >= leftDist;
   const lowerTopLeft = atTop && atLeft && topDist < leftDist;
@@ -680,8 +703,10 @@ function getRegion(config: _Config, valid: _Regions): [Region, Reason] {
  * @returns {object} A repositioned content rect.
  */
 function constrainRect(config: _Config, region: Region, rect: Rect): Rect {
-  const left = constrainLeft(config, region, rect);
-  const top = constrainTop(config, region, rect);
+  const offsetBounds = getOffsetBounds(config, region);
+
+  const left = constrainLeft(config, region, offsetBounds, rect);
+  const top = constrainTop(config, region, offsetBounds, rect);
 
   return new Rect(left, top, rect.width, rect.height);
 }
@@ -794,27 +819,33 @@ function normalizeAlign(align: ?Align): number {
   return 0.5;
 }
 
-const defaults = ({
-  offset = 0,
-  overlap = 0,
-  align,
-  region,
-  bounds,
-  target,
-  content,
-  disabled,
-  constrain,
-}: Config = {}): _Config => ({
-  offset,
-  overlap,
-  align: normalizeAlign(align),
-  region,
-  bounds: Rect.from(bounds),
-  target: Rect.from(target),
-  content,
-  disabled: {...noRegions, ...disabled},
-  constrain: {...allRegions, ...constrain},
-});
+function defaults(config: Config): _Config {
+  const {
+    offset = 0,
+    overlap = 0,
+    edgeOffset = 0,
+    align,
+    region,
+    bounds,
+    target,
+    content,
+    disabled,
+    constrain,
+  } = config;
+
+  return {
+    offset,
+    overlap,
+    edgeOffset,
+    align: normalizeAlign(align),
+    region,
+    bounds: Rect.from(bounds),
+    target: Rect.from(target),
+    content,
+    disabled: {...noRegions, ...disabled},
+    constrain: {...allRegions, ...constrain},
+  };
+}
 
 /**
  * Calculate a FlowTip layout result.
@@ -833,7 +864,7 @@ const defaults = ({
  * @param   {number} [config.align=0.5] Target-content align factor.
  * @returns {Object} FlowTip layout result object.
  */
-const flowtip = (config: Config): Result => {
+function flowtip(config: Config): Result {
   const finalConfig = defaults(config);
 
   const valid = getValidRegions(finalConfig);
@@ -861,6 +892,6 @@ const flowtip = (config: Config): Result => {
     overlap,
     overlapCenter,
   };
-};
+}
 
 export default flowtip;
