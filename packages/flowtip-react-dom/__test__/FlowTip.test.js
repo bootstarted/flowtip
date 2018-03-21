@@ -50,7 +50,7 @@ describe('FlowTip', () => {
     let spy;
 
     beforeEach(() => {
-      spy = jest.spyOn(FlowTip.prototype, '_handleScroll');
+      spy = jest.spyOn(FlowTip.prototype, '_updateState');
     });
 
     afterEach(() => {
@@ -71,11 +71,12 @@ describe('FlowTip', () => {
         attachTo: document.getElementById('root'),
       });
 
-      expect(spy).toHaveBeenCalledTimes(0);
+      const count = spy.mock.calls.length;
 
       window.dispatchEvent(new UIEvent('scroll'));
 
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(count + 1);
+
       wrapper.unmount();
     });
   });
