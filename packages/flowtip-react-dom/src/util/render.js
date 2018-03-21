@@ -1,9 +1,10 @@
 // @flow
 
-import {getClampedTailPosition, RIGHT, LEFT} from 'flowtip-core';
+import {Rect, getClampedTailPosition, RIGHT, LEFT} from 'flowtip-core';
 
 import type {Style, Props, State} from '../types';
 import {getOffset} from '../util/state';
+import {getViewportRect} from '../util/dom';
 
 /**
  * Get the content element position style based on the current layout result
@@ -21,6 +22,43 @@ export const getContentStyle = (props: Props, state: State) => {
       position: 'absolute',
       clip: 'rect(0 0 0 0)',
     };
+  }
+
+  if (
+    Rect.areEqual(state.result.bounds, getViewportRect()) &&
+    !Rect.isValid(Rect.intersect(state.result.bounds, state.result.target))
+  ) {
+    if (props.constrainTop && state.result.region === 'bottom') {
+      return {
+        position: 'fixed',
+        top: Math.round(state.result.rect.top),
+        left: Math.round(state.result.rect.left),
+      };
+    }
+
+    if (props.constrainRight && state.result.region === 'left') {
+      return {
+        position: 'fixed',
+        top: Math.round(state.result.rect.top),
+        right: Math.round(window.innerWidth - state.result.rect.right),
+      };
+    }
+
+    if (props.constrainBottom && state.result.region === 'top') {
+      return {
+        position: 'fixed',
+        bottom: Math.round(window.innerHeight - state.result.rect.bottom),
+        left: Math.round(state.result.rect.left),
+      };
+    }
+
+    if (props.constrainLeft && state.result.region === 'right') {
+      return {
+        position: 'fixed',
+        top: Math.round(state.result.rect.top),
+        left: Math.round(state.result.rect.left),
+      };
+    }
   }
 
   return {
