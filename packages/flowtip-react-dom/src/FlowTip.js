@@ -11,6 +11,7 @@ import {
   getContainingBlock,
   getClippingBlock,
   getContentRect,
+  getViewportRect,
 } from './util/dom';
 import {getRegion, getOverlap, getOffset} from './util/state';
 import defaultRender from './defaultRender';
@@ -61,6 +62,7 @@ class FlowTip extends React.Component<Props, State> {
   _node: HTMLElement | null = null;
   state = {
     containingBlock: Rect.zero,
+    boundedByViewport: true,
     bounds: null,
     content: null,
     contentBorders: null,
@@ -177,8 +179,12 @@ class FlowTip extends React.Component<Props, State> {
 
     const contentBorders = this._node ? getBorders(this._node) : null;
 
+    const boundedByViewport =
+      !nextProps.bounds && this._clippingBlockNode === document.documentElement;
+
     return {
       containingBlock,
+      boundedByViewport,
       bounds,
       content,
       contentBorders,
@@ -230,10 +236,8 @@ class FlowTip extends React.Component<Props, State> {
   // DOM Measurement Methods ===================================================
 
   _getBoundsRect(nextProps: Props): Rect | null {
-    const viewportRect = new Rect(0, 0, window.innerWidth, window.innerHeight);
-
     const processBounds = (boundsRect: RectLike) => {
-      const visibleBounds = Rect.intersect(viewportRect, boundsRect);
+      const visibleBounds = Rect.intersect(getViewportRect(), boundsRect);
 
       return Rect.isValid(visibleBounds) ? visibleBounds : null;
     };

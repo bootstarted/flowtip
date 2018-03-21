@@ -72,3 +72,7 @@ export function getContentRect(node: HTMLElement): Rect {
     Math.min(rect.height - border.top - border.bottom, node.clientHeight) || 0,
   );
 }
+
+export function getViewportRect(): Rect {
+  return new Rect(0, 0, window.innerWidth, window.innerHeight);
+}
