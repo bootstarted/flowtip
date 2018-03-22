@@ -4,6 +4,13 @@
   "version": "5.1.0",
   "author": "Neal Granger <neal@nealg.com>",
   "main": "./lib",
+  "module": "./es",
+  "sideEffects": false,
+  "files": [
+    "README.md",
+    "lib",
+    "es"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/metalabdesign/flowtip.git"
@@ -19,15 +26,6 @@
     "url": "https://github.com/qiushihe/metalabdesign/issues"
   },
   "homepage": "https://github.com/metalabdesign/flowtip/tree/master/packages/flowtip-react-dom",
-  "files": [
-    "lib"
-  ],
-  "scripts": {
-    "clean": "../../node_modules/.bin/rimraf lib",
-    "build": "../../node_modules/.bin/babel --copy-files -s -d lib src",
-    "copy": "../../node_modules/.bin/ncp src lib && ../../node_modules/.bin/renamer --regex --find '$' --replace '.flow' 'lib/**/*.js'",
-    "prepare": "npm run clean && npm run copy && npm run build"
-  },
   "dependencies": {
     "flowtip-core": "^5.1.0",
     "react-resize-observer": "^0.2.1"
