@@ -1,29 +1,46 @@
 {
   "presets": [
-    ["@babel/preset-env", {
-      "shippedProposals": true,
-      "targets": {
-        "node": "8"
+    [
+      "@babel/preset-env", {
+        "modules": false,
+        "shippedProposals": true,
+        "targets": {
+          "node": 8
+        }
       }
-    }],
+    ],
     "@babel/preset-react",
     "@babel/preset-flow"
   ],
   "plugins": [
     "@babel/plugin-proposal-class-properties",
-    "@babel/plugin-syntax-dynamic-import"
+    [
+      "module-resolver",
+      {
+        "cwd": "babelrc",
+        "alias": {
+          "^(flowtip-core|flowtip-react-dom)/(lib|es|src)($|/.*$)":
+            "./packages/\\1/src/\\3",
+          "^(flowtip-core|flowtip-react-dom)$": "./packages/\\1/src",
+        }
+      }
+    ]
   ],
   "env": {
     "test": {
       "plugins": [
-        ["module-resolver", {
-          "alias": {
-            "flowtip-core/lib": "./packages/flowtip-core/src",
-            "flowtip-core": "./packages/flowtip-core/src",
-            "flowtip-react-dom/lib": "./packages/flowtip-react-dom/src",
-            "flowtip-react-dom": "./packages/flowtip-react-dom/src",
-          }
-        }]
+        "@babel/plugin-transform-modules-commonjs"
+      ]
+    },
+    "lib": {
+      "plugins": [
+        "@babel/plugin-transform-modules-commonjs",
+        ["module-resolver", {}]
+      ]
+    },
+    "es": {
+      "plugins": [
+        ["module-resolver", {}]
       ]
     }
   }
