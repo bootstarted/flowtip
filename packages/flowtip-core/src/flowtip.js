@@ -810,10 +810,10 @@ const allRegions = {top: true, right: true, bottom: true, left: true};
 const noRegions = {top: false, right: false, bottom: false, left: false};
 
 function normalizeAlign(align: ?Align): number {
-  if (typeof align === 'number') { 
-    return align; 
+  if (typeof align === 'number') {
+    return align;
   }
-  
+
   if (align === 'start') {
     return 0;
   }
