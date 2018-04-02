@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/metalabdesign/flowtip.git"
+    "url": "https://github.com/metalabdesign/flowtip/tree/master/packages/flowtip-react-dom"
   },
   "keywords": [
     "tooltip",
@@ -23,7 +23,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/qiushihe/metalabdesign/issues"
+    "url": "https://github.com/metalabdesign/flowtip/issues"
   },
   "homepage": "https://github.com/metalabdesign/flowtip/tree/master/packages/flowtip-react-dom",
   "dependencies": {
