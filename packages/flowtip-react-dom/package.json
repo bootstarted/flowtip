@@ -1,7 +1,7 @@
 {
   "name": "flowtip-react-dom",
   "description": "A flexible, adaptable, and easy to use tooltip positioning library for React.",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "author": "Neal Granger <neal@nealg.com>",
   "main": "./lib",
   "module": "./es",
@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/metalabdesign/flowtip/tree/master/packages/flowtip-react-dom",
   "dependencies": {
-    "flowtip-core": "^5.1.0",
+    "flowtip-core": "^5.2.0",
     "react-resize-observer": "^0.2.1"
   },
   "peerDependencies": {
