@@ -3,14 +3,19 @@
 import {findDOMNode as _findDOMNode} from 'react-dom';
 import type {Component} from 'react';
 
-// flowlint unclear-type: off
+type FiberNode = {
+  stateNode: null | Element | Text,
+  child: ?FiberNode,
+};
+
 const findDOMNode = (
-  componentOrElement: Element | ?Component<any, any>,
+  componentOrElement: Element | ?Component<*, *>,
 ): null | Element | Text => {
   const node = _findDOMNode(componentOrElement);
   if (node) return node;
 
-  let fiberNode =
+  let fiberNode: ?FiberNode =
+    // flowlint-next-line unclear-type: off
     componentOrElement && (componentOrElement: any)._reactInternalFiber;
 
   while (fiberNode && !(fiberNode.stateNode instanceof Element)) {
