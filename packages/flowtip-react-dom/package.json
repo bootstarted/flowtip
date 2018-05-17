@@ -28,7 +28,7 @@
   "homepage": "https://github.com/metalabdesign/flowtip/tree/master/packages/flowtip-react-dom",
   "dependencies": {
     "flowtip-core": "^5.2.0",
-    "react-resize-observer": "^0.2.1"
+    "react-resize-observer": "^1.0.0"
   },
   "peerDependencies": {
     "react": ">=0.14",
