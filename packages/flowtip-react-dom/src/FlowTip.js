@@ -249,8 +249,8 @@ class FlowTip extends React.Component<Props, State> {
     if (document.body && this._clippingBlockNode === document.documentElement) {
       return processBounds(
         new Rect(
-          -document.body.scrollLeft,
-          -document.body.scrollTop,
+          -window.scrollX,
+          -window.scrollY,
           document.body.scrollWidth,
           document.body.scrollHeight,
         ),
@@ -274,8 +274,8 @@ class FlowTip extends React.Component<Props, State> {
       this._containingBlockNode === document.documentElement
     ) {
       return new Rect(
-        -document.body.scrollLeft,
-        -document.body.scrollTop,
+        -window.scrollX,
+        -window.scrollY,
         document.body.scrollWidth,
         document.body.scrollHeight,
       );
