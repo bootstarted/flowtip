@@ -1,14 +1,9 @@
 extends:
   - metalab
   - metalab/react
-plugins:
-  - prettier
 rules:
   complexity: 0
-  jsx-quotes:
-    - 2
-    - prefer-double
-  prettier/prettier: 2
+  valid-jsdoc: 0
   metalab/flowtype/space-after-type-colon: 0
 overrides:
   -

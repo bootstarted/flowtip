@@ -1,4 +1,5 @@
 // @flow
+import invariant from 'invariant';
 
 export type RectLike =
   // eslint-disable-next-line no-use-before-define
@@ -115,6 +116,10 @@ class Rect {
   }
 
   constructor(left: number, top: number, width: number, height: number): void {
+    invariant(typeof left === 'number', 'left must be number');
+    invariant(typeof top === 'number', 'top must be number');
+    invariant(typeof width === 'number', 'width must be number');
+    invariant(typeof height === 'number', 'height must be number');
     this.left = left;
     this.top = top;
     this.width = width;

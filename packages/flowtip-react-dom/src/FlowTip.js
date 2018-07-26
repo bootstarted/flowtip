@@ -14,11 +14,13 @@ import {
   getViewportRect,
 } from './util/dom';
 import {getRegion, getOverlap, getOffset} from './util/state';
-import defaultRender from './defaultRender';
+import {getTailStyle, getContentStyle} from './util/render';
 
 // Static `flowtip` layout calculation result mock for use during initial client
 // side render or on server render where DOM feedback is not possible.
 const STATIC_RESULT: Result = {
+  regions: {left: {}, right: {}, top: {}, bottom: {}},
+  align: {},
   bounds: Rect.zero,
   target: Rect.zero,
   region: 'bottom',
@@ -30,6 +32,43 @@ const STATIC_RESULT: Result = {
   overlapCenter: 0,
   _static: true,
 };
+
+class RectBlock extends React.Component {
+  render() {
+    const {rect, children, name, color} = this.props;
+    if (!rect) {
+      return null;
+    }
+    return (
+      <div
+        style={{
+          background: color,
+          pointerEvents: 'none',
+          position: 'fixed',
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+          border: 'solid 1px red',
+        }}
+      >
+        {children}
+        <div
+          style={{
+            position: 'absolute',
+            top: '2px',
+            left: '2px',
+            right: '2px',
+            color: 'red',
+            fontSize: '11px',
+          }}
+        >
+          {name}
+        </div>
+      </div>
+    );
+  }
+}
 
 class FlowTip extends React.Component<Props, State> {
   static defaultProps = {
@@ -48,7 +87,6 @@ class FlowTip extends React.Component<Props, State> {
     constrainRight: true,
     constrainBottom: true,
     constrainLeft: true,
-    render: defaultRender,
   };
 
   _nextContent: Dimensions | null = null;
@@ -251,8 +289,8 @@ class FlowTip extends React.Component<Props, State> {
         new Rect(
           -window.scrollX,
           -window.scrollY,
-          document.body.scrollWidth,
-          document.body.scrollHeight,
+          Math.max(window.innerWidth, document.body.scrollWidth),
+          Math.max(window.innerHeight, document.body.scrollHeight),
         ),
       );
     }
@@ -344,12 +382,114 @@ class FlowTip extends React.Component<Props, State> {
   };
 
   render(): React.Node {
-    return this.props.render({
-      onTailSize: this._handleTailSize,
-      onContentSize: this._handleContentSize,
-      state: this.state,
-      props: this.props,
+    const children = this.props.children({
+      tailStyle: getTailStyle(this.props, this.state),
+      setTailSize: this._handleTailSize,
+      contentStyle: getContentStyle(this.props, this.state),
+      setContentSize: this._handleContentSize,
+      ...this.state.result,
     });
+    if (this.props.debug) {
+      const regionName = this.state.result.region;
+      const regions = this.state.result.regions;
+      const region = regions[regionName];
+      return (
+        <React.Fragment>
+          {children}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              bottom: 0,
+              width: 1,
+              left: this.props.target.left,
+              background: '#c0c0c0',
+            }}
+          />
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              bottom: 0,
+              width: 1,
+              left: this.props.target.left + this.props.target.width,
+              background: '#c0c0c0',
+            }}
+          />
+          <div
+            style={{
+              position: 'fixed',
+              left: 0,
+              right: 0,
+              height: 1,
+              top: this.props.target.top,
+              background: '#c0c0c0',
+            }}
+          />
+          <div
+            style={{
+              position: 'fixed',
+              left: 0,
+              right: 0,
+              height: 1,
+              top: this.props.target.top + this.props.target.height,
+              background: '#c0c0c0',
+            }}
+          />
+          <RectBlock rect={this.props.target} name="target">
+            <div
+              style={{
+                position: 'absolute',
+                right: 'calc(100% - 2px)',
+                top: 'calc(50% - 0.5px)',
+                height: 1,
+                width: region === 'left' ? 20 : 6,
+                background: regions.left.hasEnoughSpace ? 'green' : 'red',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                left: 'calc(100% - 2px)',
+                top: 'calc(50% - 0.5px)',
+                height: 1,
+                width: region === 'right' ? 20 : 6,
+                background: regions.right.hasEnoughSpace ? 'green' : 'red',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                left: 'calc(50% - 0.5px)',
+                bottom: 'calc(100% - 2px)',
+                height: region === 'top' ? 20 : 6,
+                width: 1,
+                background: regions.top.hasEnoughSpace ? 'green' : 'red',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                left: 'calc(50% - 0.5px)',
+                top: 'calc(100% - 2px)',
+                height: region === 'bottom' ? 20 : 6,
+                width: 1,
+                background: regions.bottom.hasEnoughSpace ? 'green' : 'red',
+              }}
+            />
+          </RectBlock>
+          <RectBlock rect={this.state.bounds} name="bounds" />
+          <RectBlock
+            rect={region.contentRect}
+            name="available"
+            color="rgba(10,10,10,0.3)"
+          >
+            {region.isDetatched && 'detatched'}
+          </RectBlock>
+        </React.Fragment>
+      );
+    }
+    return children;
   }
 }
 

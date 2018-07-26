@@ -19,17 +19,37 @@ import React from 'react';
 import FlowTip from 'flowtip-react-dom';
 import ResizeObserver from 'react-resize-observer';
 
-const Content = ({result, children, style}) => (
+const Content = ({children, style}) => (
   <div className="flowtip-content" style={style}>
     {children}
   </div>
 );
 
-const Tail = ({result, children, style}) => (
+const Tail = ({region, children, style}) => (
   <div className={`flowtip-tail-${result.region}`} style={style}>
     {children}
   </div>
 );
+
+class ExampleTip extends React.Component {
+  render() {
+    return (
+      <FlowTip target={this.props.target}>
+        ({contentStyle, tailStyle, updateContentRect, updateTailRect, region}) => {
+          return (
+            <Content style={contentStyle}>
+              <ResizeObserver onReflow={updateContentRect} />
+              <Tail region={region} style={tailStyle}>
+                <ResizeObserver onReflow={updateTailRect} />
+              </Tail>
+            </Content>
+          )
+        }
+        FlowTip Content
+      </FlowTip>
+    );
+  }
+}
 
 class FlowTipExample extends React.Component {
   state = {flowTipOpen: false, target: null};
@@ -46,9 +66,7 @@ class FlowTipExample extends React.Component {
           Activate FlowTip
         </button>
         {!!this.state.flowTipOpen && (
-          <FlowTip target={this.state.target} content={Content} tail={Tail}>
-            FlowTip Content
-          </FlowTip>
+          <ExampleTip target={this.state.target} />
         )}
       </div>
     );

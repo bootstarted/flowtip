@@ -19,25 +19,12 @@ export type Borders = {
   bottom: number,
 };
 
-export type ContentProps = {
-  style: Style,
-  result: Result,
-  children: React.Node,
-};
-
-export type TailProps = {
-  style: Style,
-  result: Result,
-  children: React.Node,
-};
-
 export type RenderProps = {
-  onContentSize(Dimensions): mixed,
-  onTailSize(Dimensions): mixed,
-  // eslint-disable-next-line no-use-before-define
-  state: State,
-  // eslint-disable-next-line no-use-before-define
-  props: Props,
+  setContentSize(Dimensions): mixed,
+  setTailSize(Dimensions): mixed,
+  tailStyle: Style,
+  contentStyle: Style,
+  ...Result,
 };
 
 export type Render = (RenderProps) => React.Node;
@@ -80,14 +67,8 @@ export type Props = {
   constrainBottom: boolean,
   /** Constrain the content at the bottom boundary. */
   constrainLeft: boolean,
-  children: React.Node,
 
-  render: Render,
-
-  children: React.Node,
-
-  content?: React.ComponentType<ContentProps> | string,
-  tail?: ?React.ComponentType<TailProps>,
+  children: Render,
 };
 
 export type State = {

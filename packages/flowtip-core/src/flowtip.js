@@ -1,6 +1,7 @@
 // @flow
 import Rect from './Rect';
 import type {RectLike} from './Rect';
+import invariant from 'invariant';
 
 export type Region = 'top' | 'right' | 'bottom' | 'left';
 export type Reason = 'default' | 'inverted' | 'ideal' | 'external' | 'fallback';
@@ -103,31 +104,228 @@ function getRect(config: _Config, region: Region): Rect {
   return new Rect(left, top, content.width, content.height);
 }
 
+const getContentAvailabilityRect = (config, region: Region, _result) => {
+  const {target, bounds, offset} = config;
+  switch (region) {
+    case TOP: {
+      const top = bounds.top;
+      const bottom = Math.min(bounds.bottom, target.top) - offset;
+      return new Rect(bounds.left, top, bounds.width, bottom - top);
+    }
+    case BOTTOM: {
+      const top = Math.max(target.bottom, bounds.top) + offset;
+      const bottom = bounds.bottom;
+      return new Rect(bounds.left, top, bounds.width, bottom - top);
+    }
+    case LEFT: {
+      const left = bounds.left;
+      const right = Math.min(bounds.right, target.left) - offset;
+      return new Rect(left, bounds.top, right - left, bounds.height);
+    }
+    case RIGHT: {
+      const left = Math.max(bounds.left, target.right) + offset;
+      const right = bounds.right;
+      return new Rect(left, bounds.top, right - left, bounds.height);
+    }
+    default:
+      throw new TypeError('Invalid region.');
+  }
+};
+
+const getTailAvailabilityRect = (config, region: Region, _result) => {
+  const {target, bounds} = config;
+  switch (region) {
+    case TOP:
+      return new Rect(
+        target.left,
+        bounds.top,
+        target.width,
+        target.top - bounds.top,
+      );
+    case BOTTOM:
+      return new Rect(
+        target.left,
+        target.bottom,
+        target.width,
+        bounds.bottom - target.bottom,
+      );
+    case LEFT:
+      return new Rect(
+        bounds.left,
+        target.top,
+        target.left - bounds.left,
+        target.height,
+      );
+    case RIGHT:
+      return new Rect(
+        target.right,
+        target.top,
+        bounds.right - target.right,
+        target.height,
+      );
+    default:
+      throw new TypeError('Invalid region.');
+  }
+};
+
+const getContentRect = (config, region, result) => {
+  const {overlap, content, bounds} = config;
+  const contentAvailable = result.contentAvailabilityRect;
+  const tailAvailable = result.tailAvailabilityRect;
+  switch (region) {
+    case TOP:
+    case BOTTOM:
+      const left = Math.max(
+        bounds.left,
+        tailAvailable.left + overlap - content.width,
+      );
+      const right = Math.min(
+        bounds.right,
+        tailAvailable.right - overlap + content.width,
+      );
+      return new Rect(
+        left,
+        contentAvailable.top,
+        right - left,
+        contentAvailable.height,
+      );
+    case LEFT:
+    case RIGHT:
+      const top = Math.max(
+        bounds.top,
+        tailAvailable.top + overlap - content.height,
+      );
+      const bottom = Math.min(
+        bounds.bottom,
+        tailAvailable.bottom - overlap + content.height,
+      );
+      return new Rect(
+        contentAvailable.left,
+        top,
+        contentAvailable.width,
+        bottom - top,
+      );
+    default:
+      throw new TypeError('Invalid region.');
+  }
+};
+
+const getOverlapRect = (config, region, result) => {
+  return Rect.intersect(config.target, result.contentRect);
+};
+
+const getOverlap = (config, region, result) => {
+  switch (region) {
+    case TOP:
+    case BOTTOM:
+      return result.overlapRect.width;
+    case LEFT:
+    case RIGHT:
+      return result.overlapRect.height;
+    default:
+      throw new TypeError();
+  }
+};
+
 /**
- * Calculate the final effective bounds of the positioned content rect for a
- * given region.
+ * Calculate which regions are valid for the content rect to occupy.
+ * This function measures the available space around the target rect within the
+ * container rect. Any region with sufficient space to display the content rect
+ * without clipping is set to `true`.
  *
- * This calculation uses the maximum of the target offset and edge offset config
- * values as the offset along the edge of the content facing the target. This
- * prevents the content from being offset from the boundary edge by both offset
- * amounts (the target offset is used to provide space for an indicator triangle
- * and only applies in the direction facing the target).
+ * This function checks the margins between the target rect and the bounds rect
+ * in every region when offset from the the target. If a margin is smaller than
+ * the width or height of the height of the content rect, that region is not
+ * valid.
  *
- * @param   {Object} config FlowTip layout config object.
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @returns {Object} A rect object
+ *  _________________________________________________________________
+ * |                   ^                                             |
+ * |                   |                                             |
+ * |                  top                                            |
+ * |                 margin   |‾‾‾‾‾‾‾‾‾‾‾|                          |
+ * |                   |      |  content  |                          |
+ * |                  _V_ _ _ |___________|    |<----right-margin--->|
+ * |                                |          |                     |
+ * |         |‾‾‾‾‾‾‾‾‾‾‾|     _____|_____     |‾‾‾‾‾‾‾‾‾‾‾|         |
+ * |         |  content  |----|  target   |----|  content  |         |
+ * |         |___________|     ‾‾‾‾‾|‾‾‾‾‾     |___________|         |
+ * |                     |          |                                |
+ * |<----left-margin---->|    |‾‾‾‾‾‾‾‾‾‾‾| ‾ ‾<- bottom margin      |
+ *  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|  content  |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+ *                            |___________|
+ * > bottom margin is smaller than the content height, this region is disabled
+ *
+ * In addition to checking the margins, this function also checks that enough
+ * of the target rect intersects with the bounds rect in each direction to
+ * accommodate the `overlap` value set in the config. This calculation allows
+ * a region to be considered invalid if there is not enough room to render
+ * a caret.
+ *
+ *               |                                                   |
+ *               |<--L-->|------------min-overlap------------|<--R-->|
+ *               |                                                   |
+ *               |<-left-intersection->|                             |
+ *               |                     |                             |
+ *               |   __________________|                             |
+ *               |  |      target      |                             |
+ *               |  |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾                              |
+ *               |  |<--------------right-intersection-------------->|
+ *               |           ^                                       |
+ *               | |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|                            |
+ *               | |       content      |                            |
+ *               | |____________________|                            |
+ *               |                                                   |
+ * > Sufficient intersection at the left and right, the top and bottom
+ * > regions are considered valid.
+ *
+ *               |                                                   |
+ *               |<--L-->|------------min-overlap------------|<--R-->|
+ *               |                                                   |
+ *               |<-->|--left-intersection                           |
+ *               |    |                                              |
+ *  _____________|____|      |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|                  |
+ * |      target      |    < |       content      |                  |
+ * |‾‾‾‾‾‾‾‾‾‾‾‾‾|‾‾‾‾       |____________________|                  |
+ * |             |                                                   |
+ * |<------------+----------right-intersection---------------------->|
+ *               |                                                   |
+ * > Insufficient intersection at the left, the top and bottom regions are
+ * > not considered valid. Only the right region is valid.
+ *
  */
-function getOffsetBounds(config: _Config, region: Region): Rect {
-  const {bounds, edgeOffset, offset} = config;
-  const maxOffset = Math.max(offset, edgeOffset);
+const hasEnoughSpace = (config: _Config, region, result): _Regions => {
+  switch (region) {
+    case TOP:
+    case BOTTOM:
+      return result.contentRect.height >= config.content.height;
+    case RIGHT:
+    case LEFT:
+      return result.contentRect.width >= config.content.width;
+    default:
+      throw new TypeError();
+  }
+};
 
-  const left = bounds.left + (region === RIGHT ? maxOffset : edgeOffset);
-  const top = bounds.top + (region === BOTTOM ? maxOffset : edgeOffset);
-  const right = bounds.right - (region === LEFT ? maxOffset : edgeOffset);
-  const bottom = bounds.bottom - (region === TOP ? maxOffset : edgeOffset);
+const hasEnoughOverlap = (config, region, result) => {
+  return result.overlap >= config.overlap;
+};
 
-  return new Rect(left, top, right - left, bottom - top);
-}
+const isDetatched = (config, region, result) => {
+  const {target, offset} = config;
+  const {contentRect} = result;
+  switch (region) {
+    case BOTTOM:
+      return target.bottom + offset < contentRect.top;
+    case TOP:
+      return target.top - offset > contentRect.bottom;
+    case RIGHT:
+      return target.right + offset < contentRect.left;
+    case LEFT:
+      return target.left - offset > contentRect.right;
+    default:
+      throw new TypeError();
+  }
+};
 
 /**
  * Get the updated left position of the content rect with boundary constraints
@@ -201,223 +399,6 @@ function constrainTop(
   }
 
   return rect.top;
-}
-
-/**
- * Check if the content will be clipped by the boundary edge if placed in a
- * region.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`)
- * @returns {Object} Clipped regions (`{top, right, bottom, left}`).
- */
-function getRegionClip(config: _Config, region: Region): _Regions {
-  const rect = getRect(config, region);
-  const offsetBounds = getOffsetBounds(config, region);
-
-  return {
-    top: rect.top < offsetBounds.top,
-    right: offsetBounds.right < rect.right,
-    bottom: offsetBounds.bottom < rect.bottom,
-    left: rect.left < offsetBounds.left,
-  };
-}
-
-/**
- * Calculate which regions are valid for the content rect to occupy.
- * This function measures the available space around the target rect within the
- * container rect. Any region with sufficient space to display the content rect
- * without clipping is set to `true`.
- *
- * This function checks the margins between the target rect and the bounds rect
- * in every region when offset from the the target. If a margin is smaller than
- * the width or height of the height of the content rect, that region is not
- * valid.
- *
- *  _________________________________________________________________
- * |                   ^                                             |
- * |                   |                                             |
- * |                  top                                            |
- * |                 margin   |‾‾‾‾‾‾‾‾‾‾‾|                          |
- * |                   |      |  content  |                          |
- * |                  _V_ _ _ |___________|    |<----right-margin--->|
- * |                                |          |                     |
- * |         |‾‾‾‾‾‾‾‾‾‾‾|     _____|_____     |‾‾‾‾‾‾‾‾‾‾‾|         |
- * |         |  content  |----|  target   |----|  content  |         |
- * |         |___________|     ‾‾‾‾‾|‾‾‾‾‾     |___________|         |
- * |                     |          |                                |
- * |<----left-margin---->|    |‾‾‾‾‾‾‾‾‾‾‾| ‾ ‾<- bottom margin      |
- *  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|  content  |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
- *                            |___________|
- * > bottom margin is smaller than the content height, this region is disabled
- *
- * In addition to checking the margins, this function also checks that enough
- * of the target rect intersects with the bounds rect in each direction to
- * accommodate the `overlap` value set in the config. This calculation allows
- * a region to be considered invalid if there is not enough room to render
- * a caret.
- *
- *               |                                                   |
- *               |<--L-->|------------min-overlap------------|<--R-->|
- *               |                                                   |
- *               |<-left-intersection->|                             |
- *               |                     |                             |
- *               |   __________________|                             |
- *               |  |      target      |                             |
- *               |  |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾                              |
- *               |  |<--------------right-intersection-------------->|
- *               |           ^                                       |
- *               | |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|                            |
- *               | |       content      |                            |
- *               | |____________________|                            |
- *               |                                                   |
- * > Sufficient intersection at the left and right, the top and bottom
- * > regions are considered valid.
- *
- *               |                                                   |
- *               |<--L-->|------------min-overlap------------|<--R-->|
- *               |                                                   |
- *               |<-->|--left-intersection                           |
- *               |    |                                              |
- *  _____________|____|      |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|                  |
- * |      target      |    < |       content      |                  |
- * |‾‾‾‾‾‾‾‾‾‾‾‾‾|‾‾‾‾       |____________________|                  |
- * |             |                                                   |
- * |<------------+----------right-intersection---------------------->|
- *               |                                                   |
- * > Insufficient intersection at the left, the top and bottom regions are
- * > not considered valid. Only the right region is valid.
- *
- * @param   {Object} config FlowTip layout config object.
- * @returns {Object} Valid regions (`{top, right, bottom, left}`).
- */
-function getValidRegions(config: _Config): _Regions {
-  const {
-    target,
-    overlap,
-    offset,
-    edgeOffset,
-    bounds,
-    content,
-    constrain,
-  } = config;
-
-  const offsetBounds = Rect.grow(bounds, -edgeOffset);
-
-  // This value is true if `overlap` amount of the target rect intersects
-  // the bounds rect in the horizontal direction.
-  const topBottomValid =
-    offsetBounds.right - target.left >= overlap &&
-    target.right - offsetBounds.left >= overlap;
-
-  // This value is true if `overlap` amount of the target rect intersects
-  // the bounds rect in the vertical direction.
-  const leftRightValid =
-    offsetBounds.bottom - target.top >= overlap &&
-    target.bottom - offsetBounds.top >= overlap;
-
-  // Calculate the available space in each region.
-  const topMargin = target.top - offsetBounds.top - offset;
-  const rightMargin = offsetBounds.right - target.right - offset;
-  const bottomMargin = offsetBounds.bottom - target.bottom - offset;
-  const leftMargin = target.left - offsetBounds.left - offset;
-
-  const topRegion = getRegionClip(config, TOP);
-  const rightRegion = getRegionClip(config, RIGHT);
-  const bottomRegion = getRegionClip(config, BOTTOM);
-  const leftRegion = getRegionClip(config, LEFT);
-
-  const topClips =
-    (!constrain.left && topRegion.left) ||
-    (!constrain.right && topRegion.right);
-  const rightClips =
-    (!constrain.top && rightRegion.top) ||
-    (!constrain.bottom && rightRegion.bottom);
-  const bottomClips =
-    (!constrain.left && bottomRegion.left) ||
-    (!constrain.right && rightRegion.bottom);
-  const leftClips =
-    (!constrain.top && topRegion.top) ||
-    (!constrain.bottom && leftRegion.bottom);
-
-  // A region is considered valid if the margin is large enough to fit the
-  // side of the content rect and if there is enough linear overlap as defined
-  // in the config. The overlap check ensures that a region is valid only if
-  // there is room to render a caret.
-  return {
-    top: !topClips && topBottomValid && topMargin >= content.height,
-    right: !rightClips && leftRightValid && rightMargin >= content.width,
-    bottom: !bottomClips && topBottomValid && bottomMargin >= content.height,
-    left: !leftClips && leftRightValid && leftMargin >= content.width,
-  };
-}
-
-/**
- * Get the ideal region to position the content rect. This function returns the
- * region adjacent to the target that has the largest available space.
- *
- * If there are no regions that are large enough to fit the content rect
- * `undefined` is returned.
- *
- *     ___________________________________________________________________
- *    |                      ^                                            |
- *    |                      |                                            |
- *    |                      V                                            |
- *    |                 |‾‾‾‾‾‾‾‾‾‾|                                      |
- *    |                 | content  |                                      |
- *    |                 |__________|                                      |
- *    |   |‾‾‾‾‾‾‾‾‾‾|   ____|_____   |‾‾‾‾‾‾‾‾‾‾|                        |
- *    |<->| content  |--|  target  |--| content  |<---------------------->|
- *    |   |__________|   ‾‾‾‾|‾‾‾‾‾   |__________|                        |
- *    |                 |‾‾‾‾‾‾‾‾‾‾|                                      |
- *    |                 | content  |                                      |
- *    |                 |__________|                                      |
- *    |                      ^                                            |
- *    |                      |                                            |
- *    |                      V                                            |
- *     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
- * > Although all regions are valid, the region with largest available space
- * > (right) returned as the ideal region.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
- * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
- */
-function getIdealRegion(config: _Config, valid: _Regions): ?Region {
-  const {target, content, disabled, bounds} = config;
-
-  let margin = 0;
-  let region = undefined;
-
-  // Calculate the amount of remaining free space in each region when occupied
-  // by the content rect. It is not necessary to factor `offset` into this
-  // calculation since it is constant for all regions.
-  const topMargin = target.top - bounds.top - content.height;
-  const rightMargin = bounds.right - target.right - content.width;
-  const bottomMargin = bounds.bottom - target.bottom - content.height;
-  const leftMargin = target.left - bounds.left - content.width;
-
-  if (valid.top && !disabled.top && topMargin > margin) {
-    margin = topMargin;
-    region = TOP;
-  }
-
-  if (valid.right && !disabled.right && rightMargin > margin) {
-    margin = rightMargin;
-    region = RIGHT;
-  }
-
-  if (valid.bottom && !disabled.bottom && bottomMargin > margin) {
-    margin = bottomMargin;
-    region = BOTTOM;
-  }
-
-  if (valid.left && !disabled.left && leftMargin > margin) {
-    margin = leftMargin;
-    region = LEFT;
-  }
-
-  return region;
 }
 
 /**
@@ -559,143 +540,6 @@ function getExternalRegion(config: _Config): ?Region {
 }
 
 /**
- * Get the opposite region of the one provided.
- * i.e. `left` -> `right`, `top` -> `bottom`
- *
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @returns {string} The inverse region.
- */
-function invertRegion(region: Region): Region {
-  return {
-    top: BOTTOM,
-    bottom: TOP,
-    left: RIGHT,
-    right: LEFT,
-  }[region];
-}
-
-/**
- * Return the default region set in the config, or its inverse if either are
- * valid.
- *
- * Using the inverse helps preserve visual continuity when the content meets the
- * edge of the bounds rect; instead of appearing to rotate 90 degrees around the
- * target, inverting it will cause it to appear to flip, which is more visually
- * appealing.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
- * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
- */
-function getDefaultRegion(config: _Config, valid: _Regions): ?Region {
-  const {region} = config;
-
-  if (typeof region === 'string') {
-    if (valid[region] && !config.disabled[region]) {
-      return region;
-    }
-  }
-
-  return undefined;
-}
-
-/**
- * Return the default region set in the config, or its inverse if either are
- * valid.
- *
- * Using the inverse helps preserve visual continuity when the content meets the
- * edge of the bounds rect; instead of appearing to rotate 90 degrees around the
- * target, inverting it will cause it to appear to flip, which is more visually
- * appealing.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
- * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
- */
-function getInvertDefaultRegion(config: _Config, valid: _Regions): ?Region {
-  const {region} = config;
-
-  if (typeof region === 'string') {
-    const invertedDefault = invertRegion(region);
-    if (valid[invertedDefault] && !config.disabled[invertedDefault]) {
-      return invertedDefault;
-    }
-  }
-
-  return undefined;
-}
-
-/**
- * If a correct region could not be resolved due to one or more regions
- * disabled in the config, we need to return a fallback region. This may
- * result in the content rect getting inadvertently clipped with the
- * bounds rect or the target rect, but there is nothing else we can do.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
- * @returns {string} A region (`top`, `right`, `bottom`, or `left`).
- */
-function getFallbackRegion(config: _Config): Region {
-  // Prioritize the configured default region.
-  let fallback: ?Region = config.region;
-
-  // If the default region is not set or is disabled, pick the first enabled
-  // region.
-  if (typeof fallback !== 'string' || config.disabled[fallback]) {
-    fallback = Object.keys(config.disabled).find(
-      (region) => !config.disabled[region],
-    );
-  }
-
-  // ALL OF THE REGIONS ARE DISABLED ಠ_ಠ
-  if (typeof fallback !== 'string') {
-    fallback = TOP;
-  }
-
-  return fallback;
-}
-
-/**
- * Get the current region that should be occupied by the content rect.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
- * @returns {array} Array containing region and reason.
- */
-function getRegion(config: _Config, valid: _Regions): [Region, Reason] {
-  const ideal = getIdealRegion(config, valid);
-
-  // Return the default region set in the config if it is valid.
-  const defaultRegion = getDefaultRegion(config, valid);
-
-  if (typeof defaultRegion === 'string') {
-    return [defaultRegion, defaultRegion === ideal ? 'ideal' : 'default'];
-  }
-
-  // Return the default region set in the config if it is valid.
-  const invertedDefault = getInvertDefaultRegion(config, valid);
-
-  if (typeof invertedDefault === 'string') {
-    return [invertedDefault, invertedDefault === ideal ? 'ideal' : 'inverted'];
-  }
-
-  // Return the region with the most valid space.
-  if (typeof ideal === 'string') {
-    return [ideal, 'ideal'];
-  }
-
-  // Retun the region from the external calculation if one is returned.
-  const external = getExternalRegion(config);
-  if (typeof external === 'string') {
-    return [external, 'external'];
-  }
-
-  const fallback = getFallbackRegion(config);
-
-  return [fallback, 'fallback'];
-}
-
-/**
  * Get the updated left position of the content rect with boundary constraints
  * applied.
  *
@@ -704,9 +548,12 @@ function getRegion(config: _Config, valid: _Regions): [Region, Reason] {
  * @param   {Object} rect A content rect object.
  * @returns {Object} A repositioned content rect.
  */
-function constrainRect(config: _Config, region: Region, rect: Rect): Rect {
-  const offsetBounds = getOffsetBounds(config, region);
-
+function constrainRect(
+  config: _Config,
+  region: Region,
+  rect: Rect,
+  offsetBounds,
+): Rect {
   const left = constrainLeft(config, region, offsetBounds, rect);
   const top = constrainTop(config, region, offsetBounds, rect);
 
@@ -738,22 +585,6 @@ function getOffset(config: _Config, region: Region, rect: Rect): number {
 
   // Region is left.
   return target.left - rect.right;
-}
-
-/**
- * Get the current linear overlap between the content rect and the target rect.
- *
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @param   {Object} intersect The intersection rect of the target and content.
- * @returns {number} Overlap between target and content.
- */
-function getOverlap(region: Region, intersect: Rect): number {
-  if (region === TOP || region === BOTTOM) {
-    return intersect.width;
-  }
-
-  // Region is left or right.
-  return intersect.height;
 }
 
 /**
@@ -873,29 +704,65 @@ function defaults(config: Config): _Config {
 function flowtip(config: Config): Result {
   const finalConfig = defaults(config);
 
-  const valid = getValidRegions(finalConfig);
+  invariant(
+    typeof config.target.left === 'number',
+    'target.left must be number',
+  );
+  invariant(typeof config.target.top === 'number', 'target.top must be number');
+  invariant(
+    typeof config.bounds.left === 'number',
+    'bounds.left must be number',
+  );
+  invariant(typeof config.bounds.top === 'number', 'bounds.top must be number');
 
-  const [region, reason] = getRegion(finalConfig, valid);
+  const regionList = [LEFT, RIGHT, TOP, BOTTOM];
+  const phases = [
+    {key: 'contentAvailabilityRect', value: getContentAvailabilityRect},
+    {key: 'tailAvailabilityRect', value: getTailAvailabilityRect},
+    {key: 'contentRect', value: getContentRect},
+    {key: 'overlapRect', value: getOverlapRect},
+    {key: 'overlap', value: getOverlap},
+    {key: 'hasEnoughSpace', value: hasEnoughSpace},
+    {key: 'hasEnoughOverlap', value: hasEnoughOverlap},
+    {key: 'isDetatched', value: isDetatched},
+  ];
+
+  const regions = {};
+  regionList.forEach((region) => {
+    const result = {};
+    phases.forEach((phase) => {
+      result[phase.key] = phase.value(finalConfig, region, result);
+    });
+    regions[region] = result;
+  });
+
+  const region =
+    regionList.find((name) => {
+      return regions[name].hasEnoughSpace && regions[name].hasEnoughOverlap;
+    }) || 'left';
 
   const tempRect = getRect(finalConfig, region);
 
-  const rect = constrainRect(finalConfig, region, tempRect);
+  const rect = constrainRect(
+    finalConfig,
+    region,
+    tempRect,
+    regions[region].contentRect,
+  );
 
   const intersect = Rect.intersect(finalConfig.target, rect);
 
   const offset = getOffset(finalConfig, region, rect);
 
-  const overlap = getOverlap(region, intersect);
+  const overlap = regions[region].overlap;
 
   const overlapCenter = getCenter(region, rect, intersect);
-
   return {
+    regions,
     bounds: finalConfig.bounds,
     target: finalConfig.target,
     region,
-    reason,
     rect,
-    valid,
     offset,
     overlap,
     overlapCenter,
