@@ -211,7 +211,40 @@ const getContentRect = (config, region, result) => {
 };
 
 const getOverlapRect = (config, region, result) => {
-  return Rect.intersect(config.target, result.contentRect);
+  const {target} = config;
+  const {contentRect} = result;
+  switch (region) {
+    case TOP: {
+      const left = Math.max(contentRect.left, target.left);
+      const right = Math.min(contentRect.right, target.right);
+      const top = contentRect.bottom;
+      const bottom = target.top;
+      return new Rect(left, top, right - left, bottom - top);
+    }
+    case BOTTOM: {
+      const left = Math.max(contentRect.left, target.left);
+      const right = Math.min(contentRect.right, target.right);
+      const top = target.bottom;
+      const bottom = contentRect.top;
+      return new Rect(left, top, right - left, bottom - top);
+    }
+    case LEFT: {
+      const left = contentRect.right;
+      const right = target.left;
+      const top = Math.max(contentRect.top, target.top);
+      const bottom = Math.min(contentRect.bottom, target.bottom);
+      return new Rect(left, top, right - left, bottom - top);
+    }
+    case RIGHT: {
+      const left = target.right;
+      const right = contentRect.left;
+      const top = Math.max(contentRect.top, target.top);
+      const bottom = Math.min(contentRect.bottom, target.bottom);
+      return new Rect(left, top, right - left, bottom - top);
+    }
+    default:
+      throw new TypeError('Invalid region');
+  }
 };
 
 const getOverlap = (config, region, result) => {
@@ -222,6 +255,59 @@ const getOverlap = (config, region, result) => {
     case LEFT:
     case RIGHT:
       return result.overlapRect.height;
+    default:
+      throw new TypeError();
+  }
+};
+
+const getAlignmentFactor = (config, region, result) => {
+  const {target, content} = config;
+  const {contentRect} = result;
+  // const rect = Rect.intersect(result.tailAvailabilityRect, result.contentRect);
+  // switch (region) {
+  //   case LEFT:
+  //   case RIGHT:
+  //     return {min: 1 - target.top / rect.top, max: rect.bottom / target.bottom};
+  //   case TOP:
+  //   case BOTTOM:
+  //     return {min: 1 - target.left / rect.left, max: rect.right / target.right};
+  //   default:
+  //     throw new TypeError('invalid region');
+  // }
+  // y = mx + b
+  // x = (y - b) / m
+  switch (region) {
+    case LEFT:
+    case RIGHT: {
+      const b = target.top;
+      const m = content.height / target.height;
+      const yMin = contentRect.top;
+      const yMax = contentRect.bottom;
+      return {
+        minContent: (yMin - b) / m,
+        maxContent: (yMax - b) / m,
+        minTail: (target.top - b) / m,
+        maxTail: (target.bottom - b) / m,
+      };
+    }
+    case TOP:
+    case BOTTOM: {
+      // content.left = target.left + (target.width - content.width) * align;
+      //
+      const b = target.left;
+      const m = target.width;
+      const lolA = target.left + content.width;
+      const lolB = target.right - content.width;
+      const min = Math.min(lolA, contentRect.right) / lolA;
+      const max = lolB / Math.max(lolB, contentRect.left);
+
+      return {
+        minContent: min,
+        maxContent: max,
+        // minTail: (target.left - b) / m,
+        // maxTail: (target.right - b) / m,
+      };
+    }
     default:
       throw new TypeError();
   }
@@ -552,10 +638,19 @@ function constrainRect(
   config: _Config,
   region: Region,
   rect: Rect,
-  offsetBounds,
+  result,
 ): Rect {
-  const left = constrainLeft(config, region, offsetBounds, rect);
-  const top = constrainTop(config, region, offsetBounds, rect);
+  const offsetBounds = result.contentRect;
+  const shouldConstrainLeft =
+    !result.isDetatched || (region === TOP || region === BOTTOM);
+  const shouldConstraintTop =
+    !result.isDetatched || (region === LEFT || region === RIGHT);
+  const left = shouldConstrainLeft
+    ? constrainLeft(config, region, offsetBounds, rect)
+    : rect.left;
+  const top = shouldConstraintTop
+    ? constrainTop(config, region, offsetBounds, rect)
+    : rect.top;
 
   return new Rect(left, top, rect.width, rect.height);
 }
@@ -715,7 +810,7 @@ function flowtip(config: Config): Result {
   );
   invariant(typeof config.bounds.top === 'number', 'bounds.top must be number');
 
-  const regionList = [LEFT, RIGHT, TOP, BOTTOM];
+  const regionList = [TOP, LEFT, RIGHT, BOTTOM];
   const phases = [
     {key: 'contentAvailabilityRect', value: getContentAvailabilityRect},
     {key: 'tailAvailabilityRect', value: getTailAvailabilityRect},
@@ -725,6 +820,7 @@ function flowtip(config: Config): Result {
     {key: 'hasEnoughSpace', value: hasEnoughSpace},
     {key: 'hasEnoughOverlap', value: hasEnoughOverlap},
     {key: 'isDetatched', value: isDetatched},
+    {key: 'alignmentFactor', value: getAlignmentFactor},
   ];
 
   const regions = {};
@@ -743,12 +839,7 @@ function flowtip(config: Config): Result {
 
   const tempRect = getRect(finalConfig, region);
 
-  const rect = constrainRect(
-    finalConfig,
-    region,
-    tempRect,
-    regions[region].contentRect,
-  );
+  const rect = constrainRect(finalConfig, region, tempRect, regions[region]);
 
   const intersect = Rect.intersect(finalConfig.target, rect);
 

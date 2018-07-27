@@ -478,6 +478,7 @@ class FlowTip extends React.Component<Props, State> {
               }}
             />
           </RectBlock>
+          <RectBlock rect={region.overlapRect} name="overlap" />
           <RectBlock rect={this.state.bounds} name="bounds" />
           <RectBlock
             rect={region.contentRect}
