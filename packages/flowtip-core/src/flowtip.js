@@ -59,6 +59,9 @@ export const START: Align = 'start';
 export const CENTER: Align = 'center';
 export const END: Align = 'end';
 
+const clamp = (min: number, max: number, x: number): number =>
+  Math.min(max, Math.max(min, x));
+
 /**
  * Get the position of the content rect when moved into the supplied region and
  * aligned with `config.align`. The returned rect represents the ideal content
@@ -74,8 +77,8 @@ export const END: Align = 'end';
  * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
  * @returns {Object} A rect object.
  */
-function getRect(config: _Config, region: Region): Rect {
-  const {target, content, align, offset} = config;
+function getRect(config): Rect {
+  const {target, content, offset, region, align} = config;
 
   let left;
   let top;
@@ -263,49 +266,31 @@ const getOverlap = (config, region, result) => {
 const getAlignmentFactor = (config, region, result) => {
   const {target, content} = config;
   const {contentRect} = result;
-  // const rect = Rect.intersect(result.tailAvailabilityRect, result.contentRect);
-  // switch (region) {
-  //   case LEFT:
-  //   case RIGHT:
-  //     return {min: 1 - target.top / rect.top, max: rect.bottom / target.bottom};
-  //   case TOP:
-  //   case BOTTOM:
-  //     return {min: 1 - target.left / rect.left, max: rect.right / target.right};
-  //   default:
-  //     throw new TypeError('invalid region');
-  // }
-  // y = mx + b
-  // x = (y - b) / m
   switch (region) {
     case LEFT:
     case RIGHT: {
       const b = target.top;
-      const m = content.height / target.height;
-      const yMin = contentRect.top;
-      const yMax = contentRect.bottom;
+      const m = target.height - content.height;
+      const z = contentRect.bottom - target.height;
+      const w = contentRect.top;
       return {
-        minContent: (yMin - b) / m,
-        maxContent: (yMax - b) / m,
-        minTail: (target.top - b) / m,
-        maxTail: (target.bottom - b) / m,
+        m,
+        b,
+        min: 1 + (z - b) / m,
+        max: (w - b) / m,
       };
     }
     case TOP:
     case BOTTOM: {
-      // content.left = target.left + (target.width - content.width) * align;
-      //
       const b = target.left;
-      const m = target.width;
-      const lolA = target.left + content.width;
-      const lolB = target.right - content.width;
-      const min = Math.min(lolA, contentRect.right) / lolA;
-      const max = lolB / Math.max(lolB, contentRect.left);
-
+      const m = target.width - content.width;
+      const z = contentRect.right - target.width;
+      const w = contentRect.left;
       return {
-        minContent: min,
-        maxContent: max,
-        // minTail: (target.left - b) / m,
-        // maxTail: (target.right - b) / m,
+        m,
+        b,
+        min: 1 + (z - b) / m,
+        max: (w - b) / m,
       };
     }
     default:
@@ -423,27 +408,20 @@ const isDetatched = (config, region, result) => {
  * @param   {Object} rect A content rect object.
  * @returns {number} A new left position for the content rect.
  */
-function constrainLeft(
-  config: _Config,
-  region: Region,
-  offsetBounds: Rect,
-  rect: Rect,
-): number {
-  const {constrain, bounds} = config;
-
+function constrainLeft(bounds: Rect, offsetBounds: Rect, rect: Rect): number {
   // Center align the content rect if is wider than the bounds rect.
-  if (constrain.left && constrain.right && rect.width > offsetBounds.width) {
+  if (rect.width > offsetBounds.width) {
     return bounds.left + (bounds.width - rect.width) / 2;
   }
 
   // If either the left or right edge of the content rect is outside the bounds
   // rect, position it on the edge. Only one of these cases can be true since
   // the content is not wider than the bounds.
-  if (constrain.left && rect.left < offsetBounds.left) {
+  if (rect.left < offsetBounds.left) {
     return offsetBounds.left;
   }
 
-  if (constrain.right && rect.right > offsetBounds.left + offsetBounds.width) {
+  if (rect.right > offsetBounds.left + offsetBounds.width) {
     return offsetBounds.right - rect.width;
   }
 
@@ -460,27 +438,20 @@ function constrainLeft(
  * @param   {Object} rect A content rect object.
  * @returns {number} A new top position for the content rect.
  */
-function constrainTop(
-  config: _Config,
-  region: Region,
-  offsetBounds: Rect,
-  rect: Rect,
-): number {
-  const {constrain, bounds} = config;
-
+function constrainTop(bounds: Rect, offsetBounds: Rect, rect: Rect): number {
   // Center align the content rect if is taller than the bounds rect.
-  if (constrain.top && constrain.bottom && rect.height > offsetBounds.height) {
+  if (rect.height > offsetBounds.height) {
     return bounds.top + (bounds.height - rect.height) / 2;
   }
 
   // If either the left or right edge of the content rect is outside the bounds
   // rect, position it on the edge. Only one of these cases can be true since
   // the content is not taller than the bounds.
-  if (constrain.top && rect.top < offsetBounds.top) {
+  if (rect.top < offsetBounds.top) {
     return offsetBounds.top;
   }
 
-  if (constrain.bottom && rect.bottom > offsetBounds.bottom) {
+  if (rect.bottom > offsetBounds.bottom) {
     return offsetBounds.bottom - rect.height;
   }
 
@@ -634,22 +605,17 @@ function getExternalRegion(config: _Config): ?Region {
  * @param   {Object} rect A content rect object.
  * @returns {Object} A repositioned content rect.
  */
-function constrainRect(
-  config: _Config,
-  region: Region,
-  rect: Rect,
-  result,
-): Rect {
-  const offsetBounds = result.contentRect;
+function constrainRect(config: _Config, rect: Rect): Rect {
+  const offsetBounds = config.contentRect;
   const shouldConstrainLeft =
-    !result.isDetatched || (region === TOP || region === BOTTOM);
+    !config.isDetatched || (config.region === TOP || config.region === BOTTOM);
   const shouldConstraintTop =
-    !result.isDetatched || (region === LEFT || region === RIGHT);
+    !config.isDetatched || (config.region === LEFT || config.region === RIGHT);
   const left = shouldConstrainLeft
-    ? constrainLeft(config, region, offsetBounds, rect)
+    ? constrainLeft(config.bounds, offsetBounds, rect)
     : rect.left;
   const top = shouldConstraintTop
-    ? constrainTop(config, region, offsetBounds, rect)
+    ? constrainTop(config.bounds, offsetBounds, rect)
     : rect.top;
 
   return new Rect(left, top, rect.width, rect.height);
@@ -667,9 +633,7 @@ function constrainRect(
  * @param   {Object} rect A content rect object.
  * @returns {number} Distance between target and content.
  */
-function getOffset(config: _Config, region: Region, rect: Rect): number {
-  const {target} = config;
-
+function getOffset(target: Rect, region: Region, rect: Rect): number {
   if (region === TOP) {
     return target.top - rect.bottom;
   } else if (region === RIGHT) {
@@ -779,6 +743,47 @@ function defaults(config: Config): _Config {
   };
 }
 
+const canCenterAlign = (x) => {
+  return x.alignmentFactor.min <= 0.5 && x.alignmentFactor.max >= 0.5;
+};
+
+const calculateThingy = (regions) => {
+  const regionNames = Object.keys(regions);
+
+  const available = regionNames.filter((regionName) => {
+    const {hasEnoughOverlap, hasEnoughSpace} = regions[regionName];
+    return hasEnoughOverlap && hasEnoughSpace;
+  });
+
+  available.sort((a, b) => {
+    const x1 = canCenterAlign(regions[a]);
+    const x2 = canCenterAlign(regions[b]);
+    if (x1 === x2) {
+      return 0;
+    } else if (x1) {
+      return 1;
+    }
+    return -1;
+  });
+
+  const regionName = available[0] || 'left';
+  const region = regions[regionName];
+  let align = 0.5;
+
+  if (!canCenterAlign(region)) {
+    if (region.alignmentFactor.min <= 0) {
+      align = 0;
+    } else if (region.alignmentFactor.max >= 1) {
+      align = 1;
+    }
+  }
+
+  return {
+    region: regionName,
+    align,
+  };
+};
+
 /**
  * Calculate a FlowTip layout result.
  *
@@ -832,30 +837,27 @@ function flowtip(config: Config): Result {
     regions[region] = result;
   });
 
-  const region =
-    regionList.find((name) => {
-      return regions[name].hasEnoughSpace && regions[name].hasEnoughOverlap;
-    }) || 'left';
+  const output = calculateThingy(regions);
+  const otherThing = {
+    ...finalConfig,
+    ...output,
+    ...regions[output.region],
+  };
 
-  const tempRect = getRect(finalConfig, region);
+  const tempRect = getRect(otherThing);
 
-  const rect = constrainRect(finalConfig, region, tempRect, regions[region]);
+  const rect = constrainRect(otherThing, tempRect);
 
-  const intersect = Rect.intersect(finalConfig.target, rect);
+  const intersect = Rect.intersect(otherThing.target, rect);
 
-  const offset = getOffset(finalConfig, region, rect);
+  const offset = getOffset(otherThing.target, otherThing.region, rect);
 
-  const overlap = regions[region].overlap;
-
-  const overlapCenter = getCenter(region, rect, intersect);
+  const overlapCenter = getCenter(otherThing.region, rect, intersect);
   return {
+    ...otherThing,
     regions,
-    bounds: finalConfig.bounds,
-    target: finalConfig.target,
-    region,
     rect,
     offset,
-    overlap,
     overlapCenter,
   };
 }

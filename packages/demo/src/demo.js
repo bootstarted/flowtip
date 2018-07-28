@@ -54,15 +54,6 @@ const BoundsContainer = styled.div`
   left: 0;
 `;
 
-const Handle = styled.div`
-  position: absolute;
-  transform: translateX(-50%) translateY(-50%);
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #aaa;
-`;
-
 const ExampleTarget = styled.div`
   position: absolute;
   left: 0;
@@ -143,12 +134,7 @@ class FlowTipExample extends React.Component {
             width: bounds.width,
             height: bounds.height,
           }}
-        >
-          <Handle style={{top: 0, left: 0}} />
-          <Handle style={{top: 0, right: 0}} />
-          <Handle style={{bottom: 0, left: 0}} />
-          <Handle style={{bottom: 0, right: 0}} />
-        </BoundsContainer>
+        />
       </Draggable>
     );
   }
