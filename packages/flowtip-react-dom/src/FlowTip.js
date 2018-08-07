@@ -246,7 +246,7 @@ class FlowTip extends React.Component<Props, State> {
       return processBounds(nextProps.bounds);
     }
 
-    if (document.body && this._clippingBlockNode === document.documentElement) {
+    if (document.body) {
       return processBounds(
         new Rect(
           -window.scrollX,
