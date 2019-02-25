@@ -15,3 +15,9 @@ overrides:
     files: "*.test.js"
     env:
       jest: true
+  -
+    files: "babel.config.js"
+    env:
+      node: true
+    rules:
+      metalab/import/no-commonjs: 0
