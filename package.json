@@ -16,31 +16,31 @@
     "test": "npm run flow --silent && npm run lint --slient && npm run spec --silent"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.40",
-    "@babel/core": "^7.0.0-beta.40",
-    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.40",
-    "@babel/plugin-transform-modules-commonjs": "^7.0.0-beta.42",
-    "@babel/preset-env": "^7.0.0-beta.40",
-    "@babel/preset-flow": "^7.0.0-beta.40",
-    "@babel/preset-react": "^7.0.0-beta.40",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-jest": "^22.4.1",
-    "babel-plugin-module-resolver": "^3.1.0",
-    "enzyme": "^3.3.0",
-    "enzyme-adapter-react-16": "^1.1.1",
-    "eslint": "^4.18.2",
-    "eslint-config-metalab": "^8.0.0",
-    "eslint-plugin-prettier": "^2.6.0",
-    "flow-bin": "^0.67.1",
-    "jest": "^22.4.2",
-    "lerna": "^2.9.0",
-    "ncp": "^2.0.0",
-    "prettier": "^1.11.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "regenerator-runtime": "^0.11.1",
-    "renamer": "^0.6.1",
-    "rimraf": "^2.6.2"
+    "@babel/cli": "7.0.0-beta.41",
+    "@babel/core": "7.0.0-beta.41",
+    "@babel/plugin-proposal-class-properties": "7.0.0-beta.41",
+    "@babel/plugin-transform-modules-commonjs": "7.0.0-beta.42",
+    "@babel/preset-env": "7.0.0-beta.41",
+    "@babel/preset-flow": "7.0.0-beta.41",
+    "@babel/preset-react": "7.0.0-beta.41",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "22.4.1",
+    "babel-plugin-module-resolver": "3.1.0",
+    "enzyme": "3.3.0",
+    "enzyme-adapter-react-16": "1.1.1",
+    "eslint": "4.18.2",
+    "eslint-config-metalab": "8.0.0",
+    "eslint-plugin-prettier": "2.6.0",
+    "flow-bin": "0.67.1",
+    "jest": "22.4.2",
+    "lerna": "2.9.0",
+    "ncp": "2.0.0",
+    "prettier": "1.11.1",
+    "react": "16.2.0",
+    "react-dom": "16.2.0",
+    "regenerator-runtime": "0.11.1",
+    "renamer": "0.6.1",
+    "rimraf": "2.6.2"
   },
   "devEngines": {
     "node": "9",
@@ -67,6 +67,6 @@
     "> 1%"
   ],
   "dependencies": {
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.40"
+    "@babel/plugin-syntax-dynamic-import": "7.0.0-beta.41"
   }
 }
