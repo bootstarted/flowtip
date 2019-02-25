@@ -16,13 +16,13 @@
     "test": "npm run flow --silent && npm run lint --slient && npm run spec --silent"
   },
   "devDependencies": {
-    "@babel/cli": "7.0.0-beta.41",
-    "@babel/core": "7.0.0-beta.41",
-    "@babel/plugin-proposal-class-properties": "7.0.0-beta.41",
-    "@babel/plugin-transform-modules-commonjs": "7.0.0-beta.42",
-    "@babel/preset-env": "7.0.0-beta.41",
-    "@babel/preset-flow": "7.0.0-beta.41",
-    "@babel/preset-react": "7.0.0-beta.41",
+    "@babel/cli": "7.2.3",
+    "@babel/core": "7.3.4",
+    "@babel/plugin-proposal-class-properties": "7.3.4",
+    "@babel/plugin-transform-modules-commonjs": "7.2.0",
+    "@babel/preset-env": "7.3.4",
+    "@babel/preset-flow": "7.0.0",
+    "@babel/preset-react": "7.0.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "22.4.1",
     "babel-plugin-module-resolver": "3.1.0",
@@ -67,6 +67,6 @@
     "> 1%"
   ],
   "dependencies": {
-    "@babel/plugin-syntax-dynamic-import": "7.0.0-beta.41"
+    "@babel/plugin-syntax-dynamic-import": "7.2.0"
   }
 }
