@@ -24,7 +24,7 @@
     "@babel/preset-flow": "7.0.0",
     "@babel/preset-react": "7.0.0",
     "babel-core": "7.0.0-bridge.0",
-    "babel-jest": "22.4.1",
+    "babel-jest": "22.4.4",
     "babel-plugin-module-resolver": "3.2.0",
     "enzyme": "3.9.0",
     "enzyme-adapter-react-16": "1.9.1",
@@ -32,7 +32,7 @@
     "eslint-config-metalab": "8.0.0",
     "eslint-plugin-prettier": "2.7.0",
     "flow-bin": "0.67.1",
-    "jest": "22.4.2",
+    "jest": "22.4.4",
     "lerna": "2.9.0",
     "ncp": "2.0.0",
     "prettier": "1.16.4",
@@ -58,7 +58,8 @@
     },
     "setupFiles": [
       "./__test__/setup.js"
-    ]
+    ],
+    "testURL": "http://localhost"
   },
   "browserslist": [
     "last 2 versions",
