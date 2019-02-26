@@ -30,7 +30,7 @@
     "enzyme-adapter-react-16": "1.9.1",
     "eslint": "4.19.1",
     "eslint-config-metalab": "8.0.0",
-    "eslint-plugin-prettier": "2.6.0",
+    "eslint-plugin-prettier": "2.7.0",
     "flow-bin": "0.67.1",
     "jest": "22.4.2",
     "lerna": "2.9.0",
