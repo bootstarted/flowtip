@@ -33,7 +33,7 @@
     "eslint-plugin-prettier": "2.7.0",
     "flow-bin": "0.67.1",
     "jest": "22.4.4",
-    "lerna": "2.9.0",
+    "lerna": "2.11.0",
     "ncp": "2.0.0",
     "prettier": "1.16.4",
     "react": "16.8.3",
