@@ -39,7 +39,7 @@
     "react": "16.8.3",
     "react-dom": "16.8.3",
     "regenerator-runtime": "0.13.1",
-    "renamer": "0.6.1",
+    "renamer": "0.7.3",
     "rimraf": "2.6.2"
   },
   "devEngines": {
