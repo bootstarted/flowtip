@@ -1,13 +1,11 @@
-// @flow
-
 import {Rect} from 'flowtip-core';
-import type {Borders} from '../types';
+import {Borders} from '../types';
 
 export function findAncestor(
   callback: (node: HTMLElement) => boolean,
-  node: ?Node,
+  node: Node | null | void,
 ): HTMLElement | null {
-  let current = node;
+  let current: Node | null | void = node;
 
   while (current instanceof HTMLElement) {
     if (callback(current)) {
@@ -23,21 +21,25 @@ export function findAncestor(
 export function getBorders(node: HTMLElement): Borders {
   const style = getComputedStyle(node);
 
-  const top = parseInt(style.borderTopWidth, 10);
-  const right = parseInt(style.borderRightWidth, 10);
-  const bottom = parseInt(style.borderBottomWidth, 10);
-  const left = parseInt(style.borderLeftWidth, 10);
+  const top = style.borderTopWidth ? parseInt(style.borderTopWidth, 10) : 0;
+  const right = style.borderRightWidth
+    ? parseInt(style.borderRightWidth, 10)
+    : 0;
+  const bottom = style.borderBottomWidth
+    ? parseInt(style.borderBottomWidth, 10)
+    : 0;
+  const left = style.borderLeftWidth ? parseInt(style.borderLeftWidth, 10) : 0;
 
   return {top, right, bottom, left};
 }
 
-export function getClippingBlock(node: ?Node): HTMLElement {
+export function getClippingBlock(node: Node | null | void): HTMLElement {
   const result = findAncestor((node) => {
     if (node === document.documentElement) return true;
 
     const style = getComputedStyle(node);
 
-    return style.overflow && style.overflow !== 'visible';
+    return !!(style.overflow && style.overflow !== 'visible');
   }, node);
 
   if (result) return result;
@@ -46,13 +48,13 @@ export function getClippingBlock(node: ?Node): HTMLElement {
   throw new Error('document.documentElement is null');
 }
 
-export function getContainingBlock(node: ?Node): HTMLElement {
+export function getContainingBlock(node: Node | null | void): HTMLElement {
   const result = findAncestor((node) => {
     if (node === document.documentElement) return true;
 
     const style = getComputedStyle(node);
 
-    return style.position && style.position !== 'static';
+    return !!(style.position && style.position !== 'static');
   }, node);
 
   if (result) return result;

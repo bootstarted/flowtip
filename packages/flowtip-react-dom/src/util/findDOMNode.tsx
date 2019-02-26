@@ -1,22 +1,20 @@
-// @flow
-
 import {findDOMNode as _findDOMNode} from 'react-dom';
-import type {Component} from 'react';
+import {Component} from 'react';
 
 type FiberNode = {
   stateNode: null | Element | Text,
-  child: ?FiberNode,
+  child: FiberNode | void,
 };
 
 const findDOMNode = (
-  componentOrElement: Element | ?Component<*, *>,
+  componentOrElement: Element | Component,
 ): null | Element | Text => {
   const node = _findDOMNode(componentOrElement);
   if (node) return node;
 
-  let fiberNode: ?FiberNode =
+  let fiberNode: FiberNode | void =
     // flowlint-next-line unclear-type: off
-    componentOrElement && (componentOrElement: any)._reactInternalFiber;
+    componentOrElement && (componentOrElement as any)._reactInternalFiber;
 
   while (fiberNode && !(fiberNode.stateNode instanceof Element)) {
     fiberNode = fiberNode.child;

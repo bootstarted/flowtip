@@ -1,16 +1,5 @@
-// @flow
-
 import * as React from 'react';
-import type {
-  Rect,
-  RectLike,
-  Region,
-  Align,
-  Dimensions,
-  Result,
-} from 'flowtip-core';
-
-export type Style = {[string]: string | number};
+import {Rect, RectLike, Region, Align, Dimensions, Result} from 'flowtip-core';
 
 export type Borders = {
   top: number,
@@ -20,27 +9,27 @@ export type Borders = {
 };
 
 export type ContentProps = {
-  style: Style,
+  style: React.CSSProperties,
   result: Result,
-  children: React.Node,
+  children: React.ReactNode,
 };
 
 export type TailProps = {
-  style: Style,
+  style: React.CSSProperties,
   result: Result,
-  children: React.Node,
+  children: React.ReactNode,
 };
 
 export type RenderProps = {
-  onContentSize(Dimensions): mixed,
-  onTailSize(Dimensions): mixed,
+  onContentSize(Dimensions): unknown,
+  onTailSize(Dimensions): unknown,
   // eslint-disable-next-line no-use-before-define
   state: State,
   // eslint-disable-next-line no-use-before-define
   props: Props,
 };
 
-export type Render = (RenderProps) => React.Node;
+export type Render = (RenderProps) => React.ReactNode;
 
 export type Props = {
   /** DOMRect (or similar shaped object) of target position. */
@@ -80,14 +69,12 @@ export type Props = {
   constrainBottom: boolean,
   /** Constrain the content at the bottom boundary. */
   constrainLeft: boolean,
-  children: React.Node,
+  children: React.ReactNode,
 
   render: Render,
 
-  children: React.Node,
-
-  content?: React.ComponentType<ContentProps> | string,
-  tail?: ?React.ComponentType<TailProps>,
+  content?: React.ComponentType<ContentProps> | 'div',
+  tail?: React.ComponentType<TailProps>,
 };
 
 export type State = {
@@ -97,4 +84,5 @@ export type State = {
   contentBorders: Borders | null,
   tail: Dimensions | null,
   result: Result,
+  boundedByViewport: boolean | null,
 };

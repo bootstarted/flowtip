@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "./types",
+    "target": "es6",
+    "noImplicitAny": false,
+    "moduleResolution": "Node",
+    "outDir": "dist",
+    "rootDir": "./src/",
+    "sourceMap": false,
+    "strict": true,
+    "jsx": "react"
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src/*"
+  ]
+}

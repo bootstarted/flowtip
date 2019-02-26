@@ -2,18 +2,18 @@
   "private": true,
   "name": "flowtip-packages",
   "scripts": {
-    "build": "npm run clean && npm run build:flow && npm run build:es && npm run build:lib",
-    "build:es": "BABEL_ENV=es npx babel --copy-files -s --relative -d ../es packages/*/src",
-    "build:flow": "npx lerna exec ncp src es && npx lerna exec ncp src lib && npx renamer --regex --find '$' --replace '.flow' 'packages/*/@(es|lib)/**/*.js'",
-    "build:lib": "BABEL_ENV=lib npx babel --copy-files -s --relative -d ../lib packages/*/src",
-    "clean": "npx lerna exec rimraf lib es",
-    "flow": "npx flow",
-    "format": "npx prettier --write '**/*.js'",
-    "lint": "npx eslint .",
+    "build": "npm run build:compile && npm run build:types",
+    "build:compile": "npm run clean && npx lerna exec -- 'rollup --config ${LERNA_ROOT_PATH}/rollup.config.js'",
+    "build:flowtype": "npx lerna exec -- 'for file in $(find ./types -name *.d.ts -type f | sed \"s|^\\./types||\"); do mkdir -p `dirname ./${file}` && flowgen ./types/${file} -o .${file/.d.ts/.flow.js}; done;'",
+    "build:types": "npx lerna exec -- 'tsc --emitDeclarationOnly'",
+    "clean": "npx lerna exec rimraf ./**/*.js ",
+    "format": "npx prettier --write '**/*.tsx'",
     "prepare": "npx lerna bootstrap && npm run build",
-    "spec": "npx jest --runInBand=${SPEC_SERIAL:-$CI} --coverage=${SPEC_COVERAGE:-$CI}",
-    "spec:watch": "npm run spec -- --watch",
-    "test": "npm run flow --silent && npm run lint --slient && npm run spec --silent"
+    "test": "npm run test:lint && npm run test:spec && npm run test:types",
+    "test:lint": "NODE_ENV=test npx eslint .",
+    "test:spec": "NODE_ENV=test npx jest --runInBand=${SPEC_SERIAL:-$CI} --coverage=${SPEC_COVERAGE:-$CI}",
+    "test:spec:watch": "NODE_ENV=test npm run spec -- --watch",
+    "test:types": "NODE_ENV=test npx lerna exec -- 'tsc --noEmit --project .'"
   },
   "devDependencies": {
     "@babel/cli": "7.2.3",
@@ -21,8 +21,9 @@
     "@babel/plugin-proposal-class-properties": "7.3.4",
     "@babel/plugin-transform-modules-commonjs": "7.2.0",
     "@babel/preset-env": "7.3.4",
-    "@babel/preset-flow": "7.0.0",
     "@babel/preset-react": "7.0.0",
+    "@babel/preset-typescript": "7.3.3",
+    "@types/react": "16.8.5",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "24.1.0",
     "babel-plugin-module-resolver": "3.2.0",
@@ -31,7 +32,7 @@
     "eslint": "5.14.1",
     "eslint-config-metalab": "10.0.0",
     "eslint-plugin-prettier": "3.0.1",
-    "flow-bin": "0.67.1",
+    "flowgen": "1.5.8",
     "jest": "24.1.0",
     "lerna": "3.13.1",
     "ncp": "2.0.0",
@@ -39,8 +40,12 @@
     "react": "16.8.3",
     "react-dom": "16.8.3",
     "regenerator-runtime": "0.13.1",
-    "renamer": "0.7.3",
-    "rimraf": "2.6.3"
+    "rimraf": "2.6.3",
+    "rollup": "1.2.4",
+    "rollup-plugin-babel": "4.3.2",
+    "rollup-plugin-commonjs": "9.2.1",
+    "rollup-plugin-node-resolve": "4.0.1",
+    "typescript": "3.3.3333"
   },
   "devEngines": {
     "node": "9",
@@ -53,9 +58,18 @@
     "coveragePathIgnorePatterns": [
       "__test__/"
     ],
+    "testMatch": [
+      "**/*.test.tsx"
+    ],
     "transform": {
-      "^.+\\.jsx?$": "babel-jest"
+      "^.+\\.(t|j)sx?$": "babel-jest"
     },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx"
+    ],
     "setupFiles": [
       "./__test__/setup.js"
     ],
@@ -66,8 +80,5 @@
     "safari >= 7",
     "ie >= 10",
     "> 1%"
-  ],
-  "dependencies": {
-    "@babel/plugin-syntax-dynamic-import": "7.2.0"
-  }
+  ]
 }
