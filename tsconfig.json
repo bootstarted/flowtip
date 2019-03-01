@@ -4,12 +4,12 @@
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "module": "commonjs",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "paths": {
-      "*": ["types/*", "packages/*"]
+      "*": ["packages/*"]
     },
     "strict": true,
     "suppressImplicitAnyIndexErrors": true,

@@ -8,6 +8,8 @@ import {
   Result as BaseResult,
 } from 'flowtip-core';
 
+// export type RectLike = RectLike;
+
 export interface Result extends BaseResult {
   _static?: boolean;
 }
@@ -26,9 +28,7 @@ export interface ContentProps {
 }
 
 export interface TailProps {
-  style: React.CSSProperties;
   result: Result;
-  children: React.ReactNode;
 }
 
 export interface RenderProps {
@@ -86,6 +86,8 @@ export interface Props {
 
   content?: React.ComponentType<ContentProps> | 'div';
   tail?: React.ComponentType<TailProps>;
+
+  debug?: boolean;
 }
 
 export interface State {

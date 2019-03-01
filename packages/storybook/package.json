@@ -1,0 +1,9 @@
+{
+  "name": "storybook",
+  "private": true,
+  "dependencies": {
+    "flowtip-core": "^5.2.0",
+    "flowtip-react-dom": "^5.2.0",
+    "react-resize-observer": "^1.0.1"
+  }
+}

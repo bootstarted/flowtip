@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    // "module": "CommonJS",
+    "outDir": "build/lib",
+    "rootDirs": [
+      "../packages/flowtip-react-dom/src",
+      "../packages/flowtip-core/src",
+      "./"
+    ]
+  },
+  "exclude": ["node_modules"]
+}

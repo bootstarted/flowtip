@@ -21,6 +21,8 @@ import {
 import {getRegion, getOverlap, getOffset} from './util/state';
 import defaultRender from './defaultRender';
 
+import FlowTipDebug from './FlowTipDebug';
+
 // Static `flowtip` layout calculation result mock for use during initial client
 // side render or on server render where DOM feedback is not possible.
 const STATIC_RESULT: Result = {
@@ -33,7 +35,7 @@ const STATIC_RESULT: Result = {
   offset: 0,
   overlap: 0,
   overlapCenter: 0,
-  _static: true,
+  _static: false,
 };
 
 class FlowTip extends React.Component<Props, State> {
@@ -52,6 +54,7 @@ class FlowTip extends React.Component<Props, State> {
     constrainBottom: true,
     constrainLeft: true,
     render: defaultRender,
+    debug: false,
   };
 
   _nextContent?: Dimensions;
@@ -246,13 +249,13 @@ class FlowTip extends React.Component<Props, State> {
       return processBounds(nextProps.bounds);
     }
 
-    if (document.body && this._clippingBlockNode === document.documentElement) {
+    if (this._clippingBlockNode === document.documentElement) {
       return processBounds(
         new Rect(
           -window.scrollX,
           -window.scrollY,
-          document.body.scrollWidth,
-          document.body.scrollHeight,
+          document.documentElement.scrollWidth,
+          document.documentElement.scrollHeight,
         ),
       );
     }
@@ -269,15 +272,12 @@ class FlowTip extends React.Component<Props, State> {
       return Rect.zero;
     }
 
-    if (
-      document.body &&
-      this._containingBlockNode === document.documentElement
-    ) {
+    if (this._containingBlockNode === document.documentElement) {
       return new Rect(
         -window.scrollX,
         -window.scrollY,
-        document.body.scrollWidth,
-        document.body.scrollHeight,
+        document.documentElement.scrollWidth,
+        document.documentElement.scrollHeight,
       );
     }
 
@@ -344,12 +344,28 @@ class FlowTip extends React.Component<Props, State> {
   };
 
   render(): React.ReactNode {
-    return this.props.render({
+    const content = this.props.render({
       onTailSize: this._handleTailSize,
       onContentSize: this._handleContentSize,
       state: this.state,
       props: this.props,
     });
+
+    if (this.props.debug) {
+      const result = {...this.state.result};
+      if (this.props.target) {
+        result.target = Rect.from(this.props.target);
+      }
+
+      return (
+        <>
+          {content}
+          <FlowTipDebug {...result} />
+        </>
+      );
+    }
+
+    return content;
   }
 }
 

@@ -39,14 +39,15 @@ const defaultRender = (renderProps: RenderProps): React.ReactNode => {
   const {props, state, onTailSize, onContentSize} = renderProps;
   const {content: ContentComponent = 'div', tail: TailComponent} = props;
 
-  const children = (
+  const content = (
     <>
       <ResizeObserver onResize={onContentSize} />
       {props.children}
       {isComponent(TailComponent) && (
-        <TailComponent style={getTailStyle(props, state)} result={state.result}>
+        <div style={getTailStyle(props, state)}>
           <ResizeObserver onResize={onTailSize} />
-        </TailComponent>
+          <TailComponent result={state.result} />
+        </div>
       )}
     </>
   );
@@ -57,7 +58,7 @@ const defaultRender = (renderProps: RenderProps): React.ReactNode => {
         {...omitFlowtipProps(props)}
         style={getContentStyle(props, state)}
       >
-        {children}
+        {content}
       </ContentComponent>
     );
   }
@@ -68,7 +69,7 @@ const defaultRender = (renderProps: RenderProps): React.ReactNode => {
       style={getContentStyle(props, state)}
       result={state.result}
     >
-      {children}
+      {content}
     </ContentComponent>
   );
 };
