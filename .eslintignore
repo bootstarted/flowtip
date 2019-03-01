@@ -3,4 +3,6 @@ coverage
 dist
 es
 lib
-flow-typed
+index.js
+index.es.js
+*.flow.js

@@ -1,10 +1,8 @@
-// @flow
-
 import * as React from 'react';
 import flowtip, {CENTER, Rect, areEqualDimensions} from 'flowtip-core';
-import type {RectLike, Region, Dimensions, Result} from 'flowtip-core';
+import {RectLike, Region, Dimensions, Result} from 'flowtip-core';
 
-import type {Props, State} from './types';
+import {Props, State} from './types';
 import findDOMNode from './util/findDOMNode';
 import {
   getBorders,
@@ -136,7 +134,7 @@ class FlowTip extends React.Component<Props, State> {
       bounds &&
       target &&
       content &&
-      (typeof nextProps.Tail !== 'function' || tail)
+      (typeof nextProps.tail !== 'function' || tail)
     ) {
       const intermediateState = {
         ...this.state,
@@ -343,7 +341,7 @@ class FlowTip extends React.Component<Props, State> {
     this._updateState(this.props);
   };
 
-  render(): React.Node {
+  render(): React.ReactNode {
     return this.props.render({
       onTailSize: this._handleTailSize,
       onContentSize: this._handleContentSize,

@@ -1,9 +1,6 @@
-// @flow
-
 export type RectLike =
   // eslint-disable-next-line no-use-before-define
   | Rect
-  | ClientRect
   | {
       top: number,
       left: number,
@@ -85,7 +82,7 @@ class Rect {
    * @param   {Object} [b] A rect-like object.
    * @returns {boolean} True if rects are equal.
    */
-  static areEqual(a: ?RectLike, b: ?RectLike): boolean {
+  static areEqual(a: RectLike | void, b: RectLike | void): boolean {
     if (a === b) return true;
 
     if ((a === null || a === undefined) && (b === null || b === undefined)) {
@@ -114,7 +111,7 @@ class Rect {
     return rect.width >= 0 && rect.height >= 0;
   }
 
-  constructor(left: number, top: number, width: number, height: number): void {
+  constructor(left: number, top: number, width: number, height: number) {
     this.left = left;
     this.top = top;
     this.width = width;

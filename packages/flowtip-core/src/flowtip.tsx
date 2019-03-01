@@ -1,6 +1,4 @@
-// @flow
-import Rect from './Rect';
-import type {RectLike} from './Rect';
+import Rect, {RectLike} from './Rect';
 
 export type Region = 'top' | 'right' | 'bottom' | 'left';
 export type Reason = 'default' | 'inverted' | 'ideal' | 'external' | 'fallback';
@@ -12,7 +10,12 @@ type _Regions = {
   bottom: boolean,
   left: boolean,
 };
-export type Regions = $Shape<_Regions>;
+export type Regions = {
+  top?: boolean,
+  right?: boolean,
+  bottom?: boolean,
+  left?: boolean,
+};
 export type Result = {
   bounds: Rect,
   target: Rect,
@@ -33,8 +36,8 @@ type _Config = {
   bounds: Rect,
   target: Rect,
   content: Dimensions,
-  disabled: _Regions,
-  constrain: _Regions,
+  disabled: Regions,
+  constrain: Regions,
 };
 export type Config = {
   offset?: number,
@@ -45,8 +48,8 @@ export type Config = {
   bounds: RectLike | Rect,
   target: RectLike | Rect,
   content: Dimensions,
-  disabled?: Regions,
-  constrain?: Regions,
+  disabled?: _Regions,
+  constrain?: _Regions,
 };
 
 export const TOP: Region = 'top';
@@ -383,11 +386,11 @@ function getValidRegions(config: _Config): _Regions {
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
-function getIdealRegion(config: _Config, valid: _Regions): ?Region {
+function getIdealRegion(config: _Config, valid: _Regions): Region | void {
   const {target, content, disabled, bounds} = config;
 
   let margin = 0;
-  let region = undefined;
+  let region: Region | void = undefined;
 
   // Calculate the amount of remaining free space in each region when occupied
   // by the content rect. It is not necessary to factor `offset` into this
@@ -480,7 +483,7 @@ function getIdealRegion(config: _Config, valid: _Regions): ?Region {
  * @param   {Object} config FlowTip layout config object.
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
-function getExternalRegion(config: _Config): ?Region {
+function getExternalRegion(config: _Config): Region | void {
   const {target, constrain, bounds, edgeOffset, disabled} = config;
 
   const offsetBounds = Rect.grow(bounds, -edgeOffset);
@@ -587,7 +590,7 @@ function invertRegion(region: Region): Region {
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
-function getDefaultRegion(config: _Config, valid: _Regions): ?Region {
+function getDefaultRegion(config: _Config, valid: _Regions): Region | void {
   const {region} = config;
 
   if (typeof region === 'string') {
@@ -612,7 +615,10 @@ function getDefaultRegion(config: _Config, valid: _Regions): ?Region {
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
-function getInvertDefaultRegion(config: _Config, valid: _Regions): ?Region {
+function getInvertDefaultRegion(
+  config: _Config,
+  valid: _Regions,
+): Region | void {
   const {region} = config;
 
   if (typeof region === 'string') {
@@ -637,14 +643,14 @@ function getInvertDefaultRegion(config: _Config, valid: _Regions): ?Region {
  */
 function getFallbackRegion(config: _Config): Region {
   // Prioritize the configured default region.
-  let fallback: ?Region = config.region;
+  let fallback: Region | void = config.region;
 
   // If the default region is not set or is disabled, pick the first enabled
   // region.
   if (typeof fallback !== 'string' || config.disabled[fallback]) {
     fallback = Object.keys(config.disabled).find(
       (region) => !config.disabled[region],
-    );
+    ) as Region;
   }
 
   // ALL OF THE REGIONS ARE DISABLED ಠ_ಠ
@@ -809,7 +815,7 @@ function getCenter(region: Region, rect: Rect, intersect: Rect): number {
 const allRegions = {top: true, right: true, bottom: true, left: true};
 const noRegions = {top: false, right: false, bottom: false, left: false};
 
-function normalizeAlign(align: ?Align): number {
+function normalizeAlign(align: Align | void): number {
   if (typeof align === 'number') {
     return align;
   }

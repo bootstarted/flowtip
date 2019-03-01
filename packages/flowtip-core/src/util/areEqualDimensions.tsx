@@ -1,7 +1,9 @@
-// @flow
-import type {Dimensions} from '../flowtip';
+import {Dimensions} from '../flowtip';
 
-const areEqualDimensions = (a: ?Dimensions, b: ?Dimensions): boolean => {
+const areEqualDimensions = (
+  a: Dimensions | void,
+  b: Dimensions | void,
+): boolean => {
   if (a === b) return true;
 
   if ((a === null || a === undefined) && (b === null || b === undefined)) {

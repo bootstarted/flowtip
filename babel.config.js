@@ -13,34 +13,21 @@ module.exports = (api) => {
         },
       ],
       '@babel/preset-react',
-      '@babel/preset-flow',
+      '@babel/preset-typescript',
     ],
     plugins: [
       '@babel/plugin-proposal-class-properties',
       [
-        'module-resolver',
+        'babel-plugin-module-resolver',
         {
-          cwd: 'babelrc',
-          alias: {
-            '^(flowtip-core|flowtip-react-dom)/(lib|es|src)($|/.*$)':
-              './packages/\\1/src/\\3',
-            '^(flowtip-core|flowtip-react-dom)$': './packages/\\1/src',
-          },
+          cwd: __dirname,
+          extensions: ['.tsx', '.ts', '.js'],
         },
       ],
     ],
   };
   if (process.env.NODE_ENV === 'test') {
     out.plugins.push('@babel/plugin-transform-modules-commonjs');
-  }
-  if (process.env.NODE_ENV === 'lib') {
-    out.plugins.push('@babel/plugin-transform-modules-commonjs', [
-      'module-resolver',
-      {},
-    ]);
-  }
-  if (process.env.NODE_ENV === 'es') {
-    out.plugins.push(['module-resolver', {}]);
   }
   return out;
 };

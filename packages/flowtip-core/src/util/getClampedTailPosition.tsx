@@ -1,6 +1,5 @@
-// @flow
 import {LEFT, RIGHT} from '../flowtip';
-import type {Dimensions, Result} from '../flowtip';
+import {Dimensions, Result} from '../flowtip';
 
 const getClampedTailPosition = (
   result: Result,

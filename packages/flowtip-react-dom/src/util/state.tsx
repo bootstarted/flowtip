@@ -1,8 +1,6 @@
-// @flow
-
 import {RIGHT, LEFT} from 'flowtip-core';
-import type {Region} from 'flowtip-core';
-import type {Props, State} from '../types';
+import {Region} from 'flowtip-core';
+import {Props, State} from '../types';
 
 /**
  * Get the last rendered region (`top`, `right`, `bottom`, or `left`).

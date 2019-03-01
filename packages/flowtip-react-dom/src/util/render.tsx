@@ -1,8 +1,7 @@
-// @flow
-
+import * as React from 'react';
 import {Rect, getClampedTailPosition, RIGHT, LEFT} from 'flowtip-core';
 
-import type {Style, Props, State} from '../types';
+import {Props, State} from '../types';
 import {getOffset} from '../util/state';
 import {getViewportRect} from '../util/dom';
 
@@ -14,7 +13,10 @@ import {getViewportRect} from '../util/dom';
  * @param   {Object} state - FlowTip props.
  * @returns {Object} Content position style.
  */
-export const getContentStyle = (props: Props, state: State) => {
+export const getContentStyle = (
+  props: Props,
+  state: State,
+): React.CSSProperties => {
   // Hide the result with css clip - preserving its ability to be measured -
   // when working with a static layout result mock.
   if (state.result._static === true) {
@@ -76,12 +78,15 @@ export const getContentStyle = (props: Props, state: State) => {
  * @param   {Object} state - FlowTip props.
  * @returns {Object} Tail position style.
  */
-export const getTailStyle = (props: Props, state: State) => {
+export const getTailStyle = (
+  props: Props,
+  state: State,
+): React.CSSProperties => {
   if (!state.result) return {position: 'absolute'};
 
   const tailAttached = state.result.offset >= getOffset(props, state);
 
-  const style: Style = {
+  const style: React.CSSProperties = {
     position: 'absolute',
     visibility: tailAttached ? 'visible' : 'hidden',
   };

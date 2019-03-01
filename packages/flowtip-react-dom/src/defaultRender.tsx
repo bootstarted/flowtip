@@ -1,9 +1,7 @@
-// @flow
-
 import * as React from 'react';
 import ResizeObserver from 'react-resize-observer';
 
-import type {Props, RenderProps} from './types';
+import {Props, RenderProps} from './types';
 import {getTailStyle, getContentStyle} from './util/render';
 
 const omitFlowtipProps = (props: Props) => {
@@ -33,22 +31,16 @@ const omitFlowtipProps = (props: Props) => {
   return rest;
 };
 
-const isComponent = (component): %checks => {
+const isComponent = (component): component is React.Component => {
   return typeof component === 'string' || typeof component === 'function';
 };
 
-const defaultRender = (renderProps: RenderProps): React.Node => {
+const defaultRender = (renderProps: RenderProps): React.ReactNode => {
   const {props, state, onTailSize, onContentSize} = renderProps;
   const {content: ContentComponent = 'div', tail: TailComponent} = props;
 
-  return (
-    <ContentComponent
-      {...omitFlowtipProps(props)}
-      style={getContentStyle(props, state)}
-      {...(typeof ContentComponent === 'string'
-        ? null
-        : {result: state.result})}
-    >
+  const children = (
+    <>
       <ResizeObserver onResize={onContentSize} />
       {props.children}
       {isComponent(TailComponent) && (
@@ -56,6 +48,27 @@ const defaultRender = (renderProps: RenderProps): React.Node => {
           <ResizeObserver onResize={onTailSize} />
         </TailComponent>
       )}
+    </>
+  );
+
+  if (ContentComponent === 'div') {
+    return (
+      <ContentComponent
+        {...omitFlowtipProps(props)}
+        style={getContentStyle(props, state)}
+      >
+        {children}
+      </ContentComponent>
+    );
+  }
+
+  return (
+    <ContentComponent
+      {...omitFlowtipProps(props)}
+      style={getContentStyle(props, state)}
+      result={state.result}
+    >
+      {children}
     </ContentComponent>
   );
 };
