@@ -2,12 +2,12 @@ export type RectLike =
   // eslint-disable-next-line no-use-before-define
   | Rect
   | {
-      top: number,
-      left: number,
-      width: number,
-      height: number,
-      bottom?: number,
-      right?: number,
+      top: number;
+      left: number;
+      width: number;
+      height: number;
+      bottom?: number;
+      right?: number;
     };
 
 class Rect {

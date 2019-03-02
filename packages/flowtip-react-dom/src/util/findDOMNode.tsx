@@ -2,8 +2,8 @@ import {findDOMNode as _findDOMNode} from 'react-dom';
 import {Component} from 'react';
 
 type FiberNode = {
-  stateNode: null | Element | Text,
-  child: FiberNode | void,
+  stateNode: null | Element | Text;
+  child: FiberNode | void;
 };
 
 const findDOMNode = (

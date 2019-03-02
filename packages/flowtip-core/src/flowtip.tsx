@@ -2,54 +2,54 @@ import Rect, {RectLike} from './Rect';
 
 export type Region = 'top' | 'right' | 'bottom' | 'left';
 export type Reason = 'default' | 'inverted' | 'ideal' | 'external' | 'fallback';
-export type Dimensions = {width: number, height: number};
+export type Dimensions = {width: number; height: number};
 export type Align = 'start' | 'center' | 'end' | number;
 type _Regions = {
-  top: boolean,
-  right: boolean,
-  bottom: boolean,
-  left: boolean,
+  top: boolean;
+  right: boolean;
+  bottom: boolean;
+  left: boolean;
 };
 export type Regions = {
-  top?: boolean,
-  right?: boolean,
-  bottom?: boolean,
-  left?: boolean,
+  top?: boolean;
+  right?: boolean;
+  bottom?: boolean;
+  left?: boolean;
 };
 export type Result = {
-  bounds: Rect,
-  target: Rect,
-  region: Region,
-  reason: Reason,
-  rect: Rect,
-  valid: _Regions,
-  offset: number,
-  overlap: number,
-  overlapCenter: number,
+  bounds: Rect;
+  target: Rect;
+  region: Region;
+  reason: Reason;
+  rect: Rect;
+  valid: _Regions;
+  offset: number;
+  overlap: number;
+  overlapCenter: number;
 };
 type _Config = {
-  offset: number,
-  overlap: number,
-  edgeOffset: number,
-  align: number,
-  region?: Region,
-  bounds: Rect,
-  target: Rect,
-  content: Dimensions,
-  disabled: Regions,
-  constrain: Regions,
+  offset: number;
+  overlap: number;
+  edgeOffset: number;
+  align: number;
+  region?: Region;
+  bounds: Rect;
+  target: Rect;
+  content: Dimensions;
+  disabled: Regions;
+  constrain: Regions;
 };
 export type Config = {
-  offset?: number,
-  overlap?: number,
-  edgeOffset?: number,
-  align?: Align,
-  region?: Region,
-  bounds: RectLike | Rect,
-  target: RectLike | Rect,
-  content: Dimensions,
-  disabled?: _Regions,
-  constrain?: _Regions,
+  offset?: number;
+  overlap?: number;
+  edgeOffset?: number;
+  align?: Align;
+  region?: Region;
+  bounds: RectLike | Rect;
+  target: RectLike | Rect;
+  content: Dimensions;
+  disabled?: _Regions;
+  constrain?: _Regions;
 };
 
 export const TOP: Region = 'top';
