@@ -9,7 +9,7 @@ import {Props, State} from '../types';
  * @param   {Object} state - FlowTip state.
  * @returns {string} Region.
  */
-export function getLastRegion(props: Props, state: State): Region | void {
+export function getLastRegion(props: Props, state: State): Region | undefined {
   return state.result._static === true ? props.region : state.result.region;
 }
 
@@ -21,7 +21,7 @@ export function getLastRegion(props: Props, state: State): Region | void {
  * @param   {Object} state - FlowTip state.
  * @returns {string} Region.
  */
-export function getRegion(props: Props, state: State): Region | void {
+export function getRegion(props: Props, state: State): Region | undefined {
   // Feed the current region in as the default if `sticky` is true.
   // This makes the component stay in its region until it meets a
   // boundary edge and must change.

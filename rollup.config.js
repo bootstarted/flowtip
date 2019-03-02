@@ -8,11 +8,11 @@ export default {
   input: './src/index.tsx',
   output: [
     {
-      file: './index.js',
+      file: './lib/index.js',
       format: 'cjs',
     },
     {
-      file: './index.es.js',
+      file: './lib/index.es.js',
       format: 'esm',
     },
   ],

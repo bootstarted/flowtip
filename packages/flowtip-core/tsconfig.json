@@ -1,16 +1,7 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "declaration": true,
-    "declarationDir": "./types",
-    "target": "es6",
-    "noImplicitAny": false,
-    "moduleResolution": "Node",
-    "outDir": "dist",
-    "rootDir": "./src/",
-    "sourceMap": false,
-    "strict": true,
-    "jsx": "react"
+    "outDir": "lib"
   },
-  "exclude": ["node_modules"],
-  "include": ["src/*"]
+  "include": ["src"]
 }

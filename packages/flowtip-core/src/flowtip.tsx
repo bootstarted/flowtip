@@ -10,13 +10,13 @@ type _Regions = {
   bottom: boolean;
   left: boolean;
 };
-export type Regions = {
+export interface Regions {
   top?: boolean;
   right?: boolean;
   bottom?: boolean;
   left?: boolean;
-};
-export type Result = {
+}
+export interface Result {
   bounds: Rect;
   target: Rect;
   region: Region;
@@ -26,7 +26,7 @@ export type Result = {
   offset: number;
   overlap: number;
   overlapCenter: number;
-};
+}
 type _Config = {
   offset: number;
   overlap: number;
@@ -36,21 +36,21 @@ type _Config = {
   bounds: Rect;
   target: Rect;
   content: Dimensions;
-  disabled: Regions;
-  constrain: Regions;
+  disabled: _Regions;
+  constrain: _Regions;
 };
-export type Config = {
+export interface Config {
   offset?: number;
   overlap?: number;
   edgeOffset?: number;
   align?: Align;
   region?: Region;
-  bounds: RectLike | Rect;
-  target: RectLike | Rect;
+  bounds: RectLike;
+  target: RectLike;
   content: Dimensions;
-  disabled?: _Regions;
-  constrain?: _Regions;
-};
+  disabled?: Regions;
+  constrain?: Regions;
+}
 
 export const TOP: Region = 'top';
 export const RIGHT: Region = 'right';
@@ -386,11 +386,11 @@ function getValidRegions(config: _Config): _Regions {
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
-function getIdealRegion(config: _Config, valid: _Regions): Region | void {
+function getIdealRegion(config: _Config, valid: _Regions): Region | undefined {
   const {target, content, disabled, bounds} = config;
 
   let margin = 0;
-  let region: Region | void = undefined;
+  let region: Region | undefined = undefined;
 
   // Calculate the amount of remaining free space in each region when occupied
   // by the content rect. It is not necessary to factor `offset` into this
@@ -483,7 +483,7 @@ function getIdealRegion(config: _Config, valid: _Regions): Region | void {
  * @param   {Object} config FlowTip layout config object.
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
-function getExternalRegion(config: _Config): Region | void {
+function getExternalRegion(config: _Config): Region | undefined {
   const {target, constrain, bounds, edgeOffset, disabled} = config;
 
   const offsetBounds = Rect.grow(bounds, -edgeOffset);
@@ -590,7 +590,10 @@ function invertRegion(region: Region): Region {
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
-function getDefaultRegion(config: _Config, valid: _Regions): Region | void {
+function getDefaultRegion(
+  config: _Config,
+  valid: _Regions,
+): Region | undefined {
   const {region} = config;
 
   if (typeof region === 'string') {
@@ -618,7 +621,7 @@ function getDefaultRegion(config: _Config, valid: _Regions): Region | void {
 function getInvertDefaultRegion(
   config: _Config,
   valid: _Regions,
-): Region | void {
+): Region | undefined {
   const {region} = config;
 
   if (typeof region === 'string') {
@@ -643,7 +646,7 @@ function getInvertDefaultRegion(
  */
 function getFallbackRegion(config: _Config): Region {
   // Prioritize the configured default region.
-  let fallback: Region | void = config.region;
+  let fallback: Region | undefined = config.region;
 
   // If the default region is not set or is disabled, pick the first enabled
   // region.
@@ -815,7 +818,7 @@ function getCenter(region: Region, rect: Rect, intersect: Rect): number {
 const allRegions = {top: true, right: true, bottom: true, left: true};
 const noRegions = {top: false, right: false, bottom: false, left: false};
 
-function normalizeAlign(align: Align | void): number {
+function normalizeAlign(align?: Align): number {
   if (typeof align === 'number') {
     return align;
   }

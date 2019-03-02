@@ -1,9 +1,6 @@
 import {Dimensions} from '../flowtip';
 
-const areEqualDimensions = (
-  a: Dimensions | void,
-  b: Dimensions | void,
-): boolean => {
+const areEqualDimensions = (a?: Dimensions, b?: Dimensions): boolean => {
   if (a === b) return true;
 
   if ((a === null || a === undefined) && (b === null || b === undefined)) {

@@ -1,10 +1,4 @@
 node_modules
 *.log
 coverage
-es
 lib
-dist
-index.js
-index.es.js
-types
-*.flow.js

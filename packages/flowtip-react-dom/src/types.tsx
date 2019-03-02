@@ -1,45 +1,56 @@
 import * as React from 'react';
-import {Rect, RectLike, Region, Align, Dimensions, Result} from 'flowtip-core';
+import {
+  Rect,
+  RectLike,
+  Region,
+  Align,
+  Dimensions,
+  Result as BaseResult,
+} from 'flowtip-core';
 
-export type Borders = {
+export interface Result extends BaseResult {
+  _static?: boolean;
+}
+
+export interface Borders {
   top: number;
   left: number;
   right: number;
   bottom: number;
-};
+}
 
-export type ContentProps = {
+export interface ContentProps {
   style: React.CSSProperties;
   result: Result;
   children: React.ReactNode;
-};
+}
 
-export type TailProps = {
+export interface TailProps {
   style: React.CSSProperties;
   result: Result;
   children: React.ReactNode;
-};
+}
 
-export type RenderProps = {
-  onContentSize(Dimensions): unknown;
-  onTailSize(Dimensions): unknown;
+export interface RenderProps {
+  onContentSize(dimensions: Dimensions): unknown;
+  onTailSize(dimensions: Dimensions): unknown;
   // eslint-disable-next-line no-use-before-define
   state: State;
   // eslint-disable-next-line no-use-before-define
   props: Props;
-};
+}
 
-export type Render = (RenderProps) => React.ReactNode;
+export type Render = (props: RenderProps) => React.ReactNode;
 
-export type Props = {
+export interface Props {
   /** DOMRect (or similar shaped object) of target position. */
-  target: RectLike | null;
+  target?: RectLike;
   /**
     DOMRect (or similar shaped object) of content boundary.
    */
-  bounds: RectLike | null;
+  bounds?: RectLike;
   /** Default region the content should unless otherwise constrained. */
-  region: Region | void;
+  region?: Region;
   /** Retain the previous rendered region unless otherwise constrained. */
   sticky: boolean;
   /** Offset between target rect and tail. */
@@ -75,14 +86,14 @@ export type Props = {
 
   content?: React.ComponentType<ContentProps> | 'div';
   tail?: React.ComponentType<TailProps>;
-};
+}
 
-export type State = {
+export interface State {
   containingBlock: Rect;
-  bounds: Rect | null;
-  content: Dimensions | null;
-  contentBorders: Borders | null;
-  tail: Dimensions | null;
+  bounds?: Rect;
+  content?: Dimensions;
+  contentBorders?: Borders;
+  tail?: Dimensions;
   result: Result;
-  boundedByViewport: boolean | null;
-};
+  boundedByViewport?: boolean;
+}

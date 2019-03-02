@@ -1,8 +1,15 @@
 import * as React from 'react';
-import flowtip, {CENTER, Rect, areEqualDimensions} from 'flowtip-core';
-import {RectLike, Region, Dimensions, Result} from 'flowtip-core';
+import flowtip, {
+  CENTER,
+  Rect,
+  areEqualDimensions,
+  RectLike,
+  Region,
+  Dimensions,
+  Config,
+} from 'flowtip-core';
 
-import {Props, State} from './types';
+import {Props, State, Result} from './types';
 import findDOMNode from './util/findDOMNode';
 import {
   getBorders,
@@ -31,8 +38,6 @@ const STATIC_RESULT: Result = {
 
 class FlowTip extends React.Component<Props, State> {
   static defaultProps = {
-    bounds: null,
-    region: undefined,
     sticky: true,
     targetOffset: 0,
     edgeOffset: 0,
@@ -49,22 +54,19 @@ class FlowTip extends React.Component<Props, State> {
     render: defaultRender,
   };
 
-  _nextContent: Dimensions | null = null;
-  _nextTail: Dimensions | null = null;
+  _nextContent?: Dimensions;
+  _nextTail?: Dimensions;
   _nextContainingBlock: Rect = Rect.zero;
-  _nextBounds: Rect | null = null;
-  _lastRegion: Region | void;
+  _nextBounds?: Rect;
+  _lastRegion?: Region;
   _isMounted: boolean = false;
   _containingBlockNode: HTMLElement | null = null;
   _clippingBlockNode: HTMLElement | null = null;
   _node: HTMLElement | null = null;
-  state = {
+
+  state: State = {
     containingBlock: Rect.zero,
     boundedByViewport: true,
-    bounds: null,
-    content: null,
-    contentBorders: null,
-    tail: null,
     result: STATIC_RESULT,
   };
 
@@ -136,7 +138,7 @@ class FlowTip extends React.Component<Props, State> {
       content &&
       (typeof nextProps.tail !== 'function' || tail)
     ) {
-      const intermediateState = {
+      const intermediateState: State = {
         ...this.state,
         bounds,
         containingBlock,
@@ -149,7 +151,7 @@ class FlowTip extends React.Component<Props, State> {
       const region = getRegion(nextProps, intermediateState);
       const {edgeOffset = offset, align} = nextProps;
 
-      const config = {
+      const config: Config = {
         offset,
         edgeOffset,
         overlap,
@@ -175,7 +177,7 @@ class FlowTip extends React.Component<Props, State> {
       result = flowtip(config);
     }
 
-    const contentBorders = this._node ? getBorders(this._node) : null;
+    const contentBorders = this._node ? getBorders(this._node) : undefined;
 
     const boundedByViewport =
       !nextProps.bounds && this._clippingBlockNode === document.documentElement;
@@ -233,11 +235,11 @@ class FlowTip extends React.Component<Props, State> {
 
   // DOM Measurement Methods ===================================================
 
-  _getBoundsRect(nextProps: Props): Rect | null {
+  _getBoundsRect(nextProps: Props): Rect | undefined {
     const processBounds = (boundsRect: RectLike) => {
       const visibleBounds = Rect.intersect(getViewportRect(), boundsRect);
 
-      return Rect.isValid(visibleBounds) ? visibleBounds : null;
+      return Rect.isValid(visibleBounds) ? visibleBounds : undefined;
     };
 
     if (nextProps.bounds) {
@@ -259,7 +261,7 @@ class FlowTip extends React.Component<Props, State> {
       return processBounds(getContentRect(this._clippingBlockNode));
     }
 
-    return null;
+    return undefined;
   }
 
   _getContainingBlockRect(): Rect {

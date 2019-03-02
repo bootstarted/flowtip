@@ -31,7 +31,7 @@ const omitFlowtipProps = (props: Props) => {
   return rest;
 };
 
-const isComponent = (component): component is React.Component => {
+const isComponent = (component: unknown): component is React.Component => {
   return typeof component === 'string' || typeof component === 'function';
 };
 
@@ -51,7 +51,7 @@ const defaultRender = (renderProps: RenderProps): React.ReactNode => {
     </>
   );
 
-  if (ContentComponent === 'div') {
+  if (typeof ContentComponent === 'string') {
     return (
       <ContentComponent
         {...omitFlowtipProps(props)}

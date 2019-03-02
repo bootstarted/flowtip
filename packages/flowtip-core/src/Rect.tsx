@@ -1,16 +1,13 @@
-export type RectLike =
-  // eslint-disable-next-line no-use-before-define
-  | Rect
-  | {
-      top: number;
-      left: number;
-      width: number;
-      height: number;
-      bottom?: number;
-      right?: number;
-    };
+export interface RectLike {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  bottom?: number;
+  right?: number;
+}
 
-class Rect {
+class Rect implements RectLike {
   top: number;
   left: number;
   height: number;
@@ -82,7 +79,7 @@ class Rect {
    * @param   {Object} [b] A rect-like object.
    * @returns {boolean} True if rects are equal.
    */
-  static areEqual(a: RectLike | void, b: RectLike | void): boolean {
+  static areEqual(a?: RectLike, b?: RectLike): boolean {
     if (a === b) return true;
 
     if ((a === null || a === undefined) && (b === null || b === undefined)) {
