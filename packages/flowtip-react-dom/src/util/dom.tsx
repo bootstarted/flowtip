@@ -68,10 +68,10 @@ export function getContentRect(node: HTMLElement): Rect {
   const border = getBorders(node);
 
   return new Rect(
-    rect.left + border.left || 0,
-    rect.top + border.top || 0,
-    Math.min(rect.width - border.left - border.right, node.clientWidth) || 0,
-    Math.min(rect.height - border.top - border.bottom, node.clientHeight) || 0,
+    rect.left + border.left,
+    rect.top + border.top,
+    Math.min(rect.width - border.left - border.right, node.clientWidth),
+    Math.min(rect.height - border.top - border.bottom, node.clientHeight),
   );
 }
 

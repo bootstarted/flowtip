@@ -1,30 +1,22 @@
-export interface RectLike {
+export interface RectShape {
   top: number;
   left: number;
   width: number;
   height: number;
-  bottom?: number;
-  right?: number;
 }
 
-class Rect implements RectLike {
-  top: number;
-  left: number;
-  height: number;
-  width: number;
-  right: number;
-  bottom: number;
-
+class Rect implements DOMRectReadOnly, RectShape {
   static zero: Rect = new Rect(0, 0, 0, 0);
 
   /**
-   * Convert a rect-like object to a Rect instance. This is useful for
-   * converting non-serializable ClientRect instances to more standard objects.
+   * Convert a rect shaped object to a Rect instance. This is useful for
+   * converting native ClientRect/DOMRect instances to standard objects with
+   * enumerable keys.
    *
    * @param   {Object} rect A rect-like object.
    * @returns {Object} A Rect instance.
    */
-  static from(rect: RectLike): Rect {
+  static fromRect(rect: RectShape): Rect {
     if (rect instanceof Rect) return rect;
     return new Rect(rect.left, rect.top, rect.width, rect.height);
   }
@@ -38,13 +30,13 @@ class Rect implements RectLike {
    * If the rects do not intersect in either axis, the returned dimension for
    * that axis is negative and represents the distance between the rects.
    *
-   * @param   {Object} a A rect-like object.
-   * @param   {Object} b A rect-like object.
+   * @param   {Object} a An object implementing RectShape.
+   * @param   {Object} b An object implementing RectShape.
    * @returns {Object} A Rect instance.
    */
-  static intersect(a: RectLike, b: RectLike): Rect {
-    const rectA = Rect.from(a);
-    const rectB = Rect.from(b);
+  static intersect(a: RectShape, b: RectShape): Rect {
+    const rectA = Rect.fromRect(a);
+    const rectB = Rect.fromRect(b);
 
     const left = Math.max(rectA.left, rectB.left);
     const right = Math.min(rectA.right, rectB.right);
@@ -59,11 +51,11 @@ class Rect implements RectLike {
   /**
    * Expand (or shrink) the boundaries of a rect.
    *
-   * @param   {Object} rect A rect-like object.
+   * @param   {Object} rect An object implementing RectShape.
    * @param   {number} amount Offset to apply to each boundary edge.
    * @returns {Object} A Rect instance.
    */
-  static grow(rect: RectLike, amount: number): Rect {
+  static grow(rect: RectShape, amount: number): Rect {
     return new Rect(
       rect.left - amount,
       rect.top - amount,
@@ -73,13 +65,13 @@ class Rect implements RectLike {
   }
 
   /**
-   * Determine if two rect-like objects are equal.
+   * Determine if two objects implementing RectShape are equal.
    *
-   * @param   {Object} [a] A rect-like object.
-   * @param   {Object} [b] A rect-like object.
+   * @param   {Object} [a] An object implementing RectShape.
+   * @param   {Object} [b] An object implementing RectShape.
    * @returns {boolean} True if rects are equal.
    */
-  static areEqual(a?: RectLike, b?: RectLike): boolean {
+  static areEqual(a?: RectShape, b?: RectShape): boolean {
     if (a === b) return true;
 
     if ((a === null || a === undefined) && (b === null || b === undefined)) {
@@ -101,20 +93,52 @@ class Rect implements RectLike {
   /**
    * Determine if a rect-like object has valid positive area.
    *
-   * @param   {Object} [rect] A rect-like object.
+   * @param   {Object} [rect] An object implementing RectShape.
    * @returns {boolean} True if the rect has a positive area.
    */
-  static isValid(rect: RectLike): boolean {
+  static isValid(rect: RectShape): boolean {
     return rect.width >= 0 && rect.height >= 0;
   }
 
-  constructor(left: number, top: number, width: number, height: number) {
-    this.left = left;
-    this.top = top;
+  top: number;
+  left: number;
+  height: number;
+  width: number;
+
+  toJSON() {
+    return {
+      bottom: this.bottom,
+      height: this.height,
+      left: this.left,
+      right: this.right,
+      top: this.top,
+      width: this.width,
+      x: this.x,
+      y: this.y,
+    };
+  }
+
+  get x() {
+    return this.left;
+  }
+
+  get y() {
+    return this.top;
+  }
+
+  get right() {
+    return this.left + this.width;
+  }
+
+  get bottom() {
+    return this.top + this.height;
+  }
+
+  constructor(x: number, y: number, width: number, height: number) {
+    this.left = x;
+    this.top = y;
     this.width = width;
     this.height = height;
-    this.right = this.left + this.width;
-    this.bottom = this.top + this.height;
 
     Object.freeze(this);
   }

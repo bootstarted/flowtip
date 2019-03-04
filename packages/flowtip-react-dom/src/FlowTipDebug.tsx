@@ -28,6 +28,14 @@ class FlowTipDebug extends React.Component<Result> {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
+    context.strokeStyle = 'orange';
+    context.strokeRect(
+      this.props.bounds.left + 0.5,
+      this.props.bounds.top + 0.5,
+      this.props.bounds.width - 1,
+      this.props.bounds.height - 1,
+    );
+
     context.strokeStyle = 'red';
     context.strokeRect(
       this.props.target.left + 0.5,

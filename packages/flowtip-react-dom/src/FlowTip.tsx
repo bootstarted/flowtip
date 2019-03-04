@@ -3,13 +3,13 @@ import flowtip, {
   CENTER,
   Rect,
   areEqualDimensions,
-  RectLike,
+  RectShape,
   Region,
   Dimensions,
   Config,
 } from 'flowtip-core';
 
-import {Props, State, Result} from './types';
+import {Props, State, Result, Point} from './types';
 import findDOMNode from './util/findDOMNode';
 import {
   getBorders,
@@ -22,6 +22,12 @@ import {getRegion, getOverlap, getOffset} from './util/state';
 import defaultRender from './defaultRender';
 
 import FlowTipDebug from './FlowTipDebug';
+
+const POINT_ZERO: Point = Object.freeze({x: 0, y: 0});
+
+const areEqualPoints = (a: Point, b: Point) => {
+  return a.x === b.x && a.y === b.y;
+};
 
 // Static `flowtip` layout calculation result mock for use during initial client
 // side render or on server render where DOM feedback is not possible.
@@ -42,7 +48,6 @@ class FlowTip extends React.Component<Props, State> {
   static defaultProps = {
     sticky: true,
     targetOffset: 0,
-    edgeOffset: 0,
     tailOffset: 0,
     align: CENTER,
     topDisabled: false,
@@ -59,7 +64,7 @@ class FlowTip extends React.Component<Props, State> {
 
   _nextContent?: Dimensions;
   _nextTail?: Dimensions;
-  _nextContainingBlock: Rect = Rect.zero;
+  _nextAnchor: Point = POINT_ZERO;
   _nextBounds?: Rect;
   _lastRegion?: Region;
   _isMounted: boolean = false;
@@ -68,8 +73,7 @@ class FlowTip extends React.Component<Props, State> {
   _node: HTMLElement | null = null;
 
   state: State = {
-    containingBlock: Rect.zero,
-    boundedByViewport: true,
+    anchor: POINT_ZERO,
     result: STATIC_RESULT,
   };
 
@@ -79,7 +83,7 @@ class FlowTip extends React.Component<Props, State> {
     this._isMounted = true;
 
     this._updateDOMNodes();
-    this._nextContainingBlock = this._getContainingBlockRect();
+    this._nextAnchor = this._getAnchor();
     this._nextBounds = this._getBoundsRect(this.props);
 
     this._updateState(this.props);
@@ -89,7 +93,7 @@ class FlowTip extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props): void {
-    this._nextContainingBlock = this._getContainingBlockRect();
+    this._nextAnchor = this._getAnchor();
     this._nextBounds = this._getBoundsRect(nextProps);
 
     this._updateState(nextProps);
@@ -127,14 +131,13 @@ class FlowTip extends React.Component<Props, State> {
    * @returns {void}
    */
   _getState(nextProps: Props): State {
-    const containingBlock = this._nextContainingBlock;
+    const anchor = this._nextAnchor;
     const bounds = this._nextBounds;
     const content = this._nextContent;
     const tail = this._nextTail;
     const target = nextProps.target;
 
     let result = STATIC_RESULT;
-
     if (
       bounds &&
       target &&
@@ -143,8 +146,8 @@ class FlowTip extends React.Component<Props, State> {
     ) {
       const intermediateState: State = {
         ...this.state,
+        anchor,
         bounds,
-        containingBlock,
         tail,
         content,
       };
@@ -182,12 +185,8 @@ class FlowTip extends React.Component<Props, State> {
 
     const contentBorders = this._node ? getBorders(this._node) : undefined;
 
-    const boundedByViewport =
-      !nextProps.bounds && this._clippingBlockNode === document.documentElement;
-
     return {
-      containingBlock,
-      boundedByViewport,
+      anchor,
       bounds,
       content,
       contentBorders,
@@ -214,7 +213,7 @@ class FlowTip extends React.Component<Props, State> {
     if (
       !areEqualDimensions(this.state.content, this._nextContent) ||
       !areEqualDimensions(this.state.tail, this._nextTail) ||
-      !Rect.areEqual(this.state.containingBlock, this._nextContainingBlock) ||
+      !areEqualPoints(this.state.anchor, this._nextAnchor) ||
       !Rect.areEqual(this.state.bounds, this._nextBounds) ||
       !Rect.areEqual(this.props.target, nextProps.target) ||
       this.props.region !== nextProps.region ||
@@ -239,7 +238,7 @@ class FlowTip extends React.Component<Props, State> {
   // DOM Measurement Methods ===================================================
 
   _getBoundsRect(nextProps: Props): Rect | undefined {
-    const processBounds = (boundsRect: RectLike) => {
+    const processBounds = (boundsRect: RectShape) => {
       const visibleBounds = Rect.intersect(getViewportRect(), boundsRect);
 
       return Rect.isValid(visibleBounds) ? visibleBounds : undefined;
@@ -249,17 +248,6 @@ class FlowTip extends React.Component<Props, State> {
       return processBounds(nextProps.bounds);
     }
 
-    if (this._clippingBlockNode === document.documentElement) {
-      return processBounds(
-        new Rect(
-          -window.scrollX,
-          -window.scrollY,
-          document.documentElement.scrollWidth,
-          document.documentElement.scrollHeight,
-        ),
-      );
-    }
-
     if (this._clippingBlockNode) {
       return processBounds(getContentRect(this._clippingBlockNode));
     }
@@ -267,21 +255,20 @@ class FlowTip extends React.Component<Props, State> {
     return undefined;
   }
 
-  _getContainingBlockRect(): Rect {
+  _getAnchor(): Point {
     if (!this._containingBlockNode) {
-      return Rect.zero;
+      return POINT_ZERO;
     }
+    const contentRect = getContentRect(this._containingBlockNode);
 
-    if (this._containingBlockNode === document.documentElement) {
-      return new Rect(
-        -window.scrollX,
-        -window.scrollY,
-        document.documentElement.scrollWidth,
-        document.documentElement.scrollHeight,
-      );
-    }
-
-    return getContentRect(this._containingBlockNode);
+    return {
+      x:
+        contentRect.left -
+        (this._containingBlockNode ? this._containingBlockNode.scrollLeft : 0),
+      y:
+        contentRect.top -
+        (this._containingBlockNode ? this._containingBlockNode.scrollTop : 0),
+    };
   }
 
   // DOM Element Accessors =====================================================
@@ -333,12 +320,12 @@ class FlowTip extends React.Component<Props, State> {
    * Window scroll handler.
    *
    * Responds to changes in the window scroll position to update the cached
-   * `_nextContainingBlock` and `_nextBounds` rects and triggers a state update.
+   * `_nextAnchor` point and `_nextBounds` rect and triggers a state update.
    *
    * @returns {void}
    */
   _handleScroll = () => {
-    this._nextContainingBlock = this._getContainingBlockRect();
+    this._nextAnchor = this._getAnchor();
     this._nextBounds = this._getBoundsRect(this.props);
     this._updateState(this.props);
   };
@@ -354,7 +341,7 @@ class FlowTip extends React.Component<Props, State> {
     if (this.props.debug) {
       const result = {...this.state.result};
       if (this.props.target) {
-        result.target = Rect.from(this.props.target);
+        result.target = Rect.fromRect(this.props.target);
       }
 
       return (

@@ -1,5 +1,4 @@
 module.exports = (api) => {
-  console.log('babel config', process.env.NODE_ENV);
   api.cache(() => process.env.NODE_ENV);
   const out = {
     presets: [

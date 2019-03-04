@@ -15,7 +15,7 @@
     "test:spec": "NODE_ENV=test npx jest --runInBand=${SPEC_SERIAL:-$CI} --coverage=${SPEC_COVERAGE:-$CI}",
     "test:spec:watch": "NODE_ENV=test npm run spec -- --watch",
     "test:types": "NODE_ENV=test npx lerna exec --ignore storybook -- 'tsc --noEmit --project .'",
-    "storybook": "start-storybook -p 8080 -c packages/storybook"
+    "storybook": "start-storybook -p 8080 -c packages/examples"
   },
   "devDependencies": {
     "@babel/cli": "7.2.3",

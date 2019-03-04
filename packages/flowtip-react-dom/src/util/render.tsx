@@ -65,8 +65,8 @@ export const getContentStyle = (
 
   return {
     position: 'absolute',
-    top: Math.round(state.result.rect.top - state.containingBlock.top),
-    left: Math.round(state.result.rect.left - state.containingBlock.left),
+    top: Math.round(state.result.rect.top - state.anchor.y),
+    left: Math.round(state.result.rect.left - state.anchor.x),
   };
 };
 

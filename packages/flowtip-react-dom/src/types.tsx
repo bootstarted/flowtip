@@ -1,17 +1,20 @@
 import * as React from 'react';
 import {
   Rect,
-  RectLike,
+  RectShape,
   Region,
   Align,
   Dimensions,
   Result as BaseResult,
 } from 'flowtip-core';
 
-// export type RectLike = RectLike;
-
 export interface Result extends BaseResult {
   _static?: boolean;
+}
+
+export interface Point {
+  x: number;
+  y: number;
 }
 
 export interface Borders {
@@ -44,11 +47,11 @@ export type Render = (props: RenderProps) => React.ReactNode;
 
 export interface Props {
   /** DOMRect (or similar shaped object) of target position. */
-  target?: RectLike;
+  target?: RectShape;
   /**
     DOMRect (or similar shaped object) of content boundary.
    */
-  bounds?: RectLike;
+  bounds?: RectShape;
   /** Default region the content should unless otherwise constrained. */
   region?: Region;
   /** Retain the previous rendered region unless otherwise constrained. */
@@ -87,15 +90,16 @@ export interface Props {
   content?: React.ComponentType<ContentProps> | 'div';
   tail?: React.ComponentType<TailProps>;
 
+  tailMargin?: boolean;
+
   debug?: boolean;
 }
 
 export interface State {
-  containingBlock: Rect;
+  anchor: Point;
   bounds?: Rect;
   content?: Dimensions;
   contentBorders?: Borders;
   tail?: Dimensions;
   result: Result;
-  boundedByViewport?: boolean;
 }

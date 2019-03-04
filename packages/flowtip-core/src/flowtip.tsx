@@ -1,4 +1,4 @@
-import Rect, {RectLike} from './Rect';
+import Rect, {RectShape} from './Rect';
 
 export type Region = 'top' | 'right' | 'bottom' | 'left';
 export type Reason = 'default' | 'inverted' | 'ideal' | 'external' | 'fallback';
@@ -45,8 +45,8 @@ export interface Config {
   edgeOffset?: number;
   align?: Align;
   region?: Region;
-  bounds: RectLike;
-  target: RectLike;
+  bounds: RectShape;
+  target: RectShape;
   content: Dimensions;
   disabled?: Regions;
   constrain?: Regions;
@@ -310,12 +310,14 @@ function getValidRegions(config: _Config): _Regions {
   // This value is true if `overlap` amount of the target rect intersects
   // the bounds rect in the horizontal direction.
   const topBottomValid =
+    offsetBounds.width >= content.width &&
     offsetBounds.right - target.left >= overlap &&
     target.right - offsetBounds.left >= overlap;
 
   // This value is true if `overlap` amount of the target rect intersects
   // the bounds rect in the vertical direction.
   const leftRightValid =
+    offsetBounds.height >= content.height &&
     offsetBounds.bottom - target.top >= overlap &&
     target.bottom - offsetBounds.top >= overlap;
 
@@ -854,8 +856,8 @@ function defaults(config: Config): _Config {
     edgeOffset,
     align: normalizeAlign(align),
     region,
-    bounds: Rect.from(bounds),
-    target: Rect.from(target),
+    bounds: Rect.fromRect(bounds),
+    target: Rect.fromRect(target),
     content,
     disabled: {...noRegions, ...disabled},
     constrain: {...allRegions, ...constrain},
