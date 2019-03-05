@@ -2,19 +2,13 @@ import * as React from 'react';
 import {storiesOf} from '@storybook/react';
 // import {withKnobs, object} from '@storybook/addon-knobs/react';
 
-import StyleReset from './StyleReset';
+import StoryDecorator from './StoryDecorator';
 import Draggable from './Draggable';
 import Tooltip from './Tooltip';
 
 storiesOf('Tooltip', module)
   // .addDecorator(withKnobs)
-  .addDecorator((story) => (
-    <>
-      <StyleReset />
-      {story()}
-    </>
-  ))
-
+  .addDecorator((story) => <StoryDecorator>{story()}</StoryDecorator>)
   .add('basic', () => (
     <div>
       <Tooltip content="tooltip">label</Tooltip>

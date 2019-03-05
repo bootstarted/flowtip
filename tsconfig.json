@@ -11,6 +11,7 @@
     "paths": {
       "*": ["packages/*"]
     },
+    "skipLibCheck": true,
     "strict": true,
     "suppressImplicitAnyIndexErrors": true,
     "target": "es6"

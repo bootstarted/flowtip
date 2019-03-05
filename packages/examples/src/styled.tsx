@@ -1,6 +1,6 @@
 import * as styledComponents from 'styled-components';
 
-import Theme from './theme';
+export interface Theme {}
 
 const {
   default: styled,

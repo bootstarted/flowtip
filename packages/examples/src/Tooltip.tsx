@@ -51,7 +51,7 @@ interface TooltipProps {
   hideDelay?: number;
   style?: React.CSSProperties;
   children?:
-    | ((setTarget: (rect: RectShape) => void) => React.ReactNode)
+    | ((handleReflow: (rect: RectShape) => unknown) => React.ReactNode)
     | React.ReactNode;
   content?: React.ReactNode;
   active?: boolean;
@@ -68,7 +68,7 @@ const Tooltip: React.StatelessComponent<TooltipProps> = ({
   content,
 }) => {
   const [active, setActive] = useDebouncedState(false);
-  const [target, setTarget] = React.useState<RectShape | undefined>();
+  const [target, setTarget] = React.useState<Rect>(Rect.zero);
 
   const tooltipId = useId();
 
@@ -99,6 +99,8 @@ const Tooltip: React.StatelessComponent<TooltipProps> = ({
     };
   }, [staticActive]);
 
+  const handleReflow = (rect: RectShape) => setTarget(Rect.fromRect(rect));
+
   return (
     <span
       aria-describedby={tooltipId}
@@ -111,21 +113,16 @@ const Tooltip: React.StatelessComponent<TooltipProps> = ({
       draggable={draggable}
     >
       {typeof children === 'function' ? (
-        children(setTarget)
+        children(handleReflow)
       ) : (
         <>
-          <ResizeObserver ref={targetResizeRef} onReflow={setTarget} />
+          <ResizeObserver ref={targetResizeRef} onReflow={handleReflow} />
           {children}
         </>
       )}
 
       {(staticActive || active) && (
-        <FlowTip
-          debug
-          target={Rect.fromRect(target)}
-          tail={Tail}
-          tailOffset={8}
-        >
+        <FlowTip debug target={target} tail={Tail} tailOffset={8}>
           <div
             id={tooltipId}
             role="tooltip"

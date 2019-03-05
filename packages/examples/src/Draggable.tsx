@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {Rect} from 'flowtip-core';
 import {
-  getClippingBlock,
+  // getClippingBlock,
   getContainingBlock,
   getContentRect,
 } from 'flowtip-react-dom';
@@ -33,9 +33,9 @@ const Draggable: React.StatelessComponent<DraggableProps> = ({
 
   const elementRef = React.useRef<HTMLDivElement>(null);
 
-  const clippingBlockNode = elementRef.current
-    ? getClippingBlock(elementRef.current.parentNode)
-    : undefined;
+  // const clippingBlockNode = elementRef.current
+  //   ? getClippingBlock(elementRef.current.parentNode)
+  //   : undefined;
   const containingBlockNode = elementRef.current
     ? getContainingBlock(elementRef.current.parentNode)
     : undefined;
@@ -44,9 +44,9 @@ const Draggable: React.StatelessComponent<DraggableProps> = ({
     ? getContentRect(containingBlockNode)
     : undefined;
 
-  const boundsRect = clippingBlockNode
-    ? clippingBlockNode.getBoundingClientRect()
-    : undefined;
+  // const boundsRect = clippingBlockNode
+  //   ? clippingBlockNode.getBoundingClientRect()
+  //   : undefined;
 
   React.useEffect(() => {
     if (state.dragging) {

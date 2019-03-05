@@ -1,5 +1,5 @@
 {
-  "name": "storybook",
+  "name": "examples",
   "private": true,
   "dependencies": {
     "flowtip-core": "^5.2.0",
