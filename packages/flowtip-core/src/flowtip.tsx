@@ -207,26 +207,6 @@ function constrainTop(
 }
 
 /**
- * Check if the content will be clipped by the boundary edge if placed in a
- * region.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`)
- * @returns {Object} Clipped regions (`{top, right, bottom, left}`).
- */
-function getRegionClip(config: _Config, region: Region): _Regions {
-  const rect = getRect(config, region);
-  const offsetBounds = getOffsetBounds(config, region);
-
-  return {
-    top: rect.top < offsetBounds.top,
-    right: offsetBounds.right < rect.right,
-    bottom: offsetBounds.bottom < rect.bottom,
-    left: rect.left < offsetBounds.left,
-  };
-}
-
-/**
  * Calculate which regions are valid for the content rect to occupy.
  * This function measures the available space around the target rect within the
  * container rect. Any region with sufficient space to display the content rect
@@ -296,6 +276,7 @@ function getRegionClip(config: _Config, region: Region): _Regions {
  */
 function getValidRegions(config: _Config): _Regions {
   const {
+    align,
     target,
     overlap,
     offset,
@@ -321,39 +302,66 @@ function getValidRegions(config: _Config): _Regions {
     offsetBounds.bottom - target.top >= overlap &&
     target.bottom - offsetBounds.top >= overlap;
 
+  let topValid = topBottomValid;
+  let rightValid = leftRightValid;
+  let bottomValid = topBottomValid;
+  let leftValid = leftRightValid;
+
   // Calculate the available space in each region.
-  const topMargin = target.top - offsetBounds.top - offset;
-  const rightMargin = offsetBounds.right - target.right - offset;
-  const bottomMargin = offsetBounds.bottom - target.bottom - offset;
-  const leftMargin = target.left - offsetBounds.left - offset;
 
-  const topRegion = getRegionClip(config, TOP);
-  const rightRegion = getRegionClip(config, RIGHT);
-  const bottomRegion = getRegionClip(config, BOTTOM);
-  const leftRegion = getRegionClip(config, LEFT);
+  if (topValid) {
+    const topMargin = target.top - offsetBounds.top - offset;
+    topValid = topValid && topMargin >= content.height;
+  }
 
-  const topClips =
-    (!constrain.left && topRegion.left) ||
-    (!constrain.right && topRegion.right);
-  const rightClips =
-    (!constrain.top && rightRegion.top) ||
-    (!constrain.bottom && rightRegion.bottom);
-  const bottomClips =
-    (!constrain.left && bottomRegion.left) ||
-    (!constrain.right && rightRegion.bottom);
-  const leftClips =
-    (!constrain.top && topRegion.top) ||
-    (!constrain.bottom && leftRegion.bottom);
+  if (rightValid) {
+    const rightMargin = offsetBounds.right - target.right - offset;
+    rightValid = rightValid && rightMargin >= content.width;
+  }
+
+  if (bottomValid) {
+    const bottomMargin = offsetBounds.bottom - target.bottom - offset;
+    bottomValid = bottomValid && bottomMargin >= content.height;
+  }
+
+  if (leftValid) {
+    const leftMargin = target.left - offsetBounds.left - offset;
+    leftValid = leftValid && leftMargin >= content.width;
+  }
+
+  if (topValid || bottomValid) {
+    const contentLeft = target.left + (target.width - content.width) * align;
+    const contentRight = contentLeft + content.width;
+
+    const topBottomClips =
+      (!constrain.left && bounds.left + edgeOffset > contentLeft) ||
+      (!constrain.right && bounds.right - edgeOffset < contentRight);
+
+    topValid = topValid && !topBottomClips;
+    bottomValid = bottomValid && !topBottomClips;
+  }
+
+  if (leftValid || rightValid) {
+    const contentTop = target.top + (target.height - content.height) * align;
+    const contentBottom = contentTop + content.height;
+
+    const leftRightClips =
+      (!constrain.top && bounds.top + edgeOffset > contentTop) ||
+      (!constrain.bottom && bounds.right - edgeOffset < contentBottom);
+
+    rightValid = rightValid && !leftRightClips;
+    leftValid = leftValid && !leftRightClips;
+  }
 
   // A region is considered valid if the margin is large enough to fit the
   // side of the content rect and if there is enough linear overlap as defined
   // in the config. The overlap check ensures that a region is valid only if
   // there is room to render a caret.
   return {
-    top: !topClips && topBottomValid && topMargin >= content.height,
-    right: !rightClips && leftRightValid && rightMargin >= content.width,
-    bottom: !bottomClips && topBottomValid && bottomMargin >= content.height,
-    left: !leftClips && leftRightValid && leftMargin >= content.width,
+    top: topValid,
+    right: rightValid,
+    bottom: bottomValid,
+    left: leftValid,
   };
 }
 
