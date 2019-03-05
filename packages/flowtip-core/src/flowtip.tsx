@@ -291,14 +291,12 @@ function getValidRegions(config: _Config): _Regions {
   // This value is true if `overlap` amount of the target rect intersects
   // the bounds rect in the horizontal direction.
   const topBottomValid =
-    offsetBounds.width >= content.width &&
     offsetBounds.right - target.left >= overlap &&
     target.right - offsetBounds.left >= overlap;
 
   // This value is true if `overlap` amount of the target rect intersects
   // the bounds rect in the vertical direction.
   const leftRightValid =
-    offsetBounds.height >= content.height &&
     offsetBounds.bottom - target.top >= overlap &&
     target.bottom - offsetBounds.top >= overlap;
 
