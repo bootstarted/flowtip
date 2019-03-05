@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {Rect, getClampedTailPosition, RIGHT, LEFT} from 'flowtip-core';
+import {getClampedTailPosition, RIGHT, LEFT} from 'flowtip-core';
+import Rect from 'flowtip-rect';
 
 import {Props, State} from '../types';
 import {getOffset} from '../util/state';

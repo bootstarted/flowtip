@@ -1,12 +1,6 @@
 import * as React from 'react';
-import {
-  Rect,
-  RectShape,
-  Region,
-  Align,
-  Dimensions,
-  Result as BaseResult,
-} from 'flowtip-core';
+import {Region, Align, Dimensions, Result as BaseResult} from 'flowtip-core';
+import Rect, {RectShape} from 'flowtip-rect';
 
 export interface Result extends BaseResult {
   _static?: boolean;

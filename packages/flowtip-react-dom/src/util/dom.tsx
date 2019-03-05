@@ -1,4 +1,4 @@
-import {Rect} from 'flowtip-core';
+import Rect from 'flowtip-rect';
 import {Borders} from '../types';
 
 export function findAncestor(

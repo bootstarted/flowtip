@@ -1,4 +1,4 @@
-import Rect, {RectShape} from './Rect';
+import Rect, {RectShape} from 'flowtip-rect';
 
 export type Region = 'top' | 'right' | 'bottom' | 'left';
 export type Reason = 'default' | 'inverted' | 'ideal' | 'external' | 'fallback';

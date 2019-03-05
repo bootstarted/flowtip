@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {Rect} from 'flowtip-core';
+import Rect from 'flowtip-rect';
 import {
   // getClippingBlock,
   getContainingBlock,

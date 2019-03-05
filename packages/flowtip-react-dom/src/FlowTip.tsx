@@ -1,13 +1,12 @@
 import * as React from 'react';
 import flowtip, {
   CENTER,
-  Rect,
   areEqualDimensions,
-  RectShape,
   Region,
   Dimensions,
   Config,
 } from 'flowtip-core';
+import Rect, {RectShape} from 'flowtip-rect';
 
 import {Props, State, Result, Point} from './types';
 import findDOMNode from './util/findDOMNode';

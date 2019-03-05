@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import ResizeObserver from 'react-resize-observer';
 import FlowTip, {TailProps} from 'flowtip-react-dom';
-import {RectShape, Rect} from 'flowtip-core';
+import Rect, {RectShape} from 'flowtip-rect';
 import {useDebouncedState, useId} from './util/react';
 
 const triangles = {

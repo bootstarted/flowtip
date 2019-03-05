@@ -1,6 +1,5 @@
 {
-  "name": "flowtip-core",
-  "description": "A flexible, adaptable, and easy to use tooltip positioning algorithm.",
+  "name": "flowtip-rect",
   "version": "5.2.0",
   "author": "Neal Granger <neal@nealg.com>",
   "main": "./lib/index.js",
@@ -13,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/metalabdesign/flowtip/tree/master/packages/flowtip-core"
+    "url": "https://github.com/metalabdesign/flowtip/tree/master/packages/flowtip-rect"
   },
   "keywords": [
     "tooltip",
@@ -25,8 +24,5 @@
   "bugs": {
     "url": "https://github.com/metalabdesign/flowtip/issues"
   },
-  "homepage": "https://github.com/metalabdesign/flowtip/tree/master/packages/flowtip-core",
-  "dependencies": {
-    "flowtip-rect": "^5.2.0"
-  }
+  "homepage": "https://github.com/metalabdesign/flowtip/tree/master/packages/flowtip-rect"
 }
