@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Rect toJSON should return a JSON representation of the rectaccording to the the DOMRectReadOnly interface 1`] = `
+Object {
+  "bottom": 6,
+  "height": 4,
+  "left": 1,
+  "right": 4,
+  "top": 2,
+  "width": 3,
+  "x": 1,
+  "y": 2,
+}
+`;

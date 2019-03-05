@@ -36,4 +36,25 @@ describe('Rect', () => {
       );
     });
   });
+
+  describe('isValid', () => {
+    it('should return true if a rect has a positive area', () => {
+      expect(Rect.isValid(new Rect(0, 0, 10, 10))).toBe(true);
+    });
+
+    it('should return false if a rect has a negative area', () => {
+      expect(Rect.isValid(new Rect(0, 0, -10, 10))).toBe(false);
+      expect(Rect.isValid(new Rect(0, 0, 10, -10))).toBe(false);
+    });
+  });
+
+  describe('toJSON', () => {
+    it(
+      'should return a JSON representation of the rect' +
+        'according to the the DOMRectReadOnly interface',
+      () => {
+        expect(new Rect(1, 2, 3, 4).toJSON()).toMatchSnapshot();
+      },
+    );
+  });
 });
