@@ -370,7 +370,7 @@ function getValidRegions(config: _Config): _Regions {
  * region adjacent to the target that has the largest available space.
  *
  * If there are no regions that are large enough to fit the content rect
- * `undefined` is returned.
+ * no result (`undefined`) is returned.
  *
  *     ___________________________________________________________________
  *    |                      ^                                            |
@@ -390,7 +390,7 @@ function getValidRegions(config: _Config): _Regions {
  *    |                      V                                            |
  *     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
  * > Although all regions are valid, the region with largest available space
- * > (right) returned as the ideal region.
+ * > (right) is returned as the ideal region.
  *
  * @param   {Object} config FlowTip layout config object.
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
@@ -703,7 +703,7 @@ function getRegion(config: _Config, valid: _Regions): [Region, Reason] {
     return [ideal, 'ideal'];
   }
 
-  // Retun the region from the external calculation if one is returned.
+  // Return the region from the external calculation if one is returned.
   const external = getExternalRegion(config);
   if (typeof external === 'string') {
     return [external, 'external'];
