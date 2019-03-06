@@ -275,8 +275,20 @@ function constrainTop(
  * @returns {Object} Valid regions (`{top, right, bottom, left}`).
  */
 function getValidRegions(config: _Config): _Regions {
+  return {
+    top: isValidPosition(config, TOP, config.align),
+    right: isValidPosition(config, RIGHT, config.align),
+    bottom: isValidPosition(config, BOTTOM, config.align),
+    left: isValidPosition(config, LEFT, config.align),
+  };
+}
+
+function isValidPosition(
+  config: _Config,
+  region: Region,
+  align: number,
+): boolean {
   const {
-    align,
     target,
     overlap,
     offset,
@@ -288,46 +300,29 @@ function getValidRegions(config: _Config): _Regions {
 
   const offsetBounds = Rect.grow(bounds, -edgeOffset);
 
-  // This value is true if `overlap` amount of the target rect intersects
-  // the bounds rect in the horizontal direction.
-  const topBottomValid =
-    offsetBounds.right - target.left >= overlap &&
-    target.right - offsetBounds.left >= overlap;
+  if (region === TOP || region === BOTTOM) {
+    // This value is true if `overlap` amount of the target rect intersects
+    // the bounds rect in the horizontal direction.
+    const topBottomValid =
+      offsetBounds.right - target.left >= overlap &&
+      target.right - offsetBounds.left >= overlap;
 
-  // This value is true if `overlap` amount of the target rect intersects
-  // the bounds rect in the vertical direction.
-  const leftRightValid =
-    offsetBounds.bottom - target.top >= overlap &&
-    target.bottom - offsetBounds.top >= overlap;
+    if (!topBottomValid) {
+      return false;
+    }
 
-  let topValid = topBottomValid;
-  let rightValid = leftRightValid;
-  let bottomValid = topBottomValid;
-  let leftValid = leftRightValid;
+    if (region === TOP) {
+      const topMargin = target.top - offsetBounds.top - offset;
+      if (!(topMargin >= content.height)) {
+        return false;
+      }
+    } else {
+      const bottomMargin = offsetBounds.bottom - target.bottom - offset;
+      if (!(bottomMargin >= content.height)) {
+        return false;
+      }
+    }
 
-  // Calculate the available space in each region.
-
-  if (topValid) {
-    const topMargin = target.top - offsetBounds.top - offset;
-    topValid = topValid && topMargin >= content.height;
-  }
-
-  if (rightValid) {
-    const rightMargin = offsetBounds.right - target.right - offset;
-    rightValid = rightValid && rightMargin >= content.width;
-  }
-
-  if (bottomValid) {
-    const bottomMargin = offsetBounds.bottom - target.bottom - offset;
-    bottomValid = bottomValid && bottomMargin >= content.height;
-  }
-
-  if (leftValid) {
-    const leftMargin = target.left - offsetBounds.left - offset;
-    leftValid = leftValid && leftMargin >= content.width;
-  }
-
-  if (topValid || bottomValid) {
     const contentLeft = target.left + (target.width - content.width) * align;
     const contentRight = contentLeft + content.width;
 
@@ -335,11 +330,32 @@ function getValidRegions(config: _Config): _Regions {
       (!constrain.left && bounds.left + edgeOffset > contentLeft) ||
       (!constrain.right && bounds.right - edgeOffset < contentRight);
 
-    topValid = topValid && !topBottomClips;
-    bottomValid = bottomValid && !topBottomClips;
-  }
+    if (topBottomClips) {
+      return false;
+    }
+  } else {
+    // This value is true if `overlap` amount of the target rect intersects
+    // the bounds rect in the vertical direction.
+    const leftRightValid =
+      offsetBounds.bottom - target.top >= overlap &&
+      target.bottom - offsetBounds.top >= overlap;
 
-  if (leftValid || rightValid) {
+    if (!leftRightValid) {
+      return false;
+    }
+
+    if (region === LEFT) {
+      const leftMargin = target.left - offsetBounds.left - offset;
+      if (!(leftMargin >= content.width)) {
+        return false;
+      }
+    } else {
+      const rightMargin = offsetBounds.right - target.right - offset;
+      if (!(rightMargin >= content.width)) {
+        return false;
+      }
+    }
+
     const contentTop = target.top + (target.height - content.height) * align;
     const contentBottom = contentTop + content.height;
 
@@ -347,20 +363,12 @@ function getValidRegions(config: _Config): _Regions {
       (!constrain.top && bounds.top + edgeOffset > contentTop) ||
       (!constrain.bottom && bounds.right - edgeOffset < contentBottom);
 
-    rightValid = rightValid && !leftRightClips;
-    leftValid = leftValid && !leftRightClips;
+    if (leftRightClips) {
+      return false;
+    }
   }
 
-  // A region is considered valid if the margin is large enough to fit the
-  // side of the content rect and if there is enough linear overlap as defined
-  // in the config. The overlap check ensures that a region is valid only if
-  // there is room to render a caret.
-  return {
-    top: topValid,
-    right: rightValid,
-    bottom: bottomValid,
-    left: leftValid,
-  };
+  return true;
 }
 
 /**
