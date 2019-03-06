@@ -4,6 +4,12 @@ export type Region = 'top' | 'right' | 'bottom' | 'left';
 export type Reason = 'default' | 'inverted' | 'ideal' | 'external' | 'fallback';
 export type Dimensions = {width: number; height: number};
 export type Align = 'start' | 'center' | 'end' | number;
+
+type Position = {
+  region: Region;
+  align: number;
+};
+
 type _Regions = {
   top: boolean;
   right: boolean;
@@ -76,8 +82,8 @@ export const END: Align = 'end';
  * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
  * @returns {Object} A rect object.
  */
-function getRect(config: _Config, region: Region): Rect {
-  const {target, content, align, offset} = config;
+function getRect(config: _Config, region: Region, align: number): Rect {
+  const {target, content, offset} = config;
 
   let left;
   let top;
@@ -402,7 +408,10 @@ function isValidPosition(
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
-function getIdealRegion(config: _Config, valid: _Regions): Region | undefined {
+function getIdealPosition(
+  config: _Config,
+  valid: _Regions,
+): Position | undefined {
   const {target, content, disabled, bounds} = config;
 
   let margin = 0;
@@ -436,7 +445,11 @@ function getIdealRegion(config: _Config, valid: _Regions): Region | undefined {
     region = LEFT;
   }
 
-  return region;
+  if (region) {
+    return {region, align: config.align};
+  }
+
+  return undefined;
 }
 
 /**
@@ -492,7 +505,7 @@ function getIdealRegion(config: _Config, valid: _Regions): Region | undefined {
  *              upper half |      disabled       |  upper half
  *                         |‾ ‾ ‾ ‾ ‾ ‾ ‾ ‾ ‾ ‾ ‾|
  *               quadrant  |     handled by      |  quadrant
- *                extents  |   getIdealRegion    |  extends
+ *                extents  |  getIdealPosition   |  extends
  *            indefinitely |                     |  indefinitely
  *                         |                     |
  *
@@ -577,6 +590,16 @@ function getExternalRegion(config: _Config): Region | undefined {
   return undefined;
 }
 
+function getExternalPosition(config: _Config): Position | undefined {
+  const region = getExternalRegion(config);
+
+  if (region) {
+    return {region, align: config.align};
+  }
+
+  return undefined;
+}
+
 /**
  * Get the opposite region of the one provided.
  * i.e. `left` -> `right`, `top` -> `bottom`
@@ -606,15 +629,15 @@ function invertRegion(region: Region): Region {
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
-function getDefaultRegion(
+function getDefaultPosition(
   config: _Config,
   valid: _Regions,
-): Region | undefined {
+): Position | undefined {
   const {region} = config;
 
   if (typeof region === 'string') {
     if (valid[region] && !config.disabled[region]) {
-      return region;
+      return {region, align: config.align};
     }
   }
 
@@ -634,16 +657,16 @@ function getDefaultRegion(
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
  */
-function getInvertDefaultRegion(
+function getInvertDefaultPosition(
   config: _Config,
   valid: _Regions,
-): Region | undefined {
+): Position | undefined {
   const {region} = config;
 
   if (typeof region === 'string') {
     const invertedDefault = invertRegion(region);
     if (valid[invertedDefault] && !config.disabled[invertedDefault]) {
-      return invertedDefault;
+      return {region: invertedDefault, align: config.align};
     }
   }
 
@@ -660,7 +683,7 @@ function getInvertDefaultRegion(
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {string} A region (`top`, `right`, `bottom`, or `left`).
  */
-function getFallbackRegion(config: _Config): Region {
+function getFallbackPosition(config: _Config): Position {
   // Prioritize the configured default region.
   let fallback: Region | undefined = config.region;
 
@@ -677,7 +700,7 @@ function getFallbackRegion(config: _Config): Region {
     fallback = TOP;
   }
 
-  return fallback;
+  return {region: fallback, align: config.align};
 }
 
 /**
@@ -687,37 +710,49 @@ function getFallbackRegion(config: _Config): Region {
  * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
  * @returns {array} Array containing region and reason.
  */
-function getRegion(config: _Config, valid: _Regions): [Region, Reason] {
-  const ideal = getIdealRegion(config, valid);
+function getRegion(config: _Config, valid: _Regions): [Region, number, Reason] {
+  const idealPosition = getIdealPosition(config, valid);
 
   // Return the default region set in the config if it is valid.
-  const defaultRegion = getDefaultRegion(config, valid);
+  const defaultPosition = getDefaultPosition(config, valid);
 
-  if (typeof defaultRegion === 'string') {
-    return [defaultRegion, defaultRegion === ideal ? 'ideal' : 'default'];
+  if (defaultPosition) {
+    return [
+      defaultPosition.region,
+      defaultPosition.align,
+      idealPosition && defaultPosition.region === idealPosition.region
+        ? 'ideal'
+        : 'default',
+    ];
   }
 
   // Return the default region set in the config if it is valid.
-  const invertedDefault = getInvertDefaultRegion(config, valid);
+  const invertedPosition = getInvertDefaultPosition(config, valid);
 
-  if (typeof invertedDefault === 'string') {
-    return [invertedDefault, invertedDefault === ideal ? 'ideal' : 'inverted'];
+  if (invertedPosition) {
+    return [
+      invertedPosition.region,
+      invertedPosition.align,
+      idealPosition && invertedPosition.region === idealPosition.region
+        ? 'ideal'
+        : 'inverted',
+    ];
   }
 
   // Return the region with the most valid space.
-  if (typeof ideal === 'string') {
-    return [ideal, 'ideal'];
+  if (idealPosition) {
+    return [idealPosition.region, idealPosition.align, 'ideal'];
   }
 
   // Return the region from the external calculation if one is returned.
-  const external = getExternalRegion(config);
-  if (typeof external === 'string') {
-    return [external, 'external'];
+  const externalPosition = getExternalPosition(config);
+  if (externalPosition) {
+    return [externalPosition.region, externalPosition.align, 'external'];
   }
 
-  const fallback = getFallbackRegion(config);
+  const fallbackPosition = getFallbackPosition(config);
 
-  return [fallback, 'fallback'];
+  return [fallbackPosition.region, fallbackPosition.align, 'fallback'];
 }
 
 /**
@@ -900,9 +935,9 @@ function flowtip(config: Config): Result {
 
   const valid = getValidRegions(finalConfig);
 
-  const [region, reason] = getRegion(finalConfig, valid);
+  const [region, align, reason] = getRegion(finalConfig, valid);
 
-  const tempRect = getRect(finalConfig, region);
+  const tempRect = getRect(finalConfig, region, align);
 
   const rect = constrainRect(finalConfig, region, tempRect);
 
@@ -919,6 +954,7 @@ function flowtip(config: Config): Result {
     target: finalConfig.target,
     region,
     reason,
+    align,
     rect,
     valid,
     offset,
