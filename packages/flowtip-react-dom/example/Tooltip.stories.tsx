@@ -2,7 +2,7 @@ import * as React from 'react';
 import {storiesOf} from '@storybook/react';
 // import {withKnobs, object} from '@storybook/addon-knobs/react';
 
-import StoryDecorator from './StoryDecorator';
+import StoryDecorator from '../../../.storybook/src/StoryDecorator';
 import Draggable from './Draggable';
 import Tooltip from './Tooltip';
 

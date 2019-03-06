@@ -1,11 +1,7 @@
 import * as React from 'react';
 
 import Rect from 'flowtip-rect';
-import {
-  // getClippingBlock,
-  getContainingBlock,
-  getContentRect,
-} from 'flowtip-react-dom';
+import {getContainingBlock, getContentRect} from '../src';
 import ResizeObserver from 'react-resize-observer';
 
 interface DraggableProps {

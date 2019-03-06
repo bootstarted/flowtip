@@ -1,7 +1,7 @@
 /* eslint-disable */
 const path = require('path');
 
-module.exports = (baseConfig, env, config) => {
+module.exports = ({config, mode}) => {
   // exclude 'babel-loader' so we can override it later
   // see: github.com/storybooks/storybook/issues/3346#issuecomment-425516669
   config.module.rules = config.module.rules.filter(

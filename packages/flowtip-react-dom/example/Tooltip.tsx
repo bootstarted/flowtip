@@ -1,9 +1,10 @@
 import * as React from 'react';
 
 import ResizeObserver from 'react-resize-observer';
-import FlowTip, {TailProps} from 'flowtip-react-dom';
 import Rect, {RectShape} from 'flowtip-rect';
+
 import {useDebouncedState, useId} from './util/react';
+import FlowTip, {TailProps} from '../src';
 
 const triangles = {
   top: (
