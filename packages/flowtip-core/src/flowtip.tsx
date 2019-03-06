@@ -8,11 +8,6 @@ export type Align = 'start' | 'center' | 'end' | number;
 type Regions<T> = {[key in Region]: T};
 type RegionsShape<T> = {[key in Region]?: T};
 
-type Position = {
-  region: Region;
-  align: number;
-};
-
 export interface Result {
   bounds: Rect;
   target: Rect;
@@ -93,7 +88,7 @@ function getRect(context: Context, region: Region, align: number): Rect {
   return new Rect(left, top, content.width, content.height);
 }
 
-function getOffsetBounds(context: Context, region: Region): Rect {
+function getEffectiveRegionBounds(context: Context, region: Region): Rect {
   const {bounds, edgeOffset, offset} = context;
   const maxOffset = Math.max(offset, edgeOffset);
 
@@ -160,107 +155,192 @@ function constrainTop(
 }
 
 function getValidRegions(context: Context): Regions<boolean> {
-  return {
-    top: isValidPosition(context, TOP, context.snap.top[0]),
-    right: isValidPosition(context, RIGHT, context.snap.right[0]),
-    bottom: isValidPosition(context, BOTTOM, context.snap.bottom[0]),
-    left: isValidPosition(context, LEFT, context.snap.left[0]),
-  };
-}
-
-function isValidPosition(
-  context: Context,
-  region: Region,
-  align: number,
-): boolean {
   const {
     target,
+    disabled,
     overlap,
     offset,
     edgeOffset,
     bounds,
     content,
-    constrain,
   } = context;
 
-  const offsetBounds = Rect.grow(bounds, -edgeOffset);
+  const topBottomValid =
+    !(disabled.top && disabled.bottom) &&
+    bounds.right - edgeOffset - target.left - overlap >= 0 &&
+    target.right - edgeOffset - bounds.left - overlap >= 0;
 
-  if (region === TOP || region === BOTTOM) {
-    // This value is true if `overlap` amount of the target rect intersects
-    // the bounds rect in the horizontal direction.
-    const topBottomValid =
-      offsetBounds.right - target.left >= overlap &&
-      target.right - offsetBounds.left >= overlap;
+  const leftRightValid =
+    !(disabled.left && disabled.right) &&
+    bounds.bottom - edgeOffset - target.top - overlap >= 0 &&
+    target.bottom - edgeOffset - bounds.top - overlap >= 0;
 
-    if (!topBottomValid) {
-      return false;
-    }
+  let topValid = !disabled.top && topBottomValid;
+  let rightValid = !disabled.right && leftRightValid;
+  let bottomValid = !disabled.bottom && topBottomValid;
+  let leftValid = !disabled.left && leftRightValid;
 
-    if (region === TOP) {
-      const topMargin = target.top - offsetBounds.top - offset;
-      if (!(topMargin >= content.height)) {
-        return false;
-      }
-    } else {
-      const bottomMargin = offsetBounds.bottom - target.bottom - offset;
-      if (!(bottomMargin >= content.height)) {
-        return false;
-      }
-    }
+  if (topValid) {
+    topValid =
+      target.top - offset - content.height - edgeOffset - bounds.top >= 0;
+  }
 
+  if (rightValid) {
+    rightValid =
+      bounds.right - edgeOffset - content.width - offset - target.right >= 0;
+  }
+
+  if (bottomValid) {
+    bottomValid =
+      bounds.bottom - edgeOffset - content.height - offset - target.bottom >= 0;
+  }
+
+  if (leftValid) {
+    leftValid =
+      target.left - offset - content.width - edgeOffset - bounds.left >= 0;
+  }
+
+  return {
+    top: topValid,
+    right: rightValid,
+    bottom: bottomValid,
+    left: leftValid,
+  };
+}
+
+function getValidPositions(context: Context): Regions<number[]> {
+  const {snap, target, edgeOffset, bounds, content, constrain} = context;
+
+  const topPositions = [];
+  const rightPositions = [];
+  const bottomPositions = [];
+  const leftPositions = [];
+
+  for (let i = 0; i < snap.top.length; i++) {
+    const align = snap.top[i];
     const contentLeft = target.left + (target.width - content.width) * align;
     const contentRight = contentLeft + content.width;
 
-    const topBottomClips =
-      (!constrain.left && bounds.left + edgeOffset > contentLeft) ||
-      (!constrain.right && bounds.right - edgeOffset < contentRight);
+    const contentIsClipped =
+      (constrain.left && bounds.left + edgeOffset > contentLeft) ||
+      (constrain.right && bounds.right - edgeOffset < contentRight);
 
-    if (topBottomClips) {
-      return false;
-    }
-  } else {
-    // This value is true if `overlap` amount of the target rect intersects
-    // the bounds rect in the vertical direction.
-    const leftRightValid =
-      offsetBounds.bottom - target.top >= overlap &&
-      target.bottom - offsetBounds.top >= overlap;
-
-    if (!leftRightValid) {
-      return false;
-    }
-
-    if (region === LEFT) {
-      const leftMargin = target.left - offsetBounds.left - offset;
-      if (!(leftMargin >= content.width)) {
-        return false;
-      }
-    } else {
-      const rightMargin = offsetBounds.right - target.right - offset;
-      if (!(rightMargin >= content.width)) {
-        return false;
-      }
-    }
-
-    const contentTop = target.top + (target.height - content.height) * align;
-    const contentBottom = contentTop + content.height;
-
-    const leftRightClips =
-      (!constrain.top && bounds.top + edgeOffset > contentTop) ||
-      (!constrain.bottom && bounds.right - edgeOffset < contentBottom);
-
-    if (leftRightClips) {
-      return false;
+    if (!contentIsClipped) {
+      topPositions.push(align);
     }
   }
 
-  return true;
+  for (let i = 0; i < snap.right.length; i++) {
+    const align = snap.right[i];
+    const contentTop = target.top + (target.height - content.height) * align;
+    const contentBottom = contentTop + content.height;
+
+    const contentIsClipped =
+      (constrain.top && bounds.top + edgeOffset > contentTop) ||
+      (constrain.bottom && bounds.right - edgeOffset < contentBottom);
+
+    if (!contentIsClipped) {
+      rightPositions.push(align);
+    }
+  }
+
+  for (let i = 0; i < snap.bottom.length; i++) {
+    const align = snap.bottom[i];
+    const contentLeft = target.left + (target.width - content.width) * align;
+    const contentRight = contentLeft + content.width;
+
+    const contentIsClipped =
+      (constrain.left && bounds.left + edgeOffset > contentLeft) ||
+      (constrain.right && bounds.right - edgeOffset < contentRight);
+
+    if (!contentIsClipped) {
+      bottomPositions.push(align);
+    }
+  }
+
+  for (let i = 0; i < snap.left.length; i++) {
+    const align = snap.left[i];
+    const contentTop = target.top + (target.height - content.height) * align;
+    const contentBottom = contentTop + content.height;
+
+    const contentIsClipped =
+      (constrain.top && bounds.top + edgeOffset > contentTop) ||
+      (constrain.bottom && bounds.left - edgeOffset < contentBottom);
+
+    if (!contentIsClipped) {
+      leftPositions.push(align);
+    }
+  }
+
+  return {
+    top: topPositions,
+    right: rightPositions,
+    bottom: bottomPositions,
+    left: leftPositions,
+  };
 }
 
-function getIdealPosition(
+function getPreferredAlign(
   context: Context,
-  valid: Regions<boolean>,
-): Position | undefined {
-  const {target, content, disabled, bounds} = context;
+  region: Region,
+): number | undefined {
+  if (context.region === region && context.align !== undefined) {
+    return context.align;
+  }
+
+  return undefined;
+}
+
+function getIdealAlign(context: Context, region: Region): number {
+  const {bounds, edgeOffset, target} = context;
+
+  if (region === TOP || region === BOTTOM) {
+    return (
+      (target.left - edgeOffset - bounds.left) /
+      (bounds.width - edgeOffset - edgeOffset - target.width)
+    );
+  }
+
+  return (
+    (target.top - edgeOffset - bounds.top) /
+    (bounds.height - edgeOffset - edgeOffset - target.height)
+  );
+}
+
+function getPositionInRegion(
+  context: Context,
+  region: Region,
+  positions: number[],
+): number {
+  if (positions.length === 0) {
+    return 0.5;
+  }
+
+  if (positions.length === 1) {
+    return positions[0];
+  }
+
+  let align = getPreferredAlign(context, region);
+
+  if (align === undefined) {
+    align = getIdealAlign(context, region);
+  }
+
+  console.log('idealAlign', align);
+
+  return positions.reduce((prev, next) =>
+    Math.abs(next - (align as number)) < Math.abs(prev - (align as number))
+      ? next
+      : prev,
+  );
+}
+
+function getIdealRegion(
+  context: Context,
+  regions: Regions<boolean>,
+  positions: Regions<number[]>,
+): Region | undefined {
+  const {target, content, bounds} = context;
 
   let margin = 0;
   let region: Region | undefined = undefined;
@@ -273,31 +353,47 @@ function getIdealPosition(
   const bottomMargin = bounds.bottom - target.bottom - content.height;
   const leftMargin = target.left - bounds.left - content.width;
 
-  if (valid.top && !disabled.top && topMargin > margin) {
+  // if (regions.top && positions.top.length && topMargin > margin) {
+  //   margin = topMargin;
+  //   region = TOP;
+  // }
+
+  // if (regions.right && positions.right.length && rightMargin > margin) {
+  //   margin = rightMargin;
+  //   region = RIGHT;
+  // }
+
+  // if (regions.bottom && positions.bottom.length && bottomMargin > margin) {
+  //   margin = bottomMargin;
+  //   region = BOTTOM;
+  // }
+
+  // if (regions.left && positions.left.length && leftMargin > margin) {
+  //   margin = leftMargin;
+  //   region = LEFT;
+  // }
+
+  if (regions.top && topMargin > margin) {
     margin = topMargin;
     region = TOP;
   }
 
-  if (valid.right && !disabled.right && rightMargin > margin) {
+  if (regions.right && rightMargin > margin) {
     margin = rightMargin;
     region = RIGHT;
   }
 
-  if (valid.bottom && !disabled.bottom && bottomMargin > margin) {
+  if (regions.bottom && bottomMargin > margin) {
     margin = bottomMargin;
     region = BOTTOM;
   }
 
-  if (valid.left && !disabled.left && leftMargin > margin) {
+  if (regions.left && leftMargin > margin) {
     margin = leftMargin;
     region = LEFT;
   }
 
-  if (region) {
-    return {region, align: context.snap[region][0]};
-  }
-
-  return undefined;
+  return region;
 }
 
 function getExternalRegion(context: Context): Region | undefined {
@@ -378,16 +474,6 @@ function getExternalRegion(context: Context): Region | undefined {
   return undefined;
 }
 
-function getExternalPosition(context: Context): Position | undefined {
-  const region = getExternalRegion(context);
-
-  if (region) {
-    return {region, align: context.snap[region][0]};
-  }
-
-  return undefined;
-}
-
 /**
  * Get the opposite region of the one provided.
  * i.e. `left` -> `right`, `top` -> `bottom`
@@ -404,38 +490,40 @@ function invertRegion(region: Region): Region {
   }[region];
 }
 
-function getDefaultPosition(
+function getPreferredRegion(
   context: Context,
-  valid: Regions<boolean>,
-): Position | undefined {
+  regions: Regions<boolean>,
+  positions: Regions<number[]>,
+): Region | undefined {
   const {region} = context;
 
   if (typeof region === 'string') {
-    if (valid[region] && !context.disabled[region]) {
-      return {region, align: context.snap[region][0]};
+    if (regions[region]) {
+      return region;
     }
   }
 
   return undefined;
 }
 
-function getInvertDefaultPosition(
+function getInvertPreferredRegion(
   context: Context,
-  valid: Regions<boolean>,
-): Position | undefined {
+  regions: Regions<boolean>,
+  positions: Regions<number[]>,
+): Region | undefined {
   const {region} = context;
 
   if (typeof region === 'string') {
     const result = invertRegion(region);
-    if (valid[result] && !context.disabled[result]) {
-      return {region: result, align: context.snap[result][0]};
+    if (regions[result]) {
+      return result;
     }
   }
 
   return undefined;
 }
 
-function getFallbackPosition(context: Context): Position {
+function getFallbackRegion(context: Context): Region {
   // Prioritize the configured default region.
   let result: Region | undefined = context.region;
 
@@ -452,62 +540,51 @@ function getFallbackPosition(context: Context): Position {
     result = TOP;
   }
 
-  return {region: result, align: context.snap[result][0]};
+  return result;
 }
 
 function getRegion(
   context: Context,
-  valid: Regions<boolean>,
-): [Region, number, Reason] {
-  const idealPosition = getIdealPosition(context, valid);
+  regions: Regions<boolean>,
+  positions: Regions<number[]>,
+): [Region, Reason] {
+  const ideal = getIdealRegion(context, regions, positions);
 
   // Return the default region set in the context if it is valid.
-  const defaultPosition = getDefaultPosition(context, valid);
+  const preferred = getPreferredRegion(context, regions, positions);
 
-  if (defaultPosition) {
-    return [
-      defaultPosition.region,
-      defaultPosition.align,
-      idealPosition && defaultPosition.region === idealPosition.region
-        ? 'ideal'
-        : 'default',
-    ];
+  if (preferred) {
+    return [preferred, preferred === ideal ? 'ideal' : 'default'];
   }
 
   // Return the default region set in the config if it is valid.
-  const invertedPosition = getInvertDefaultPosition(context, valid);
+  const inverted = getInvertPreferredRegion(context, regions, positions);
 
-  if (invertedPosition) {
-    return [
-      invertedPosition.region,
-      invertedPosition.align,
-      idealPosition && invertedPosition.region === idealPosition.region
-        ? 'ideal'
-        : 'inverted',
-    ];
+  if (inverted) {
+    return [inverted, inverted === ideal ? 'ideal' : 'inverted'];
   }
 
   // Return the region with the most valid space.
-  if (idealPosition) {
-    return [idealPosition.region, idealPosition.align, 'ideal'];
+  if (ideal) {
+    return [ideal, 'ideal'];
   }
 
   // Return the region from the external calculation if one is returned.
-  const externalPosition = getExternalPosition(context);
-  if (externalPosition) {
-    return [externalPosition.region, externalPosition.align, 'external'];
+  const external = getExternalRegion(context);
+  if (external) {
+    return [external, 'external'];
   }
 
-  const fallbackPosition = getFallbackPosition(context);
+  const fallback = getFallbackRegion(context);
 
-  return [fallbackPosition.region, fallbackPosition.align, 'fallback'];
+  return [fallback, 'fallback'];
 }
 
 function constrainRect(context: Context, region: Region, rect: Rect): Rect {
-  const offsetBounds = getOffsetBounds(context, region);
+  const bounds = getEffectiveRegionBounds(context, region);
 
-  const left = constrainLeft(context, region, offsetBounds, rect);
-  const top = constrainTop(context, region, offsetBounds, rect);
+  const left = constrainLeft(context, region, bounds, rect);
+  const top = constrainTop(context, region, bounds, rect);
 
   return new Rect(left, top, rect.width, rect.height);
 }
@@ -580,7 +657,7 @@ function parseConfig(config: Config): Context {
   } = config;
 
   const parsedAlign = align !== undefined ? parseAlign(align) : undefined;
-  const defaultSnap = parsedAlign !== undefined ? [parsedAlign] : [0.5];
+  const defaultSnap = parsedAlign !== undefined ? [parsedAlign] : [];
 
   return {
     align: parsedAlign,
@@ -617,11 +694,14 @@ function parseConfig(config: Config): Context {
 function flowtip(config: Config): Result {
   const context = parseConfig(config);
 
-  const valid = getValidRegions(context);
+  const regions = getValidRegions(context);
+  const positions = getValidPositions(context);
 
-  const [region, align, reason] = getRegion(context, valid);
+  const [region, reason] = getRegion(context, regions, positions);
 
-  const tempRect = getRect(context, region, align);
+  const position = getPositionInRegion(context, region, positions[region]);
+
+  const tempRect = getRect(context, region, position);
 
   const rect = constrainRect(context, region, tempRect);
 
@@ -638,9 +718,9 @@ function flowtip(config: Config): Result {
     target: context.target,
     region,
     reason,
-    align,
+    align: position,
     rect,
-    valid,
+    valid: regions,
     offset,
     overlap,
     overlapCenter,

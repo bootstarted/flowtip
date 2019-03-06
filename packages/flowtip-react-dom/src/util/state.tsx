@@ -1,4 +1,4 @@
-import {RIGHT, LEFT} from 'flowtip-core';
+import {RIGHT, LEFT, Align} from 'flowtip-core';
 import {Region} from 'flowtip-core';
 import {Props, State} from '../types';
 
@@ -26,6 +26,14 @@ export function getRegion(props: Props, state: State): Region | undefined {
   // This makes the component stay in its region until it meets a
   // boundary edge and must change.
   return props.sticky ? getLastRegion(props, state) : props.region;
+}
+
+export function getLastAlign(props: Props, state: State): Align | undefined {
+  return state.result._static === true ? props.align : state.result.align;
+}
+
+export function getAlign(props: Props, state: State): Align | undefined {
+  return props.sticky ? getLastAlign(props, state) : props.align;
 }
 
 /**

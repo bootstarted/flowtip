@@ -17,7 +17,7 @@ import {
   getContentRect,
   getViewportRect,
 } from './util/dom';
-import {getRegion, getOverlap, getOffset} from './util/state';
+import {getRegion, getOverlap, getOffset, getAlign} from './util/state';
 import defaultRender from './defaultRender';
 
 import FlowTipDebug from './FlowTipDebug';
@@ -35,6 +35,7 @@ const STATIC_RESULT: Result = {
   target: Rect.zero,
   region: 'bottom',
   reason: 'default',
+  align: 0.5,
   rect: Rect.zero,
   valid: {top: false, right: false, bottom: true, left: false},
   offset: 0,
@@ -154,7 +155,8 @@ class FlowTip extends React.Component<Props, State> {
       const offset = getOffset(nextProps, intermediateState);
       const overlap = getOverlap(nextProps, intermediateState);
       const region = getRegion(nextProps, intermediateState);
-      const {edgeOffset = offset, align} = nextProps;
+      const align = getAlign(nextProps, intermediateState);
+      const {edgeOffset = offset} = nextProps;
 
       const config: Config = {
         offset,
@@ -176,6 +178,12 @@ class FlowTip extends React.Component<Props, State> {
           right: nextProps.constrainRight,
           bottom: nextProps.constrainBottom,
           left: nextProps.constrainLeft,
+        },
+        snap: {
+          top: [0, 0.5, 1],
+          right: [0, 0.5, 1],
+          bottom: [0, 0.5, 1],
+          left: [0, 0.5, 1],
         },
       };
 

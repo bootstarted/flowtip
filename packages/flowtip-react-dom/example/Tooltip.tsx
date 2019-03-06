@@ -130,7 +130,7 @@ const Tooltip: React.StatelessComponent<TooltipProps> = ({
             style={{
               borderRadius: 8,
               background: 'rgba(0,0,0,0.5)',
-              padding: '3px 8px',
+              padding: '18px 6px',
               color: 'white',
               whiteSpace: 'nowrap',
             }}

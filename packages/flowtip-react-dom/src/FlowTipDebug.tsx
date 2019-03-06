@@ -59,18 +59,32 @@ class FlowTipDebug extends React.Component<Result> {
 
   render() {
     return ReactDOM.createPortal(
-      <canvas
-        ref={this.canvasRef}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          pointerEvents: 'none',
-          background: 'transparent',
-        }}
-      />,
+      <>
+        <canvas
+          ref={this.canvasRef}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            pointerEvents: 'none',
+            background: 'transparent',
+          }}
+        />
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            pointerEvents: 'none',
+            background: 'transparent',
+          }}
+        >
+          <pre>{JSON.stringify(this.props, null, 2)}</pre>
+        </div>
+      </>,
       this.portalNode,
     );
   }
