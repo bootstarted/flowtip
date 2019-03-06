@@ -6,7 +6,7 @@ export type Dimensions = {width: number; height: number};
 export type Align = 'start' | 'center' | 'end' | number;
 
 type Regions<T> = {[key in Region]: T};
-type RegionsShape<T> = {[key in Region]: T};
+type RegionsShape<T> = {[key in Region]?: T};
 
 type Position = {
   region: Region;
@@ -29,13 +29,14 @@ type Context = {
   offset: number;
   overlap: number;
   edgeOffset: number;
-  align: number;
+  align?: number;
   region?: Region;
   bounds: Rect;
   target: Rect;
   content: Dimensions;
   disabled: Regions<boolean>;
   constrain: Regions<boolean>;
+  snap: Regions<number[]>;
 };
 export interface Config {
   offset?: number;
@@ -48,6 +49,7 @@ export interface Config {
   content: Dimensions;
   disabled?: RegionsShape<boolean>;
   constrain?: RegionsShape<boolean>;
+  snap?: RegionsShape<Align[]>;
 }
 
 export const TOP: Region = 'top';
@@ -58,6 +60,8 @@ export const LEFT: Region = 'left';
 export const START: Align = 'start';
 export const CENTER: Align = 'center';
 export const END: Align = 'end';
+
+export const DEFAULT_ALIGN = 0.5;
 
 function getRect(context: Context, region: Region, align: number): Rect {
   const {target, content, offset} = context;
@@ -157,10 +161,10 @@ function constrainTop(
 
 function getValidRegions(context: Context): Regions<boolean> {
   return {
-    top: isValidPosition(context, TOP, context.align),
-    right: isValidPosition(context, RIGHT, context.align),
-    bottom: isValidPosition(context, BOTTOM, context.align),
-    left: isValidPosition(context, LEFT, context.align),
+    top: isValidPosition(context, TOP, context.snap.top[0]),
+    right: isValidPosition(context, RIGHT, context.snap.right[0]),
+    bottom: isValidPosition(context, BOTTOM, context.snap.bottom[0]),
+    left: isValidPosition(context, LEFT, context.snap.left[0]),
   };
 }
 
@@ -290,7 +294,7 @@ function getIdealPosition(
   }
 
   if (region) {
-    return {region, align: context.align};
+    return {region, align: context.snap[region][0]};
   }
 
   return undefined;
@@ -378,7 +382,7 @@ function getExternalPosition(context: Context): Position | undefined {
   const region = getExternalRegion(context);
 
   if (region) {
-    return {region, align: context.align};
+    return {region, align: context.snap[region][0]};
   }
 
   return undefined;
@@ -408,7 +412,7 @@ function getDefaultPosition(
 
   if (typeof region === 'string') {
     if (valid[region] && !context.disabled[region]) {
-      return {region, align: context.align};
+      return {region, align: context.snap[region][0]};
     }
   }
 
@@ -422,9 +426,9 @@ function getInvertDefaultPosition(
   const {region} = context;
 
   if (typeof region === 'string') {
-    const invertedDefault = invertRegion(region);
-    if (valid[invertedDefault] && !context.disabled[invertedDefault]) {
-      return {region: invertedDefault, align: context.align};
+    const result = invertRegion(region);
+    if (valid[result] && !context.disabled[result]) {
+      return {region: result, align: context.snap[result][0]};
     }
   }
 
@@ -433,22 +437,22 @@ function getInvertDefaultPosition(
 
 function getFallbackPosition(context: Context): Position {
   // Prioritize the configured default region.
-  let fallback: Region | undefined = context.region;
+  let result: Region | undefined = context.region;
 
   // If the default region is not set or is disabled, pick the first enabled
   // region.
-  if (typeof fallback !== 'string' || context.disabled[fallback]) {
-    fallback = Object.keys(context.disabled).find(
+  if (typeof result !== 'string' || context.disabled[result]) {
+    result = Object.keys(context.disabled).find(
       (region) => !context.disabled[region],
     ) as Region;
   }
 
   // ALL OF THE REGIONS ARE DISABLED ಠ_ಠ
-  if (typeof fallback !== 'string') {
-    fallback = TOP;
+  if (typeof result !== 'string') {
+    result = TOP;
   }
 
-  return {region: fallback, align: context.align};
+  return {region: result, align: context.snap[result][0]};
 }
 
 function getRegion(
@@ -544,7 +548,7 @@ function getCenter(region: Region, rect: Rect, intersect: Rect): number {
 const allRegions = {top: true, right: true, bottom: true, left: true};
 const noRegions = {top: false, right: false, bottom: false, left: false};
 
-function normalizeAlign(align?: Align): number {
+function parseAlign(align: Align): number {
   if (typeof align === 'number') {
     return align;
   }
@@ -560,36 +564,58 @@ function normalizeAlign(align?: Align): number {
   return 0.5;
 }
 
-function getContext(config: Config): Context {
+function parseConfig(config: Config): Context {
   const {
-    offset = 0,
-    overlap = 0,
-    edgeOffset = 0,
     align,
-    region,
     bounds,
-    target,
+    constrain,
     content,
     disabled,
-    constrain,
+    edgeOffset = 0,
+    offset = 0,
+    overlap = 0,
+    region,
+    snap = {},
+    target,
   } = config;
 
+  const parsedAlign = align !== undefined ? parseAlign(align) : undefined;
+  const defaultSnap = parsedAlign !== undefined ? [parsedAlign] : [0.5];
+
   return {
-    offset,
-    overlap,
-    edgeOffset,
-    align: normalizeAlign(align),
-    region,
+    align: parsedAlign,
     bounds: Rect.fromRect(bounds),
-    target: Rect.fromRect(target),
+    constrain: {...allRegions, ...constrain},
     content,
     disabled: {...noRegions, ...disabled},
-    constrain: {...allRegions, ...constrain},
+    edgeOffset,
+    offset,
+    overlap,
+    region,
+    snap: {
+      top:
+        snap.top !== undefined && snap.top.length
+          ? snap.top.map(parseAlign)
+          : defaultSnap,
+      right:
+        snap.right !== undefined && snap.right.length
+          ? snap.right.map(parseAlign)
+          : defaultSnap,
+      bottom:
+        snap.bottom !== undefined && snap.bottom.length
+          ? snap.bottom.map(parseAlign)
+          : defaultSnap,
+      left:
+        snap.left !== undefined && snap.left.length
+          ? snap.left.map(parseAlign)
+          : defaultSnap,
+    },
+    target: Rect.fromRect(target),
   };
 }
 
 function flowtip(config: Config): Result {
-  const context = getContext(config);
+  const context = parseConfig(config);
 
   const valid = getValidRegions(context);
 
