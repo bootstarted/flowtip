@@ -5,35 +5,27 @@ export type Reason = 'default' | 'inverted' | 'ideal' | 'external' | 'fallback';
 export type Dimensions = {width: number; height: number};
 export type Align = 'start' | 'center' | 'end' | number;
 
+type Regions<T> = {[key in Region]: T};
+type RegionsShape<T> = {[key in Region]: T};
+
 type Position = {
   region: Region;
   align: number;
 };
 
-type _Regions = {
-  top: boolean;
-  right: boolean;
-  bottom: boolean;
-  left: boolean;
-};
-export interface Regions {
-  top?: boolean;
-  right?: boolean;
-  bottom?: boolean;
-  left?: boolean;
-}
 export interface Result {
   bounds: Rect;
   target: Rect;
   region: Region;
   reason: Reason;
+  align: number;
   rect: Rect;
-  valid: _Regions;
+  valid: Regions<boolean>;
   offset: number;
   overlap: number;
   overlapCenter: number;
 }
-type _Config = {
+type Context = {
   offset: number;
   overlap: number;
   edgeOffset: number;
@@ -42,8 +34,8 @@ type _Config = {
   bounds: Rect;
   target: Rect;
   content: Dimensions;
-  disabled: _Regions;
-  constrain: _Regions;
+  disabled: Regions<boolean>;
+  constrain: Regions<boolean>;
 };
 export interface Config {
   offset?: number;
@@ -54,8 +46,8 @@ export interface Config {
   bounds: RectShape;
   target: RectShape;
   content: Dimensions;
-  disabled?: Regions;
-  constrain?: Regions;
+  disabled?: RegionsShape<boolean>;
+  constrain?: RegionsShape<boolean>;
 }
 
 export const TOP: Region = 'top';
@@ -67,23 +59,8 @@ export const START: Align = 'start';
 export const CENTER: Align = 'center';
 export const END: Align = 'end';
 
-/**
- * Get the position of the content rect when moved into the supplied region and
- * aligned with `config.align`. The returned rect represents the ideal content
- * position before any boundary constrains are applied.
- *
- * The `config.align` value determines how the content rect will be positioned
- * relative to the target rect. A `conifg.align` value of 0 will align it to the
- * start (left or top) of the target while a value of 1 will align the rect to
- * the end (right or bottom). A value of 0.5 will center align it in every
- * orientation.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @returns {Object} A rect object.
- */
-function getRect(config: _Config, region: Region, align: number): Rect {
-  const {target, content, offset} = config;
+function getRect(context: Context, region: Region, align: number): Rect {
+  const {target, content, offset} = context;
 
   let left;
   let top;
@@ -112,22 +89,8 @@ function getRect(config: _Config, region: Region, align: number): Rect {
   return new Rect(left, top, content.width, content.height);
 }
 
-/**
- * Calculate the final effective bounds of the positioned content rect for a
- * given region.
- *
- * This calculation uses the maximum of the target offset and edge offset config
- * values as the offset along the edge of the content facing the target. This
- * prevents the content from being offset from the boundary edge by both offset
- * amounts (the target offset is used to provide space for an indicator triangle
- * and only applies in the direction facing the target).
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @returns {Object} A rect object
- */
-function getOffsetBounds(config: _Config, region: Region): Rect {
-  const {bounds, edgeOffset, offset} = config;
+function getOffsetBounds(context: Context, region: Region): Rect {
+  const {bounds, edgeOffset, offset} = context;
   const maxOffset = Math.max(offset, edgeOffset);
 
   const left = bounds.left + (region === RIGHT ? maxOffset : edgeOffset);
@@ -138,23 +101,13 @@ function getOffsetBounds(config: _Config, region: Region): Rect {
   return new Rect(left, top, right - left, bottom - top);
 }
 
-/**
- * Get the updated left position of the content rect with boundary constraints
- * applied.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @param   {Object} offsetBounds A final bounds rect for the current region.
- * @param   {Object} rect A content rect object.
- * @returns {number} A new left position for the content rect.
- */
 function constrainLeft(
-  config: _Config,
+  context: Context,
   region: Region,
   offsetBounds: Rect,
   rect: Rect,
 ): number {
-  const {constrain, bounds} = config;
+  const {constrain, bounds} = context;
 
   // Center align the content rect if is wider than the bounds rect.
   if (constrain.left && constrain.right && rect.width > offsetBounds.width) {
@@ -175,23 +128,13 @@ function constrainLeft(
   return rect.left;
 }
 
-/**
- * Get the updated top position of the content rect with boundary constraints
- * applied.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @param   {Object} offsetBounds A final bounds rect for the current region.
- * @param   {Object} rect A content rect object.
- * @returns {number} A new top position for the content rect.
- */
 function constrainTop(
-  config: _Config,
+  context: Context,
   region: Region,
   offsetBounds: Rect,
   rect: Rect,
 ): number {
-  const {constrain, bounds} = config;
+  const {constrain, bounds} = context;
 
   // Center align the content rect if is taller than the bounds rect.
   if (constrain.top && constrain.bottom && rect.height > offsetBounds.height) {
@@ -212,85 +155,17 @@ function constrainTop(
   return rect.top;
 }
 
-/**
- * Calculate which regions are valid for the content rect to occupy.
- * This function measures the available space around the target rect within the
- * container rect. Any region with sufficient space to display the content rect
- * without clipping is set to `true`.
- *
- * This function checks the margins between the target rect and the bounds rect
- * in every region when offset from the the target. If a margin is smaller than
- * the width or height of the height of the content rect, that region is not
- * valid.
- *
- *  _________________________________________________________________
- * |                   ^                                             |
- * |                   |                                             |
- * |                  top                                            |
- * |                 margin   |‾‾‾‾‾‾‾‾‾‾‾|                          |
- * |                   |      |  content  |                          |
- * |                  _V_ _ _ |___________|    |<----right-margin--->|
- * |                                |          |                     |
- * |         |‾‾‾‾‾‾‾‾‾‾‾|     _____|_____     |‾‾‾‾‾‾‾‾‾‾‾|         |
- * |         |  content  |----|  target   |----|  content  |         |
- * |         |___________|     ‾‾‾‾‾|‾‾‾‾‾     |___________|         |
- * |                     |          |                                |
- * |<----left-margin---->|    |‾‾‾‾‾‾‾‾‾‾‾| ‾ ‾<- bottom margin      |
- *  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|  content  |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
- *                            |___________|
- * > bottom margin is smaller than the content height, this region is disabled
- *
- * In addition to checking the margins, this function also checks that enough
- * of the target rect intersects with the bounds rect in each direction to
- * accommodate the `overlap` value set in the config. This calculation allows
- * a region to be considered invalid if there is not enough room to render
- * a caret.
- *
- *               |                                                   |
- *               |<--L-->|------------min-overlap------------|<--R-->|
- *               |                                                   |
- *               |<-left-intersection->|                             |
- *               |                     |                             |
- *               |   __________________|                             |
- *               |  |      target      |                             |
- *               |  |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾                              |
- *               |  |<--------------right-intersection-------------->|
- *               |           ^                                       |
- *               | |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|                            |
- *               | |       content      |                            |
- *               | |____________________|                            |
- *               |                                                   |
- * > Sufficient intersection at the left and right, the top and bottom
- * > regions are considered valid.
- *
- *               |                                                   |
- *               |<--L-->|------------min-overlap------------|<--R-->|
- *               |                                                   |
- *               |<-->|--left-intersection                           |
- *               |    |                                              |
- *  _____________|____|      |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|                  |
- * |      target      |    < |       content      |                  |
- * |‾‾‾‾‾‾‾‾‾‾‾‾‾|‾‾‾‾       |____________________|                  |
- * |             |                                                   |
- * |<------------+----------right-intersection---------------------->|
- *               |                                                   |
- * > Insufficient intersection at the left, the top and bottom regions are
- * > not considered valid. Only the right region is valid.
- *
- * @param   {Object} config FlowTip layout config object.
- * @returns {Object} Valid regions (`{top, right, bottom, left}`).
- */
-function getValidRegions(config: _Config): _Regions {
+function getValidRegions(context: Context): Regions<boolean> {
   return {
-    top: isValidPosition(config, TOP, config.align),
-    right: isValidPosition(config, RIGHT, config.align),
-    bottom: isValidPosition(config, BOTTOM, config.align),
-    left: isValidPosition(config, LEFT, config.align),
+    top: isValidPosition(context, TOP, context.align),
+    right: isValidPosition(context, RIGHT, context.align),
+    bottom: isValidPosition(context, BOTTOM, context.align),
+    left: isValidPosition(context, LEFT, context.align),
   };
 }
 
 function isValidPosition(
-  config: _Config,
+  context: Context,
   region: Region,
   align: number,
 ): boolean {
@@ -302,7 +177,7 @@ function isValidPosition(
     bounds,
     content,
     constrain,
-  } = config;
+  } = context;
 
   const offsetBounds = Rect.grow(bounds, -edgeOffset);
 
@@ -377,42 +252,11 @@ function isValidPosition(
   return true;
 }
 
-/**
- * Get the ideal region to position the content rect. This function returns the
- * region adjacent to the target that has the largest available space.
- *
- * If there are no regions that are large enough to fit the content rect
- * no result (`undefined`) is returned.
- *
- *     ___________________________________________________________________
- *    |                      ^                                            |
- *    |                      |                                            |
- *    |                      V                                            |
- *    |                 |‾‾‾‾‾‾‾‾‾‾|                                      |
- *    |                 | content  |                                      |
- *    |                 |__________|                                      |
- *    |   |‾‾‾‾‾‾‾‾‾‾|   ____|_____   |‾‾‾‾‾‾‾‾‾‾|                        |
- *    |<->| content  |--|  target  |--| content  |<---------------------->|
- *    |   |__________|   ‾‾‾‾|‾‾‾‾‾   |__________|                        |
- *    |                 |‾‾‾‾‾‾‾‾‾‾|                                      |
- *    |                 | content  |                                      |
- *    |                 |__________|                                      |
- *    |                      ^                                            |
- *    |                      |                                            |
- *    |                      V                                            |
- *     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
- * > Although all regions are valid, the region with largest available space
- * > (right) is returned as the ideal region.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
- * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
- */
 function getIdealPosition(
-  config: _Config,
-  valid: _Regions,
+  context: Context,
+  valid: Regions<boolean>,
 ): Position | undefined {
-  const {target, content, disabled, bounds} = config;
+  const {target, content, disabled, bounds} = context;
 
   let margin = 0;
   let region: Region | undefined = undefined;
@@ -446,74 +290,14 @@ function getIdealPosition(
   }
 
   if (region) {
-    return {region, align: config.align};
+    return {region, align: context.align};
   }
 
   return undefined;
 }
 
-/**
- * Resolve a region when the target rect is positioned outside of the bounds
- * rect.
- *
- * This algorithm checks which triangular segment around the bounds rect is
- * occupied and returned the associated region.
- *
- *           \                   top quadrant                  /
- *             \            returns bottom region            /
- *               \                                         /
- *                 \      top-left    |    top-right     /
- *                   \    upper half  |    upper half  /
- *                     \              |              /
- *                       \            |            /
- *                         \__________|__________/
- *               top-left  | \        |        / | top-right
- *  left       lower half  |   \      |      /   | lower half         right
- *  quadrant               |     \    |    /     |                 quadrant
- *  returns   -------------|------+---+---+------|--------------    returns
- *  right                  |     /    |    \     |                     left
- *  region    bottom-left  |   /      |      \   |  bottom-right     region
- *              upper half | /        |        \ |  upper half
- *                         /‾‾‾‾‾‾‾‾‾‾|‾‾‾‾‾‾‾‾‾‾\
- *                       /            |            \
- *                     /              |              \
- *                   /   bottom-left  |  bottom-right  \
- *                 /      lower half  |  lower half      \
- *               /                                         \
- *             /               bottom quadrant               \
- *           /               returns top region                \
- *
- * > The quadrants are divided at 45 degree angles and extend outward and inward
- * > from each edge.
- *
- * When an edge constraint is disabled, the logic for that quadrant is skipped.
- * The halves of the adjacent quadrants are also skipped.
- *
- * For example, if the bottom constraint is disabled, the bottom halves of the
- * left and right quadrants do not exist. The top halves extend indefinitely
- * downwards so that the top region is never returned when the target rect is
- * not directly below the bounds rect.
- *
- *                       \            |            /
- *                         \__________|__________/
- *               top-left  | \        |        / | top-right
- *  left       lower half  |   \      |      /   | lower half         right
- *  quadrant               |     \    |    /     |                 quadrant
- *  returns   -------------|------+---+---+------|--------------    returns
- *  right                  |                     |                     left
- *  region    bottom-left  |      contrain       |  bottom-right     region
- *              upper half |      disabled       |  upper half
- *                         |‾ ‾ ‾ ‾ ‾ ‾ ‾ ‾ ‾ ‾ ‾|
- *               quadrant  |     handled by      |  quadrant
- *                extents  |  getIdealPosition   |  extends
- *            indefinitely |                     |  indefinitely
- *                         |                     |
- *
- * @param   {Object} config FlowTip layout config object.
- * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
- */
-function getExternalRegion(config: _Config): Region | undefined {
-  const {target, constrain, bounds, edgeOffset, disabled} = config;
+function getExternalRegion(context: Context): Region | undefined {
+  const {target, constrain, bounds, edgeOffset, disabled} = context;
 
   const offsetBounds = Rect.grow(bounds, -edgeOffset);
 
@@ -590,11 +374,11 @@ function getExternalRegion(config: _Config): Region | undefined {
   return undefined;
 }
 
-function getExternalPosition(config: _Config): Position | undefined {
-  const region = getExternalRegion(config);
+function getExternalPosition(context: Context): Position | undefined {
+  const region = getExternalRegion(context);
 
   if (region) {
-    return {region, align: config.align};
+    return {region, align: context.align};
   }
 
   return undefined;
@@ -616,82 +400,46 @@ function invertRegion(region: Region): Region {
   }[region];
 }
 
-/**
- * Return the default region set in the config, or its inverse if either are
- * valid.
- *
- * Using the inverse helps preserve visual continuity when the content meets the
- * edge of the bounds rect; instead of appearing to rotate 90 degrees around the
- * target, inverting it will cause it to appear to flip, which is more visually
- * appealing.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
- * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
- */
 function getDefaultPosition(
-  config: _Config,
-  valid: _Regions,
+  context: Context,
+  valid: Regions<boolean>,
 ): Position | undefined {
-  const {region} = config;
+  const {region} = context;
 
   if (typeof region === 'string') {
-    if (valid[region] && !config.disabled[region]) {
-      return {region, align: config.align};
+    if (valid[region] && !context.disabled[region]) {
+      return {region, align: context.align};
     }
   }
 
   return undefined;
 }
 
-/**
- * Return the default region set in the config, or its inverse if either are
- * valid.
- *
- * Using the inverse helps preserve visual continuity when the content meets the
- * edge of the bounds rect; instead of appearing to rotate 90 degrees around the
- * target, inverting it will cause it to appear to flip, which is more visually
- * appealing.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
- * @returns {string|undefined} A region (`top`, `right`, `bottom`, or `left`).
- */
 function getInvertDefaultPosition(
-  config: _Config,
-  valid: _Regions,
+  context: Context,
+  valid: Regions<boolean>,
 ): Position | undefined {
-  const {region} = config;
+  const {region} = context;
 
   if (typeof region === 'string') {
     const invertedDefault = invertRegion(region);
-    if (valid[invertedDefault] && !config.disabled[invertedDefault]) {
-      return {region: invertedDefault, align: config.align};
+    if (valid[invertedDefault] && !context.disabled[invertedDefault]) {
+      return {region: invertedDefault, align: context.align};
     }
   }
 
   return undefined;
 }
 
-/**
- * If a correct region could not be resolved due to one or more regions
- * disabled in the config, we need to return a fallback region. This may
- * result in the content rect getting inadvertently clipped with the
- * bounds rect or the target rect, but there is nothing else we can do.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
- * @returns {string} A region (`top`, `right`, `bottom`, or `left`).
- */
-function getFallbackPosition(config: _Config): Position {
+function getFallbackPosition(context: Context): Position {
   // Prioritize the configured default region.
-  let fallback: Region | undefined = config.region;
+  let fallback: Region | undefined = context.region;
 
   // If the default region is not set or is disabled, pick the first enabled
   // region.
-  if (typeof fallback !== 'string' || config.disabled[fallback]) {
-    fallback = Object.keys(config.disabled).find(
-      (region) => !config.disabled[region],
+  if (typeof fallback !== 'string' || context.disabled[fallback]) {
+    fallback = Object.keys(context.disabled).find(
+      (region) => !context.disabled[region],
     ) as Region;
   }
 
@@ -700,21 +448,17 @@ function getFallbackPosition(config: _Config): Position {
     fallback = TOP;
   }
 
-  return {region: fallback, align: config.align};
+  return {region: fallback, align: context.align};
 }
 
-/**
- * Get the current region that should be occupied by the content rect.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {Object} valid Valid regions (`{top, right, bottom, left}`).
- * @returns {array} Array containing region and reason.
- */
-function getRegion(config: _Config, valid: _Regions): [Region, number, Reason] {
-  const idealPosition = getIdealPosition(config, valid);
+function getRegion(
+  context: Context,
+  valid: Regions<boolean>,
+): [Region, number, Reason] {
+  const idealPosition = getIdealPosition(context, valid);
 
-  // Return the default region set in the config if it is valid.
-  const defaultPosition = getDefaultPosition(config, valid);
+  // Return the default region set in the context if it is valid.
+  const defaultPosition = getDefaultPosition(context, valid);
 
   if (defaultPosition) {
     return [
@@ -727,7 +471,7 @@ function getRegion(config: _Config, valid: _Regions): [Region, number, Reason] {
   }
 
   // Return the default region set in the config if it is valid.
-  const invertedPosition = getInvertDefaultPosition(config, valid);
+  const invertedPosition = getInvertDefaultPosition(context, valid);
 
   if (invertedPosition) {
     return [
@@ -745,48 +489,27 @@ function getRegion(config: _Config, valid: _Regions): [Region, number, Reason] {
   }
 
   // Return the region from the external calculation if one is returned.
-  const externalPosition = getExternalPosition(config);
+  const externalPosition = getExternalPosition(context);
   if (externalPosition) {
     return [externalPosition.region, externalPosition.align, 'external'];
   }
 
-  const fallbackPosition = getFallbackPosition(config);
+  const fallbackPosition = getFallbackPosition(context);
 
   return [fallbackPosition.region, fallbackPosition.align, 'fallback'];
 }
 
-/**
- * Get the updated left position of the content rect with boundary constraints
- * applied.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @param   {Object} rect A content rect object.
- * @returns {Object} A repositioned content rect.
- */
-function constrainRect(config: _Config, region: Region, rect: Rect): Rect {
-  const offsetBounds = getOffsetBounds(config, region);
+function constrainRect(context: Context, region: Region, rect: Rect): Rect {
+  const offsetBounds = getOffsetBounds(context, region);
 
-  const left = constrainLeft(config, region, offsetBounds, rect);
-  const top = constrainTop(config, region, offsetBounds, rect);
+  const left = constrainLeft(context, region, offsetBounds, rect);
+  const top = constrainTop(context, region, offsetBounds, rect);
 
   return new Rect(left, top, rect.width, rect.height);
 }
 
-/**
- * Get the distance between the target rect and the content rect along the
- * normal of the region.
- *
- * If the content rect intersects the target rect, the returned value is
- * negative.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @param   {Object} rect A content rect object.
- * @returns {number} Distance between target and content.
- */
-function getOffset(config: _Config, region: Region, rect: Rect): number {
-  const {target} = config;
+function getOffset(context: Context, region: Region, rect: Rect): number {
+  const {target} = context;
 
   if (region === TOP) {
     return target.top - rect.bottom;
@@ -800,13 +523,6 @@ function getOffset(config: _Config, region: Region, rect: Rect): number {
   return target.left - rect.right;
 }
 
-/**
- * Get the current linear overlap between the content rect and the target rect.
- *
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @param   {Object} intersect The intersection rect of the target and content.
- * @returns {number} Overlap between target and content.
- */
 function getOverlap(region: Region, intersect: Rect): number {
   if (region === TOP || region === BOTTOM) {
     return intersect.width;
@@ -816,47 +532,6 @@ function getOverlap(region: Region, intersect: Rect): number {
   return intersect.height;
 }
 
-/**
- * Get the center position of the liner overlap range between the content rect
- * and the target rect. This value is calculated to use as a style input when
- * rendering an indicator.
- *
- * The value returned is relative to the top or left edge of the content rect.
- * This is for convenience since an indicator will most likely be rendered as
- * a child of the content element.
- *
- *
- *     |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
- *     |            content             |
- *     |________________________________|
- *     |                  |      V      |
- *     |<--overlap-center-+----->|      |
- *                        |<-----+----->|-overlap
- *                        |______|______|____
- *                        |      target      |
- *                         ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
- * > The overlap center is relative to the left (or top) edge of the content
- * > rect.
- *
- *     |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
- *     |         content         |
- *     |_________________________|
- *     |                         |   V
- *     |<--overlap-center--------+-->|
- *                               |<--+-->|-overlap
- *                                       |__________________
- *                                       |      target      |
- *                                        ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
- * > If there is no geometric overlap between the content rect and the target
- * > rect, the overlap center will be longer then the content rect edge or
- * > will be negative.
- *
-
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @param   {Object} rect A content rect object.
- * @param   {Object} intersect The intersection rect of the target and content.
- * @returns {number} Distance to overlap center.
- */
 function getCenter(region: Region, rect: Rect, intersect: Rect): number {
   if (region === TOP || region === BOTTOM) {
     return intersect.left + intersect.width / 2 - rect.left;
@@ -885,7 +560,7 @@ function normalizeAlign(align?: Align): number {
   return 0.5;
 }
 
-function defaults(config: Config): _Config {
+function getContext(config: Config): Context {
   const {
     offset = 0,
     overlap = 0,
@@ -913,45 +588,28 @@ function defaults(config: Config): _Config {
   };
 }
 
-/**
- * Calculate a FlowTip layout result.
- *
- * @param   {Object} config FlowTip layout config object.
- * @param   {Object} config.target A rect representing the target element.
- * @param   {Object} config.content A rect representing the content element.
- * @param   {string} [config.region] The default region
- *                                   (`top`, `right`, `bottom`, or `left`).
- * @param   {string} config.disabled Disabled regions
- *                                   (`{top, right, bottom, left}`).
- * @param   {string} config.constrain Constrained regions
- *                                    (`{top, right, bottom, left}`).
- * @param   {number} [config.offset=0] Target-content offset.
- * @param   {number} [config.overlap=0] Min target-content liner overlap.
- * @param   {number} [config.align=0.5] Target-content align factor.
- * @returns {Object} FlowTip layout result object.
- */
 function flowtip(config: Config): Result {
-  const finalConfig = defaults(config);
+  const context = getContext(config);
 
-  const valid = getValidRegions(finalConfig);
+  const valid = getValidRegions(context);
 
-  const [region, align, reason] = getRegion(finalConfig, valid);
+  const [region, align, reason] = getRegion(context, valid);
 
-  const tempRect = getRect(finalConfig, region, align);
+  const tempRect = getRect(context, region, align);
 
-  const rect = constrainRect(finalConfig, region, tempRect);
+  const rect = constrainRect(context, region, tempRect);
 
-  const intersect = Rect.intersect(finalConfig.target, rect);
+  const intersect = Rect.intersect(context.target, rect);
 
-  const offset = getOffset(finalConfig, region, rect);
+  const offset = getOffset(context, region, rect);
 
   const overlap = getOverlap(region, intersect);
 
   const overlapCenter = getCenter(region, rect, intersect);
 
   return {
-    bounds: finalConfig.bounds,
-    target: finalConfig.target,
+    bounds: context.bounds,
+    target: context.target,
     region,
     reason,
     align,
