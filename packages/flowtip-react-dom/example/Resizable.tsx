@@ -1,69 +1,60 @@
 import * as React from 'react';
 
-import Rect from 'flowtip-rect';
+import Rect, {RectShape} from 'flowtip-rect';
 
-export interface Vec2Shape {
+export interface Point {
   x: number;
   y: number;
 }
 
-export class Vec2 implements Vec2Shape {
-  x: number;
-  y: number;
+const POINT_ZERO = {x: 0, y: 0};
 
-  static zero = new Vec2(0, 0);
-
-  static fromVec2(point: Vec2Shape): Vec2 {
-    if (point instanceof Vec2) {
-      return point;
-    }
-
-    return new Vec2(point.x, point.y);
-  }
-
-  static add(a: Vec2Shape, b: Vec2Shape): Vec2 {
-    return new Vec2(a.x + b.x, a.y + b.y);
-  }
-
-  static subtract(min: Vec2Shape, sub: Vec2Shape): Vec2 {
-    return new Vec2(min.x - sub.x, min.y - sub.y);
-  }
-
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    Object.freeze(this);
-  }
-}
+export type Handle = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w';
 
 export interface Props {
-  anchor: Vec2;
-  position: Rect;
-  onChangeStart?: () => unknown;
-  onChangeEnd?: () => unknown;
+  anchor?: Point;
+  position: RectShape;
   onChange?: (position: Rect) => unknown;
-  onHover?: () => unknown;
-  onSetActive?: () => unknown;
-  active?: boolean;
-  focused?: boolean;
   handleSize?: number;
+  handles?: {[key in Handle]: boolean};
+  minWidth?: number;
+  minHeight?: number;
+  maxWidth?: number;
+  maxHeight?: number;
 }
 
 interface State {
   activeHandle?: HTMLDivElement;
-  anchor: Vec2;
+  anchor: Point;
   cursor?: string;
   dragging: boolean;
+  focus: boolean;
   invertedX: boolean;
   invertedY: boolean;
+  mouseOver: boolean;
   position: Rect;
-  startPoint: Vec2;
+  startPoint: Point;
   startPosition: Rect;
 }
 
 class Resizable extends React.PureComponent<Props, State> {
   static defaultProps = {
+    anchor: POINT_ZERO,
     handleSize: 5,
+    handles: {
+      nw: true,
+      n: true,
+      ne: true,
+      e: true,
+      se: true,
+      s: true,
+      sw: true,
+      w: true,
+    },
+    minWidth: Number.NEGATIVE_INFINITY,
+    minHeight: Number.NEGATIVE_INFINITY,
+    maxWidth: Number.POSITIVE_INFINITY,
+    maxHeight: Number.POSITIVE_INFINITY,
   };
 
   static getDerivedStateFromProps({position}: Props) {
@@ -74,10 +65,12 @@ class Resizable extends React.PureComponent<Props, State> {
     anchor: this.props.anchor,
     cursor: undefined,
     dragging: false,
+    focus: false,
     invertedX: false,
     invertedY: false,
+    mouseOver: false,
     position: this.props.position,
-    startPoint: Vec2.zero,
+    startPoint: POINT_ZERO,
     startPosition: Rect.zero,
   };
 
@@ -93,24 +86,32 @@ class Resizable extends React.PureComponent<Props, State> {
   leftHandleRef = React.createRef<HTMLDivElement>();
   contentRef = React.createRef<HTMLDivElement>();
 
-  handleMouseMove = (event: MouseEvent) => {
-    if (
-      this.props.onHover &&
-      this.contentRef.current &&
-      event.target instanceof HTMLElement &&
-      this.contentRef.current.contains(event.target)
-    ) {
-      this.props.onHover();
-    }
+  handleFocus = () => {
+    this.setState((state) => (!state.focus ? {focus: true} : null));
+  };
 
-    if (this.state.activeHandle && this.props.active) {
-      const drag = Vec2.subtract(
-        Vec2.subtract(
-          new Vec2(event.clientX, event.clientY),
-          this.state.anchor,
-        ),
-        this.state.startPoint,
-      );
+  handleBlur = () => {
+    this.setState((state) => (state.focus ? {focus: false} : null));
+  };
+
+  handleMouseEnter = (event: React.MouseEvent) => {
+    if (event.buttons === 0) {
+      this.setState((state) => (!state.mouseOver ? {mouseOver: true} : null));
+    }
+  };
+
+  handleMouseLeave = () => {
+    if (!this.state.dragging) {
+      this.setState((state) => (state.mouseOver ? {mouseOver: false} : null));
+    }
+  };
+
+  handleMouseMove = (event: MouseEvent) => {
+    if (this.state.activeHandle) {
+      const drag = {
+        x: event.clientX - this.state.anchor.x - this.state.startPoint.x,
+        y: event.clientY - this.state.anchor.y - this.state.startPoint.y,
+      };
 
       let cursor;
 
@@ -118,6 +119,46 @@ class Resizable extends React.PureComponent<Props, State> {
       let left = this.state.position.left;
       let bottom = this.state.position.bottom;
       let right = this.state.position.right;
+
+      const setTop = () => {
+        top = Math.min(
+          Math.max(
+            this.state.startPosition.top + drag.y,
+            this.state.position.bottom - this.props.maxHeight,
+          ),
+          this.state.position.bottom - this.props.minHeight,
+        );
+      };
+
+      const setRight = () => {
+        right = Math.max(
+          Math.min(
+            this.state.startPosition.right + drag.x,
+            this.state.position.left + this.props.maxWidth,
+          ),
+          this.state.position.left + this.props.minWidth,
+        );
+      };
+
+      const setBottom = () => {
+        bottom = Math.max(
+          Math.min(
+            this.state.startPosition.bottom + drag.y,
+            this.state.position.top + this.props.maxHeight,
+          ),
+          this.state.position.top + this.props.minHeight,
+        );
+      };
+
+      const setLeft = () => {
+        left = Math.min(
+          Math.max(
+            this.state.startPosition.left + drag.x,
+            this.state.position.right - this.props.maxWidth,
+          ),
+          this.state.position.right - this.props.minWidth,
+        );
+      };
 
       switch (this.state.activeHandle) {
         case this.contentRef.current:
@@ -129,77 +170,77 @@ class Resizable extends React.PureComponent<Props, State> {
           break;
         case this.topLeftHandleRef.current:
           if (this.state.invertedY) {
-            bottom = this.state.startPosition.bottom + drag.y;
+            setBottom();
           } else {
-            top = this.state.startPosition.top + drag.y;
+            setTop();
           }
           if (this.state.invertedX) {
-            right = this.state.startPosition.right + drag.x;
+            setRight();
           } else {
-            left = this.state.startPosition.left + drag.x;
+            setLeft();
           }
           cursor = 'nwse-resize';
           break;
         case this.topHandleRef.current:
           if (this.state.invertedY) {
-            bottom = this.state.startPosition.bottom + drag.y;
+            setBottom();
           } else {
-            top = this.state.startPosition.top + drag.y;
+            setTop();
           }
           cursor = 'ns-resize';
           break;
         case this.topRightHandleRef.current:
           if (this.state.invertedY) {
-            bottom = this.state.startPosition.bottom + drag.y;
+            setBottom();
           } else {
-            top = this.state.startPosition.top + drag.y;
+            setTop();
           }
           if (this.state.invertedX) {
-            left = this.state.startPosition.left + drag.x;
+            setLeft();
           } else {
-            right = this.state.startPosition.right + drag.x;
+            setRight();
           }
           cursor = 'nesw-resize';
           break;
         case this.rightHandleRef.current:
           if (this.state.invertedX) {
-            left = this.state.startPosition.left + drag.x;
+            setLeft();
           } else {
-            right = this.state.startPosition.right + drag.x;
+            setRight();
           }
           cursor = 'ew-resize';
           break;
         case this.bottomRightHandleRef.current:
           if (this.state.invertedY) {
-            top = this.state.startPosition.top + drag.y;
+            setTop();
           } else {
-            bottom = this.state.startPosition.bottom + drag.y;
+            setBottom();
           }
           if (this.state.invertedX) {
-            left = this.state.startPosition.left + drag.x;
+            setLeft();
           } else {
-            right = this.state.startPosition.right + drag.x;
+            setRight();
           }
           cursor = 'nwse-resize';
           break;
         case this.bottomHandleRef.current:
           if (this.state.invertedY) {
-            top = this.state.startPosition.top + drag.y;
+            setTop();
           } else {
-            bottom = this.state.startPosition.bottom + drag.y;
+            setBottom();
           }
           cursor = 'ns-resize';
           break;
         case this.bottomLeftHandleRef.current:
           if (this.state.invertedY) {
-            top = this.state.startPosition.top + drag.y;
+            setTop();
           } else {
-            bottom = this.state.startPosition.bottom + drag.y;
+            setBottom();
           }
           if (this.state.invertedX) {
-            right = this.state.startPosition.right + drag.x;
+            setRight();
           } else {
-            left = this.state.startPosition.left + drag.x;
+            setLeft();
           }
           cursor = 'nesw-resize';
           break;
@@ -207,21 +248,20 @@ class Resizable extends React.PureComponent<Props, State> {
           if (this.state.invertedX) {
             right = this.state.startPosition.left + drag.x;
           } else {
-            left = this.state.startPosition.left + drag.x;
+            setLeft();
           }
           cursor = 'ew-resize';
           break;
+        default:
+          this.endDrag();
+          return;
       }
 
-      if (!this.state.dragging) {
-        if (this.props.onChangeStart) {
-          this.props.onChangeStart();
-        }
-      } else if (cursor) {
+      if (cursor && !this.state.dragging) {
         this.styleTag.innerHTML = '';
         this.styleTag.appendChild(
           document.createTextNode(
-            `*,*::before,*::after{cursor:${this.state.cursor} !important}`,
+            `*,*::before,*::after{cursor:${cursor} !important}`,
           ),
         );
       }
@@ -232,33 +272,12 @@ class Resizable extends React.PureComponent<Props, State> {
         this.props.onChange(position);
       }
 
-      this.setState((state) => {
-        if (!state.dragging) {
-          return {
-            dragging: true,
-          };
-        }
-        return null;
-      });
+      this.setState((state) => (!state.dragging ? {dragging: true} : null));
     }
   };
 
   handleMouseUp = (event: MouseEvent) => {
-    this.styleTag.innerHTML = '';
-
-    if (this.state.dragging && this.props.onChangeEnd) {
-      this.props.onChangeEnd();
-    }
-
-    this.setState((state: State) => {
-      if (state.activeHandle !== undefined || state.dragging) {
-        return {
-          dragging: false,
-          activeHandle: undefined,
-        };
-      }
-      return null;
-    });
+    this.endDrag();
   };
 
   handleMouseDown = (event: React.MouseEvent) => {
@@ -267,20 +286,28 @@ class Resizable extends React.PureComponent<Props, State> {
 
       const {clientX, clientY} = event;
 
-      if (this.props.onSetActive) {
-        this.props.onSetActive();
-      }
-
       this.setState((state: State) => {
         return {
           startPosition: state.position,
-          startPoint: Vec2.subtract(new Vec2(clientX, clientY), state.anchor),
+          startPoint: {
+            x: clientX - state.anchor.x,
+            y: clientY - state.anchor.y,
+          },
           activeHandle,
           invertedX: state.position.width < 0,
           invertedY: state.position.height < 0,
         };
       });
     }
+  };
+
+  endDrag = () => {
+    this.styleTag.innerHTML = '';
+    this.setState((state) =>
+      state.dragging || state.activeHandle !== undefined
+        ? {dragging: false, activeHandle: undefined}
+        : null,
+    );
   };
 
   componentDidMount() {
@@ -327,8 +354,13 @@ class Resizable extends React.PureComponent<Props, State> {
 
     return (
       <div
+        tabIndex={0}
         ref={this.contentRef}
         onMouseDown={this.handleMouseDown}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
+        onFocus={this.handleFocus}
+        onBlur={this.handleBlur}
         style={{
           position: 'absolute',
           top: absPosition.top,
@@ -337,18 +369,20 @@ class Resizable extends React.PureComponent<Props, State> {
           height: absPosition.height,
           outlineOffset: -1,
           outline:
-            !this.props.active && this.props.focused
+            this.state.mouseOver && !this.state.focus
               ? '2px solid rgba(0, 128, 255, 0.75)'
               : 'none',
         }}
       >
-        {this.props.active &&
+        {this.props.handles.nw &&
+          this.state.focus &&
           this.renderHandle(this.topLeftHandleRef, {
             top: handleOffset,
             left: handleOffset,
             cursor: 'nwse-resize',
           })}
-        {this.props.active &&
+        {this.props.handles.n &&
+          this.state.focus &&
           absPosition.width > 17 &&
           this.renderHandle(this.topHandleRef, {
             top: handleOffset,
@@ -356,13 +390,15 @@ class Resizable extends React.PureComponent<Props, State> {
             right: 0,
             cursor: 'ns-resize',
           })}
-        {this.props.active &&
+        {this.props.handles.ne &&
+          this.state.focus &&
           this.renderHandle(this.topRightHandleRef, {
             top: handleOffset,
             right: handleOffset,
             cursor: 'nesw-resize',
           })}
-        {this.props.active &&
+        {this.props.handles.e &&
+          this.state.focus &&
           absPosition.height > 17 &&
           this.renderHandle(this.rightHandleRef, {
             right: handleOffset,
@@ -370,13 +406,15 @@ class Resizable extends React.PureComponent<Props, State> {
             bottom: 0,
             cursor: 'ew-resize',
           })}
-        {this.props.active &&
+        {this.props.handles.se &&
+          this.state.focus &&
           this.renderHandle(this.bottomRightHandleRef, {
             right: handleOffset,
             bottom: handleOffset,
             cursor: 'nwse-resize',
           })}
-        {this.props.active &&
+        {this.props.handles.s &&
+          this.state.focus &&
           absPosition.width > 17 &&
           this.renderHandle(this.bottomHandleRef, {
             bottom: handleOffset,
@@ -384,13 +422,15 @@ class Resizable extends React.PureComponent<Props, State> {
             right: 0,
             cursor: 'ns-resize',
           })}
-        {this.props.active &&
+        {this.props.handles.sw &&
+          this.state.focus &&
           this.renderHandle(this.bottomLeftHandleRef, {
             left: handleOffset,
             bottom: handleOffset,
             cursor: 'nesw-resize',
           })}
-        {this.props.active &&
+        {this.props.handles.w &&
+          this.state.focus &&
           absPosition.height > 17 &&
           this.renderHandle(this.leftHandleRef, {
             left: handleOffset,
@@ -402,9 +442,5 @@ class Resizable extends React.PureComponent<Props, State> {
     );
   }
 }
-
-// export default React.forwardRef<HTMLDivElement, Props>((props, ref) => (
-//   <Resizable {...props} forwardedRef={ref} />
-// ));
 
 export default Resizable;

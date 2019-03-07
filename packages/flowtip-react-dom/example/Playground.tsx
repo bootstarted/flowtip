@@ -3,7 +3,7 @@ import * as React from 'react';
 import Rect from 'flowtip-rect';
 import flowtip, {Result, Region, getClampedTailPosition} from 'flowtip-core';
 
-import Resizable, {Vec2} from './Resizable';
+import Resizable from './Resizable';
 
 export interface Props {
   snap: {[key in Region]: number[]};
@@ -30,10 +30,6 @@ const Playground: React.StatelessComponent<Props> = ({
   constrain,
   sticky,
 }) => {
-  const [active, setActive] = React.useState();
-  const [focus, setFocus] = React.useState();
-  const [dragging, setDragging] = React.useState();
-
   const [target, setTarget] = React.useState(new Rect(170, 205, 80, 30));
   const [content, setContent] = React.useState({width: 100, height: 50});
   const [bounds, setBounds] = React.useState(new Rect(10, 10, 400, 400));
@@ -61,12 +57,6 @@ const Playground: React.StatelessComponent<Props> = ({
   React.useEffect(() => {
     lastResultRef.current = result;
   });
-
-  const handleStart = () => setDragging(true);
-  const handleEnd = () => setDragging(false);
-
-  const handleSetActive = (active?: string) => () => setActive(active);
-  const handleSetFocus = (focus?: string) => () => setFocus(focus);
 
   return (
     <div>
@@ -110,44 +100,29 @@ const Playground: React.StatelessComponent<Props> = ({
           />
         </div>
       )}
-      <Resizable
-        active={active === 'bounds'}
-        focused={!dragging && focus === 'bounds'}
-        position={bounds}
-        onChange={setBounds}
-        onChangeStart={handleStart}
-        onChangeEnd={handleEnd}
-        onSetActive={handleSetActive('bounds')}
-        onHover={handleSetFocus('bounds')}
-        anchor={Vec2.zero}
-      />
+      <Resizable position={bounds} onChange={setBounds} />
       {result && (
         <Resizable
-          active={active === 'content'}
-          focused={!dragging && focus === 'content'}
           position={result.rect}
           onChange={(rect: Rect) => {
             const {width, height} = Rect.abs(rect);
             setContent({width, height});
           }}
-          onChangeStart={handleStart}
-          onChangeEnd={handleEnd}
-          onSetActive={handleSetActive('content')}
-          onHover={handleSetFocus('content')}
-          anchor={Vec2.zero}
+          handles={{
+            nw: result.region === 'top' || result.region === 'left',
+            n: result.region !== 'bottom',
+            ne: result.region === 'top' || result.region === 'right',
+            e: result.region !== 'left',
+            se: result.region === 'bottom' || result.region === 'right',
+            s: result.region !== 'top',
+            sw: result.region === 'bottom' || result.region === 'left',
+            w: result.region !== 'right',
+          }}
+          minWidth={10}
+          minHeight={10}
         />
       )}
-      <Resizable
-        active={active === 'target'}
-        focused={!dragging && focus === 'target'}
-        position={target}
-        onChange={setTarget}
-        onChangeStart={handleStart}
-        onChangeEnd={handleEnd}
-        onSetActive={handleSetActive('target')}
-        onHover={handleSetFocus('target')}
-        anchor={Vec2.zero}
-      />
+      <Resizable position={target} onChange={setTarget} />
     </div>
   );
 };
