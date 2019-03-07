@@ -237,7 +237,7 @@ function getValidPositions(context: Context): Regions<number[]> {
 
     const contentIsClipped =
       (constrain.top && bounds.top + edgeOffset > contentTop) ||
-      (constrain.bottom && bounds.right - edgeOffset < contentBottom);
+      (constrain.bottom && bounds.bottom - edgeOffset < contentBottom);
 
     if (!contentIsClipped) {
       rightPositions.push(align);
@@ -265,7 +265,7 @@ function getValidPositions(context: Context): Regions<number[]> {
 
     const contentIsClipped =
       (constrain.top && bounds.top + edgeOffset > contentTop) ||
-      (constrain.bottom && bounds.left - edgeOffset < contentBottom);
+      (constrain.bottom && bounds.bottom - edgeOffset < contentBottom);
 
     if (!contentIsClipped) {
       leftPositions.push(align);
@@ -284,7 +284,10 @@ function getPreferredAlign(
   context: Context,
   region: Region,
 ): number | undefined {
-  if (context.region === region && context.align !== undefined) {
+  if (
+    context.align !== undefined &&
+    (context.region === region || context.region === invertRegion(region))
+  ) {
     return context.align;
   }
 
@@ -325,8 +328,6 @@ function getPositionInRegion(
   if (align === undefined) {
     align = getIdealAlign(context, region);
   }
-
-  console.log('idealAlign', align);
 
   return positions.reduce((prev, next) =>
     Math.abs(next - (align as number)) < Math.abs(prev - (align as number))

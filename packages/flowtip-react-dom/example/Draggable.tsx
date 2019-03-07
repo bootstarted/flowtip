@@ -5,6 +5,7 @@ import {getContainingBlock, getContentRect} from '../src';
 import ResizeObserver from 'react-resize-observer';
 
 interface DraggableProps {
+  style?: React.CSSProperties;
   children?: React.ReactNode;
   onReflow?: (rect: Rect) => void;
 }
@@ -19,6 +20,7 @@ interface DraggableState {
 const Draggable: React.StatelessComponent<DraggableProps> = ({
   children,
   onReflow,
+  style,
 }) => {
   const [state, setState] = React.useState<DraggableState>({
     rect: Rect.zero,
@@ -119,7 +121,6 @@ const Draggable: React.StatelessComponent<DraggableProps> = ({
         }));
       }}
       style={{
-        display: 'inline-block',
         position: 'absolute',
         top:
           state.rect.y +
@@ -131,6 +132,7 @@ const Draggable: React.StatelessComponent<DraggableProps> = ({
           (containingRect ? containingRect.left : 0),
         userSelect: 'none',
         cursor: 'default',
+        ...style,
       }}
     >
       <ResizeObserver

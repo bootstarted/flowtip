@@ -100,6 +100,19 @@ class Rect implements DOMRectReadOnly, RectShape {
     return rect.width >= 0 && rect.height >= 0;
   }
 
+  static abs(rect: RectShape): Rect {
+    if (rect instanceof Rect && Rect.isValid(rect)) {
+      return rect;
+    }
+
+    return new Rect(
+      Math.min(rect.left, rect.left + rect.width),
+      Math.min(rect.top, rect.top + rect.height),
+      Math.abs(rect.width),
+      Math.abs(rect.height),
+    );
+  }
+
   top: number;
   left: number;
   height: number;
