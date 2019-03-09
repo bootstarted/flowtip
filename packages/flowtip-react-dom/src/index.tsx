@@ -1,4 +1,4 @@
 export {default} from './FlowTip';
-export * from './util/dom';
-export {getContentStyle, getTailStyle} from './util/render';
-export * from './types';
+export * from './domUtil';
+export {default as LayoutObserver} from './LayoutObserver';
+export * from './LayoutObserver';

@@ -1,5 +1,11 @@
 import Rect from 'flowtip-rect';
-import {Borders} from '../types';
+
+export interface Borders {
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+}
 
 export function findAncestor(
   callback: (node: HTMLElement) => boolean,

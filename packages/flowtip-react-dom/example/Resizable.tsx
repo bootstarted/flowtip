@@ -25,14 +25,12 @@ export interface Props {
 
 interface State {
   activeHandle?: HTMLDivElement;
-  anchor: Point;
   cursor?: string;
   dragging: boolean;
   focus: boolean;
   invertedX: boolean;
   invertedY: boolean;
   mouseOver: boolean;
-  position: Rect;
   startPoint: Point;
   startPosition: Rect;
 }
@@ -57,19 +55,13 @@ class Resizable extends React.PureComponent<Props, State> {
     maxHeight: Number.POSITIVE_INFINITY,
   };
 
-  static getDerivedStateFromProps({position}: Props) {
-    return {position};
-  }
-
   state: State = {
-    anchor: this.props.anchor,
     cursor: undefined,
     dragging: false,
     focus: false,
     invertedX: false,
     invertedY: false,
     mouseOver: false,
-    position: this.props.position,
     startPoint: POINT_ZERO,
     startPosition: Rect.zero,
   };
@@ -109,24 +101,24 @@ class Resizable extends React.PureComponent<Props, State> {
   handleMouseMove = (event: MouseEvent) => {
     if (this.state.activeHandle) {
       const drag = {
-        x: event.clientX - this.state.anchor.x - this.state.startPoint.x,
-        y: event.clientY - this.state.anchor.y - this.state.startPoint.y,
+        x: event.clientX - this.state.startPoint.x - this.props.anchor.x,
+        y: event.clientY - this.state.startPoint.y - this.props.anchor.y,
       };
 
       let cursor;
 
-      let top = this.state.position.top;
-      let left = this.state.position.left;
-      let bottom = this.state.position.bottom;
-      let right = this.state.position.right;
+      let top = this.props.position.top;
+      let left = this.props.position.left;
+      let bottom = this.props.position.bottom;
+      let right = this.props.position.right;
 
       const setTop = () => {
         top = Math.min(
           Math.max(
             this.state.startPosition.top + drag.y,
-            this.state.position.bottom - this.props.maxHeight,
+            this.props.position.bottom - this.props.maxHeight,
           ),
-          this.state.position.bottom - this.props.minHeight,
+          this.props.position.bottom - this.props.minHeight,
         );
       };
 
@@ -134,9 +126,9 @@ class Resizable extends React.PureComponent<Props, State> {
         right = Math.max(
           Math.min(
             this.state.startPosition.right + drag.x,
-            this.state.position.left + this.props.maxWidth,
+            this.props.position.left + this.props.maxWidth,
           ),
-          this.state.position.left + this.props.minWidth,
+          this.props.position.left + this.props.minWidth,
         );
       };
 
@@ -144,9 +136,9 @@ class Resizable extends React.PureComponent<Props, State> {
         bottom = Math.max(
           Math.min(
             this.state.startPosition.bottom + drag.y,
-            this.state.position.top + this.props.maxHeight,
+            this.props.position.top + this.props.maxHeight,
           ),
-          this.state.position.top + this.props.minHeight,
+          this.props.position.top + this.props.minHeight,
         );
       };
 
@@ -154,9 +146,9 @@ class Resizable extends React.PureComponent<Props, State> {
         left = Math.min(
           Math.max(
             this.state.startPosition.left + drag.x,
-            this.state.position.right - this.props.maxWidth,
+            this.props.position.right - this.props.maxWidth,
           ),
-          this.state.position.right - this.props.minWidth,
+          this.props.position.right - this.props.minWidth,
         );
       };
 
@@ -286,16 +278,16 @@ class Resizable extends React.PureComponent<Props, State> {
 
       const {clientX, clientY} = event;
 
-      this.setState((state: State) => {
+      this.setState((state, props) => {
         return {
-          startPosition: state.position,
+          startPosition: props.position,
           startPoint: {
-            x: clientX - state.anchor.x,
-            y: clientY - state.anchor.y,
+            x: clientX - props.anchor.x,
+            y: clientY - props.anchor.y,
           },
           activeHandle,
-          invertedX: state.position.width < 0,
-          invertedY: state.position.height < 0,
+          invertedX: props.position.width < 0,
+          invertedY: props.position.height < 0,
         };
       });
     }
@@ -348,7 +340,7 @@ class Resizable extends React.PureComponent<Props, State> {
   }
 
   render() {
-    const absPosition = Rect.abs(this.state.position);
+    const absPosition = Rect.abs(this.props.position);
 
     const handleOffset = -0.5 * (this.props.handleSize + 1);
 

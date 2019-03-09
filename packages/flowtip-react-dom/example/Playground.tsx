@@ -3,6 +3,8 @@ import * as React from 'react';
 import Rect from 'flowtip-rect';
 import flowtip, {Result, Region, getClampedTailPosition} from 'flowtip-core';
 
+import LayoutObserver from '../src/LayoutObserver';
+
 import Resizable from './Resizable';
 
 export interface Props {
@@ -59,71 +61,82 @@ const Playground: React.StatelessComponent<Props> = ({
   });
 
   return (
-    <div>
-      <div
-        style={{
-          ...rectPositionStyle(bounds),
-          position: 'absolute',
-          outline: '1px solid black',
-        }}
-      />
-      <div
-        style={{
-          ...rectPositionStyle(target),
-          position: 'absolute',
-          background: 'gray',
-        }}
-      />
-      {result && (
-        <div
-          style={{
-            ...rectPositionStyle(result.rect),
-            position: 'absolute',
-            background: '#666',
-          }}
-        >
+    <LayoutObserver>
+      {({anchor}) => (
+        <>
           <div
             style={{
+              ...rectPositionStyle(bounds),
               position: 'absolute',
-              width: 10,
-              height: 10,
-              [result.region]: '100%',
-              [result.region === 'right' || result.region === 'left'
-                ? 'top'
-                : 'left']: getClampedTailPosition(
-                result,
-                {width: 10, height: 10},
-                0,
-              ),
-              background: '#666',
+              outline: '1px solid black',
             }}
           />
-        </div>
+          <div
+            style={{
+              ...rectPositionStyle(target),
+              position: 'absolute',
+              background: 'gray',
+            }}
+          />
+          {result && (
+            <div
+              style={{
+                ...rectPositionStyle(result.rect),
+                position: 'absolute',
+                background: '#666',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  width: 10,
+                  height: 10,
+                  [result.region]: '100%',
+                  [result.region === 'right' || result.region === 'left'
+                    ? 'top'
+                    : 'left']: getClampedTailPosition(
+                    result,
+                    {width: 10, height: 10},
+                    0,
+                  ),
+                  background: '#555',
+                }}
+              />
+            </div>
+          )}
+          <Resizable position={bounds} onChange={setBounds} anchor={anchor} />
+          {result && (
+            <Resizable
+              position={result.rect}
+              onChange={(rect: Rect) => {
+                const {width, height} = Rect.abs(rect);
+                setContent({width, height});
+              }}
+              handles={{
+                nw: result.region === 'top' || result.region === 'left',
+                n: result.region !== 'bottom',
+                ne: result.region === 'top' || result.region === 'right',
+                e: result.region !== 'left',
+                se: result.region === 'bottom' || result.region === 'right',
+                s: result.region !== 'top',
+                sw: result.region === 'bottom' || result.region === 'left',
+                w: result.region !== 'right',
+              }}
+              minWidth={10}
+              minHeight={10}
+              anchor={anchor}
+            />
+          )}
+          <Resizable
+            position={target}
+            onChange={setTarget}
+            anchor={anchor}
+            minWidth={10}
+            minHeight={10}
+          />
+        </>
       )}
-      <Resizable position={bounds} onChange={setBounds} />
-      {result && (
-        <Resizable
-          position={result.rect}
-          onChange={(rect: Rect) => {
-            const {width, height} = Rect.abs(rect);
-            setContent({width, height});
-          }}
-          handles={{
-            nw: result.region === 'top' || result.region === 'left',
-            n: result.region !== 'bottom',
-            ne: result.region === 'top' || result.region === 'right',
-            e: result.region !== 'left',
-            se: result.region === 'bottom' || result.region === 'right',
-            s: result.region !== 'top',
-            sw: result.region === 'bottom' || result.region === 'left',
-            w: result.region !== 'right',
-          }}
-          minWidth={10}
-          minHeight={10}
-        />
-      )}
-      <Resizable position={target} onChange={setTarget} />
-    </div>
+    </LayoutObserver>
   );
 };
 

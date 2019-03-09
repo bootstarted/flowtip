@@ -113,10 +113,10 @@ class Rect implements DOMRectReadOnly, RectShape {
     );
   }
 
-  top: number;
-  left: number;
-  height: number;
-  width: number;
+  readonly top: number;
+  readonly left: number;
+  readonly height: number;
+  readonly width: number;
 
   toJSON() {
     return {

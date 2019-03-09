@@ -9,13 +9,10 @@ type Regions<T> = {[key in Region]: T};
 type RegionsShape<T> = {[key in Region]?: T};
 
 export interface Result {
-  bounds: Rect;
-  target: Rect;
   region: Region;
   reason: Reason;
   align: number;
   rect: Rect;
-  valid: Regions<boolean>;
   offset: number;
   overlap: number;
   overlapCenter: number;
@@ -715,13 +712,10 @@ function flowtip(config: Config): Result {
   const overlapCenter = getCenter(region, rect, intersect);
 
   return {
-    bounds: context.bounds,
-    target: context.target,
     region,
     reason,
     align: position,
     rect,
-    valid: regions,
     offset,
     overlap,
     overlapCenter,

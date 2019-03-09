@@ -10,6 +10,8 @@ const triangles = {
   top: (
     <div
       style={{
+        width: 0,
+        height: 0,
         borderTop: '6px solid rgba(0,0,0,0.5)',
         borderLeft: '6px solid transparent',
         borderRight: '6px solid transparent',
@@ -19,6 +21,8 @@ const triangles = {
   right: (
     <div
       style={{
+        width: 0,
+        height: 0,
         borderRight: '6px solid rgba(0,0,0,0.5)',
         borderTop: '6px solid transparent',
         borderBottom: '6px solid transparent',
@@ -28,6 +32,8 @@ const triangles = {
   bottom: (
     <div
       style={{
+        width: 0,
+        height: 0,
         borderBottom: '6px solid rgba(0,0,0,0.5)',
         borderLeft: '6px solid transparent',
         borderRight: '6px solid transparent',
@@ -37,6 +43,8 @@ const triangles = {
   left: (
     <div
       style={{
+        width: 0,
+        height: 0,
         borderLeft: '6px solid rgba(0,0,0,0.5)',
         borderTop: '6px solid transparent',
         borderBottom: '6px solid transparent',
@@ -44,8 +52,6 @@ const triangles = {
     />
   ),
 };
-
-const Tail = ({result}: TailProps) => triangles[result.region];
 
 interface TooltipProps {
   showDelay?: number;
@@ -123,7 +129,7 @@ const Tooltip: React.StatelessComponent<TooltipProps> = ({
       )}
 
       {(staticActive || active) && (
-        <FlowTip debug target={target} tail={Tail} tailOffset={8}>
+        <FlowTip debug target={target} tail={triangles} tailOffset={8}>
           <div
             id={tooltipId}
             role="tooltip"

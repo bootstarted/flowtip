@@ -1,9 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import {Result} from './types';
+import {RectShape} from 'flowtip-rect';
 
-class FlowTipDebug extends React.Component<Result> {
+class FlowTipDebug extends React.Component<{
+  bounds: RectShape;
+  target: RectShape;
+  rect: RectShape;
+}> {
   portalNode: HTMLDivElement = document.createElement('div');
   canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
 
