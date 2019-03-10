@@ -259,13 +259,12 @@ const Resizable = (props: Props): React.ReactElement | null => {
 
   return (
     <div
-      tabIndex={0}
       ref={contentRef}
       onMouseDown={handleMouseDown}
       onMouseEnter={(event: React.MouseEvent) => {
         // Ignore mouseenter events when the primary mouse button is pressed.
         // This is a quick way to ignore what is likely a drag event.
-        if (event.buttons & 1) {
+        if (!(event.buttons & 1)) {
           setMouseOver(true);
         }
       }}
@@ -277,6 +276,7 @@ const Resizable = (props: Props): React.ReactElement | null => {
           setMouseOver(false);
         }
       }}
+      tabIndex={0}
       onFocus={() => setHasFocus(true)}
       onBlur={() => setHasFocus(false)}
       style={{
@@ -287,9 +287,7 @@ const Resizable = (props: Props): React.ReactElement | null => {
         height: absPosition.height,
         outlineOffset: -1,
         outline:
-          mouseOver && !hasFocus
-            ? '2px solid rgba(0, 128, 255, 0.75)'
-            : undefined,
+          mouseOver && !hasFocus ? '2px solid rgba(0, 128, 255, 0.75)' : 'none',
       }}
     >
       {props.handles.nw &&
