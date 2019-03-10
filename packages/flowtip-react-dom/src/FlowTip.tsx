@@ -58,15 +58,15 @@ interface Props {
 
   debug: boolean;
 
-  children?:
+  children:
     | ((context: RenderContext, children: React.ReactNode) => React.ReactNode)
     | React.ReactNode;
   tail?:
     | ((context: RenderContext, children: React.ReactNode) => React.ReactNode)
-    | {[key in Region]?: React.ReactNode};
+    | Partial<Record<Region, React.ReactNode>>;
 }
 
-const FlowTip: React.StatelessComponent<Props> = (props) => {
+const FlowTip = (props: Props): React.ReactNode => {
   const {target = Rect.zero} = props;
 
   const [anchorPoint, setAnchorPoint] = React.useState<Point>(props.anchor);
@@ -378,7 +378,7 @@ const FlowTip: React.StatelessComponent<Props> = (props) => {
   // be called.
   const contentElement =
     typeof props.children === 'function' ? (
-      (props.children as any)(
+      props.children(
         context,
         <>
           {contentResizeObserver}

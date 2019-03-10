@@ -1,25 +1,25 @@
-extends:
-  - metalab
-  - metalab/react
+parser: '@typescript-eslint/parser'
+parserOptions:
+  project: tsconfig.json
 plugins:
+  - react
   - prettier
+  - '@typescript-eslint'
+extends:
+  - eslint:recommended
+  - plugin:react/recommended
+  - plugin:@typescript-eslint/recommended
 rules:
-  complexity: 0
-  jsx-quotes:
-    - 2
-    - prefer-double
-  prettier/prettier: 2
-  metalab/flowtype/space-after-type-colon: 0
+  prettier/prettier: error
+  # Indent is owned by prettier
+  '@typescript-eslint/indent': off
+  '@typescript-eslint/no-unused-vars':
+    - error
+    - varsIgnorePattern: _
+      argsIgnorePattern: _
+  react/prop-types: off
 overrides:
-  -
-    files: "*.test.tsx"
-    env:
-      jest: true
-  -
-    files:
-      - "babel.config.js"
-      - "rollup.config.js"
-    env:
-      node: true
-    rules:
-      metalab/import/no-commonjs: 0
+  - files: "*.test.tsx"
+    env: {jest: true}
+  - files: "*.stories.tsx"
+    env: {node: true}

@@ -9,7 +9,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "paths": {
-      "*": ["packages/*"]
+      "*": ["packages/"]
     },
     "skipLibCheck": true,
     "strict": true,

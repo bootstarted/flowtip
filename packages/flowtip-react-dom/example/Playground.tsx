@@ -31,7 +31,7 @@ const Playground: React.StatelessComponent<Props> = ({
   disabled,
   constrain,
   sticky,
-}) => {
+}): React.ReactNode => {
   const [target, setTarget] = React.useState(new Rect(170, 205, 80, 30));
   const [content, setContent] = React.useState({width: 100, height: 50});
   const [bounds, setBounds] = React.useState(new Rect(10, 10, 400, 400));
@@ -104,10 +104,10 @@ const Playground: React.StatelessComponent<Props> = ({
               />
             </div>
           )}
-          <Resizable position={bounds} onChange={setBounds} anchor={anchor} />
+          <Resizable value={bounds} onChange={setBounds} anchor={anchor} />
           {result && (
             <Resizable
-              position={result.rect}
+              value={result.rect}
               onChange={(rect: Rect) => {
                 const {width, height} = Rect.abs(rect);
                 setContent({width, height});
@@ -128,7 +128,7 @@ const Playground: React.StatelessComponent<Props> = ({
             />
           )}
           <Resizable
-            position={target}
+            value={target}
             onChange={setTarget}
             anchor={anchor}
             minWidth={10}

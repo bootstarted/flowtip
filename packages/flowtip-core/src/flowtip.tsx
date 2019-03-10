@@ -2,11 +2,11 @@ import Rect, {RectShape} from 'flowtip-rect';
 
 export type Region = 'top' | 'right' | 'bottom' | 'left';
 export type Reason = 'default' | 'inverted' | 'ideal' | 'external' | 'fallback';
-export type Dimensions = {width: number; height: number};
+export interface Dimensions {
+  width: number;
+  height: number;
+}
 export type Align = 'start' | 'center' | 'end' | number;
-
-type Regions<T> = {[key in Region]: T};
-type RegionsShape<T> = {[key in Region]?: T};
 
 export interface Result {
   region: Region;
@@ -17,7 +17,7 @@ export interface Result {
   overlap: number;
   overlapCenter: number;
 }
-type Context = {
+interface Context {
   offset: number;
   overlap: number;
   edgeOffset: number;
@@ -26,10 +26,10 @@ type Context = {
   bounds: Rect;
   target: Rect;
   content: Dimensions;
-  disabled: Regions<boolean>;
-  constrain: Regions<boolean>;
-  snap: Regions<number[]>;
-};
+  disabled: Record<Region, boolean>;
+  constrain: Record<Region, boolean>;
+  snap: Record<Region, number[]>;
+}
 export interface Config {
   offset?: number;
   overlap?: number;
@@ -39,9 +39,9 @@ export interface Config {
   bounds: RectShape;
   target: RectShape;
   content: Dimensions;
-  disabled?: RegionsShape<boolean>;
-  constrain?: RegionsShape<boolean>;
-  snap?: RegionsShape<Align[]>;
+  disabled?: Partial<Record<Region, boolean>>;
+  constrain?: Partial<Record<Region, boolean>>;
+  snap?: Partial<Record<Region, Align[]>>;
 }
 
 export const TOP: Region = 'top';
@@ -151,7 +151,7 @@ function constrainTop(
   return rect.top;
 }
 
-function getValidRegions(context: Context): Regions<boolean> {
+function getValidRegions(context: Context): Record<Region, boolean> {
   const {
     target,
     disabled,
@@ -205,55 +205,69 @@ function getValidRegions(context: Context): Regions<boolean> {
   };
 }
 
-function getValidPositions(context: Context): Regions<number[]> {
+function getRegionValidPositions(context: Context, region: Region): number[] {
   const {snap, target, edgeOffset, bounds, content, constrain} = context;
 
-  const topPositions = [];
-  const rightPositions = [];
-  const bottomPositions = [];
+  if (region === TOP) {
+    const topPositions = [];
+
+    for (let i = 0; i < snap.top.length; i++) {
+      const align = snap.top[i];
+      const contentLeft = target.left + (target.width - content.width) * align;
+      const contentRight = contentLeft + content.width;
+
+      const contentIsClipped =
+        (constrain.left && bounds.left + edgeOffset > contentLeft) ||
+        (constrain.right && bounds.right - edgeOffset < contentRight);
+
+      if (!contentIsClipped) {
+        topPositions.push(align);
+      }
+    }
+
+    return topPositions;
+  }
+
+  if (region === RIGHT) {
+    const rightPositions = [];
+
+    for (let i = 0; i < snap.right.length; i++) {
+      const align = snap.right[i];
+      const contentTop = target.top + (target.height - content.height) * align;
+      const contentBottom = contentTop + content.height;
+
+      const contentIsClipped =
+        (constrain.top && bounds.top + edgeOffset > contentTop) ||
+        (constrain.bottom && bounds.bottom - edgeOffset < contentBottom);
+
+      if (!contentIsClipped) {
+        rightPositions.push(align);
+      }
+    }
+
+    return rightPositions;
+  }
+
+  if (region === BOTTOM) {
+    const bottomPositions = [];
+    for (let i = 0; i < snap.bottom.length; i++) {
+      const align = snap.bottom[i];
+      const contentLeft = target.left + (target.width - content.width) * align;
+      const contentRight = contentLeft + content.width;
+
+      const contentIsClipped =
+        (constrain.left && bounds.left + edgeOffset > contentLeft) ||
+        (constrain.right && bounds.right - edgeOffset < contentRight);
+
+      if (!contentIsClipped) {
+        bottomPositions.push(align);
+      }
+    }
+
+    return bottomPositions;
+  }
+
   const leftPositions = [];
-
-  for (let i = 0; i < snap.top.length; i++) {
-    const align = snap.top[i];
-    const contentLeft = target.left + (target.width - content.width) * align;
-    const contentRight = contentLeft + content.width;
-
-    const contentIsClipped =
-      (constrain.left && bounds.left + edgeOffset > contentLeft) ||
-      (constrain.right && bounds.right - edgeOffset < contentRight);
-
-    if (!contentIsClipped) {
-      topPositions.push(align);
-    }
-  }
-
-  for (let i = 0; i < snap.right.length; i++) {
-    const align = snap.right[i];
-    const contentTop = target.top + (target.height - content.height) * align;
-    const contentBottom = contentTop + content.height;
-
-    const contentIsClipped =
-      (constrain.top && bounds.top + edgeOffset > contentTop) ||
-      (constrain.bottom && bounds.bottom - edgeOffset < contentBottom);
-
-    if (!contentIsClipped) {
-      rightPositions.push(align);
-    }
-  }
-
-  for (let i = 0; i < snap.bottom.length; i++) {
-    const align = snap.bottom[i];
-    const contentLeft = target.left + (target.width - content.width) * align;
-    const contentRight = contentLeft + content.width;
-
-    const contentIsClipped =
-      (constrain.left && bounds.left + edgeOffset > contentLeft) ||
-      (constrain.right && bounds.right - edgeOffset < contentRight);
-
-    if (!contentIsClipped) {
-      bottomPositions.push(align);
-    }
-  }
 
   for (let i = 0; i < snap.left.length; i++) {
     const align = snap.left[i];
@@ -269,12 +283,16 @@ function getValidPositions(context: Context): Regions<number[]> {
     }
   }
 
+  return leftPositions;
+}
+
+function invertRegion(region: Region): Region {
   return {
-    top: topPositions,
-    right: rightPositions,
-    bottom: bottomPositions,
-    left: leftPositions,
-  };
+    top: BOTTOM,
+    bottom: TOP,
+    left: RIGHT,
+    right: LEFT,
+  }[region];
 }
 
 function getPreferredAlign(
@@ -335,8 +353,7 @@ function getPositionInRegion(
 
 function getIdealRegion(
   context: Context,
-  regions: Regions<boolean>,
-  positions: Regions<number[]>,
+  regions: Record<Region, boolean>,
 ): Region | undefined {
   const {target, content, bounds} = context;
 
@@ -350,26 +367,6 @@ function getIdealRegion(
   const rightMargin = bounds.right - target.right - content.width;
   const bottomMargin = bounds.bottom - target.bottom - content.height;
   const leftMargin = target.left - bounds.left - content.width;
-
-  // if (regions.top && positions.top.length && topMargin > margin) {
-  //   margin = topMargin;
-  //   region = TOP;
-  // }
-
-  // if (regions.right && positions.right.length && rightMargin > margin) {
-  //   margin = rightMargin;
-  //   region = RIGHT;
-  // }
-
-  // if (regions.bottom && positions.bottom.length && bottomMargin > margin) {
-  //   margin = bottomMargin;
-  //   region = BOTTOM;
-  // }
-
-  // if (regions.left && positions.left.length && leftMargin > margin) {
-  //   margin = leftMargin;
-  //   region = LEFT;
-  // }
 
   if (regions.top && topMargin > margin) {
     margin = topMargin;
@@ -472,26 +469,9 @@ function getExternalRegion(context: Context): Region | undefined {
   return undefined;
 }
 
-/**
- * Get the opposite region of the one provided.
- * i.e. `left` -> `right`, `top` -> `bottom`
- *
- * @param   {string} region A region (`top`, `right`, `bottom`, or `left`).
- * @returns {string} The inverse region.
- */
-function invertRegion(region: Region): Region {
-  return {
-    top: BOTTOM,
-    bottom: TOP,
-    left: RIGHT,
-    right: LEFT,
-  }[region];
-}
-
 function getPreferredRegion(
   context: Context,
-  regions: Regions<boolean>,
-  positions: Regions<number[]>,
+  regions: Record<Region, boolean>,
 ): Region | undefined {
   const {region} = context;
 
@@ -506,8 +486,7 @@ function getPreferredRegion(
 
 function getInvertPreferredRegion(
   context: Context,
-  regions: Regions<boolean>,
-  positions: Regions<number[]>,
+  regions: Record<Region, boolean>,
 ): Region | undefined {
   const {region} = context;
 
@@ -543,20 +522,19 @@ function getFallbackRegion(context: Context): Region {
 
 function getRegion(
   context: Context,
-  regions: Regions<boolean>,
-  positions: Regions<number[]>,
+  regions: Record<Region, boolean>,
 ): [Region, Reason] {
-  const ideal = getIdealRegion(context, regions, positions);
+  const ideal = getIdealRegion(context, regions);
 
   // Return the default region set in the context if it is valid.
-  const preferred = getPreferredRegion(context, regions, positions);
+  const preferred = getPreferredRegion(context, regions);
 
   if (preferred) {
     return [preferred, preferred === ideal ? 'ideal' : 'default'];
   }
 
   // Return the default region set in the config if it is valid.
-  const inverted = getInvertPreferredRegion(context, regions, positions);
+  const inverted = getInvertPreferredRegion(context, regions);
 
   if (inverted) {
     return [inverted, inverted === ideal ? 'ideal' : 'inverted'];
@@ -693,11 +671,12 @@ function flowtip(config: Config): Result {
   const context = parseConfig(config);
 
   const regions = getValidRegions(context);
-  const positions = getValidPositions(context);
 
-  const [region, reason] = getRegion(context, regions, positions);
+  const [region, reason] = getRegion(context, regions);
 
-  const position = getPositionInRegion(context, region, positions[region]);
+  const positions = getRegionValidPositions(context, region);
+
+  const position = getPositionInRegion(context, region, positions);
 
   const tempRect = getRect(context, region, position);
 

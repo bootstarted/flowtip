@@ -2,7 +2,7 @@ import {useMemo, useEffect, useState} from 'react';
 
 let currentId = 0;
 
-const getNextId = () => `react-element-${currentId++}`;
+const getNextId = (): string => `react-element-${currentId++}`;
 
 export function useId(): string {
   return useMemo(getNextId, []);

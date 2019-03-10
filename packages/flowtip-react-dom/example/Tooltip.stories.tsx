@@ -3,7 +3,7 @@ import {storiesOf} from '@storybook/react';
 import {withKnobs, boolean} from '@storybook/addon-knobs/react';
 
 import StoryDecorator from '../../../.storybook/src/StoryDecorator';
-import Draggable from './Draggable';
+import Resizable from './Resizable';
 import Tooltip from './Tooltip';
 import Playground from './Playground';
 
@@ -32,7 +32,14 @@ stories.add('anchor test', () => (
   >
     <div style={{height: 400}}>
       <Tooltip content="tooltip" hideDelay={999999}>
-        {(setTarget) => <Draggable onReflow={setTarget}>label</Draggable>}
+        {({target, setTarget}) => (
+          <>
+            <Resizable value={target} onChange={setTarget} />
+            <div
+              style={{position: 'absolute', ...target, background: 'blue'}}
+            />
+          </>
+        )}
       </Tooltip>
     </div>
   </div>

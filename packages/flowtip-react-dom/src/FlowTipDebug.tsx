@@ -8,14 +8,14 @@ class FlowTipDebug extends React.Component<{
   target: RectShape;
   rect: RectShape;
 }> {
-  portalNode: HTMLDivElement = document.createElement('div');
-  canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
+  private portalNode: HTMLDivElement = document.createElement('div');
+  private canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
 
-  componentDidMount() {
+  public componentDidMount(): void {
     document.body.appendChild(this.portalNode);
   }
 
-  componentDidUpdate() {
+  public componentDidUpdate(): void {
     const canvas = this.canvasRef.current;
     if (canvas === null) {
       return;
@@ -57,11 +57,11 @@ class FlowTipDebug extends React.Component<{
     );
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount(): void {
     document.body.removeChild(this.portalNode);
   }
 
-  render() {
+  public render(): React.ReactNode {
     return ReactDOM.createPortal(
       <>
         <canvas

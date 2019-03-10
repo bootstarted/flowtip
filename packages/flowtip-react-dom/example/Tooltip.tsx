@@ -4,9 +4,9 @@ import ResizeObserver from 'react-resize-observer';
 import Rect, {RectShape} from 'flowtip-rect';
 
 import {useDebouncedState, useId} from './util/react';
-import FlowTip, {TailProps} from '../src';
+import FlowTip from '../src';
 
-const triangles = {
+const tail = {
   top: (
     <div
       style={{
@@ -73,7 +73,7 @@ const Tooltip: React.StatelessComponent<TooltipProps> = ({
   active: staticActive,
   draggable,
   content,
-}) => {
+}): React.ReactNode => {
   const [active, setActive] = useDebouncedState(false);
   const [target, setTarget] = React.useState<Rect>(Rect.zero);
 
@@ -87,7 +87,7 @@ const Tooltip: React.StatelessComponent<TooltipProps> = ({
       return;
     }
 
-    const handleMouseMove = (event: UIEvent) => {
+    const handleMouseMove = (event: UIEvent): void => {
       if (
         targetRef.current &&
         event.target instanceof Node &&
@@ -106,7 +106,8 @@ const Tooltip: React.StatelessComponent<TooltipProps> = ({
     };
   }, [staticActive]);
 
-  const handleReflow = (rect: RectShape) => setTarget(Rect.fromRect(rect));
+  const handleReflow = (rect: RectShape): void =>
+    setTarget(Rect.fromRect(rect));
 
   return (
     <span
@@ -120,7 +121,7 @@ const Tooltip: React.StatelessComponent<TooltipProps> = ({
       draggable={draggable}
     >
       {typeof children === 'function' ? (
-        children(handleReflow)
+        children({target, setTarget: handleReflow})
       ) : (
         <>
           <ResizeObserver ref={targetResizeRef} onReflow={handleReflow} />
@@ -129,7 +130,7 @@ const Tooltip: React.StatelessComponent<TooltipProps> = ({
       )}
 
       {(staticActive || active) && (
-        <FlowTip debug target={target} tail={triangles} tailOffset={8}>
+        <FlowTip debug target={target} tail={tail} tailOffset={8}>
           <div
             id={tooltipId}
             role="tooltip"

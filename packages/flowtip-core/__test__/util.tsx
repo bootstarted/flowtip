@@ -1,3 +1,7 @@
+import Rect from 'flowtip-rect';
+
+import {Config, Result} from '../src';
+
 const scale = {x: 1, y: 0.5};
 
 const lines = {
@@ -13,18 +17,27 @@ const tail = {
   right: '┝',
 };
 
-const draw = (canvas, x, y, c) => {
+const draw = (canvas: string[][], x: number, y: number, c: string): void => {
   if (x >= 0 && y >= 0) canvas[y][x] = c;
 };
 
-const drawScaled = (canvas, x, y, c) => {
+const drawScaled = (
+  canvas: string[][],
+  x: number,
+  y: number,
+  c: string,
+): void => {
   const _x = Math.round(x * scale.x);
   const _y = Math.round(y * scale.y);
 
   if (_x >= 0 && _y >= 0) canvas[_y][_x] = c;
 };
 
-const drawRect = (canvas = [], rect, style = 'light') => {
+const drawRect = (
+  canvas: string[][] = [],
+  rect: Rect,
+  style: string = 'light',
+): string[][] => {
   const _top = Math.round(rect.top * scale.y);
   const _left = Math.round(rect.left * scale.x);
   const _bottom = Math.round(rect.top * scale.y + rect.height * scale.y);
@@ -64,7 +77,7 @@ const drawRect = (canvas = [], rect, style = 'light') => {
   return canvas;
 };
 
-const printCanvas = (canvas) => {
+const printCanvas = (canvas: string[][]): string => {
   let result = '';
 
   for (let y = 0, yLen = canvas.length; y < yLen; y++) {
@@ -78,7 +91,7 @@ const printCanvas = (canvas) => {
   return result.slice(0, -1);
 };
 
-export const translateRect = (rect, left, top) => ({
+export const translateRect = (rect: Rect, left: number, top: number): Rect => ({
   left: rect.left - left,
   top: rect.top - top,
   right: rect.right - left,
@@ -87,7 +100,7 @@ export const translateRect = (rect, left, top) => ({
   height: rect.height,
 });
 
-export const drawResult = (config, result) => {
+export const drawResult = (config: Config, result: Result): string => {
   const {bounds, target} = config;
   const {rect, region, reason, overlapCenter} = result;
 

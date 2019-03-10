@@ -6,7 +6,7 @@ export interface RectShape {
 }
 
 class Rect implements DOMRectReadOnly, RectShape {
-  static zero: Rect = new Rect(0, 0, 0, 0);
+  public static zero: Rect = new Rect(0, 0, 0, 0);
 
   /**
    * Convert a rect shaped object to a Rect instance. This is useful for
@@ -16,7 +16,7 @@ class Rect implements DOMRectReadOnly, RectShape {
    * @param   {Object} rect A rect-like object.
    * @returns {Object} A Rect instance.
    */
-  static fromRect(rect: RectShape): Rect {
+  public static fromRect(rect: RectShape): Rect {
     if (rect instanceof Rect) return rect;
     return new Rect(rect.left, rect.top, rect.width, rect.height);
   }
@@ -34,7 +34,7 @@ class Rect implements DOMRectReadOnly, RectShape {
    * @param   {Object} b An object implementing RectShape.
    * @returns {Object} A Rect instance.
    */
-  static intersect(a: RectShape, b: RectShape): Rect {
+  public static intersect(a: RectShape, b: RectShape): Rect {
     const rectA = Rect.fromRect(a);
     const rectB = Rect.fromRect(b);
 
@@ -55,7 +55,7 @@ class Rect implements DOMRectReadOnly, RectShape {
    * @param   {number} amount Offset to apply to each boundary edge.
    * @returns {Object} A Rect instance.
    */
-  static grow(rect: RectShape, amount: number): Rect {
+  public static grow(rect: RectShape, amount: number): Rect {
     return new Rect(
       rect.left - amount,
       rect.top - amount,
@@ -71,7 +71,7 @@ class Rect implements DOMRectReadOnly, RectShape {
    * @param   {Object} [b] An object implementing RectShape.
    * @returns {boolean} True if rects are equal.
    */
-  static areEqual(a?: RectShape, b?: RectShape): boolean {
+  public static areEqual(a?: RectShape, b?: RectShape): boolean {
     if (a === b) return true;
 
     if ((a === null || a === undefined) && (b === null || b === undefined)) {
@@ -96,11 +96,11 @@ class Rect implements DOMRectReadOnly, RectShape {
    * @param   {Object} [rect] An object implementing RectShape.
    * @returns {boolean} True if the rect has a positive area.
    */
-  static isValid(rect: RectShape): boolean {
+  public static isValid(rect: RectShape): boolean {
     return rect.width >= 0 && rect.height >= 0;
   }
 
-  static abs(rect: RectShape): Rect {
+  public static abs(rect: RectShape): Rect {
     if (rect instanceof Rect && Rect.isValid(rect)) {
       return rect;
     }
@@ -113,12 +113,15 @@ class Rect implements DOMRectReadOnly, RectShape {
     );
   }
 
-  readonly top: number;
-  readonly left: number;
-  readonly height: number;
-  readonly width: number;
+  public readonly top: number;
+  public readonly left: number;
+  public readonly height: number;
+  public readonly width: number;
 
-  toJSON() {
+  public toJSON(): Record<
+    'bottom' | 'height' | 'left' | 'right' | 'top' | 'width' | 'x' | 'y',
+    number
+  > {
     return {
       bottom: this.bottom,
       height: this.height,
@@ -131,23 +134,23 @@ class Rect implements DOMRectReadOnly, RectShape {
     };
   }
 
-  get x() {
+  public get x(): number {
     return this.left;
   }
 
-  get y() {
+  public get y(): number {
     return this.top;
   }
 
-  get right() {
+  public get right(): number {
     return this.left + this.width;
   }
 
-  get bottom() {
+  public get bottom(): number {
     return this.top + this.height;
   }
 
-  constructor(x: number, y: number, width: number, height: number) {
+  private constructor(x: number, y: number, width: number, height: number) {
     this.left = x;
     this.top = y;
     this.width = width;

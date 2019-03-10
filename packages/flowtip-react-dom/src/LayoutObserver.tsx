@@ -17,17 +17,17 @@ interface Props {
 }
 
 class LayoutObserver extends React.PureComponent<Props, State> {
-  _lastAnchor: Point = {x: 0, y: 0};
-  _lastClippingRect: Rect = Rect.zero;
+  private lastAnchor: Point = {x: 0, y: 0};
+  private lastClippingRect: Rect = Rect.zero;
 
-  state = {
-    anchor: this._lastAnchor,
-    clippingRect: this._lastClippingRect,
+  public state = {
+    anchor: this.lastAnchor,
+    clippingRect: this.lastClippingRect,
   };
 
-  _ref = React.createRef<HTMLElement>();
+  private _ref = React.createRef<HTMLElement>();
 
-  update = () => {
+  private update = (): void => {
     if (!this._ref.current) {
       return;
     }
@@ -45,12 +45,12 @@ class LayoutObserver extends React.PureComponent<Props, State> {
     const clippingRect = getContentRect(clippingBlockNode);
 
     if (
-      this._lastAnchor.x !== anchor.x ||
-      this._lastAnchor.y !== anchor.y ||
-      !Rect.areEqual(this._lastClippingRect, clippingRect)
+      this.lastAnchor.x !== anchor.x ||
+      this.lastAnchor.y !== anchor.y ||
+      !Rect.areEqual(this.lastClippingRect, clippingRect)
     ) {
-      this._lastAnchor = anchor;
-      this._lastClippingRect = clippingRect;
+      this.lastAnchor = anchor;
+      this.lastClippingRect = clippingRect;
       const update = Object.freeze({anchor, clippingRect});
 
       if (this.props.onLayoutChange) {
@@ -60,18 +60,18 @@ class LayoutObserver extends React.PureComponent<Props, State> {
     }
   };
 
-  componentDidMount() {
+  public componentDidMount(): void {
     this.update();
     window.addEventListener('scroll', this.update, true);
     window.addEventListener('resize', this.update, true);
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount(): void {
     window.removeEventListener('scroll', this.update, true);
     window.removeEventListener('resize', this.update, true);
   }
 
-  render() {
+  public render(): React.ReactNode {
     return (
       <>
         <noscript ref={this._ref} />
