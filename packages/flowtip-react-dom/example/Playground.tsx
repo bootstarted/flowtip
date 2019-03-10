@@ -14,24 +14,17 @@ export interface Props {
   sticky: boolean;
 }
 
-interface State {
-  target: Rect;
-  content: {width: number; height: number};
-  bounds: Rect;
-  result?: Result;
-}
-
 const rectPositionStyle = (rect: Rect): React.CSSProperties => {
   const {top, left, width, height} = Rect.abs(rect);
   return {top, left, width, height};
 };
 
-const Playground: React.StatelessComponent<Props> = ({
+const Playground = ({
   snap,
   disabled,
   constrain,
   sticky,
-}): React.ReactNode => {
+}: Props): React.ReactElement | null => {
   const [target, setTarget] = React.useState(new Rect(170, 205, 80, 30));
   const [content, setContent] = React.useState({width: 100, height: 50});
   const [bounds, setBounds] = React.useState(new Rect(10, 10, 400, 400));

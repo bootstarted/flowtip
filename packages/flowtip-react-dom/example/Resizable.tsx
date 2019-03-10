@@ -11,34 +11,34 @@ const POINT_ZERO = {x: 0, y: 0};
 
 export type Handle = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w';
 
-export interface Props {
-  anchor?: Point;
+interface Props {
+  anchor: Point;
   value: RectShape;
   onChange?: (value: Rect) => unknown;
-  handleSize?: number;
-  handles?: {[key in Handle]: boolean};
-  minWidth?: number;
-  minHeight?: number;
-  maxWidth?: number;
-  maxHeight?: number;
+  handleSize: number;
+  handles: {[key in Handle]: boolean};
+  minWidth: number;
+  minHeight: number;
+  maxWidth: number;
+  maxHeight: number;
 }
 
-const Resizable: React.StatelessComponent<Props> = (props): React.ReactNode => {
+const Resizable = (props: Props): React.ReactElement | null => {
   const propsRef = React.useRef<Props>();
   propsRef.current = props;
 
-  const nwHandleRef = React.useRef<HTMLDivElement>();
-  const nHandleRef = React.useRef<HTMLDivElement>();
-  const neHandleRef = React.useRef<HTMLDivElement>();
-  const eHandleRef = React.useRef<HTMLDivElement>();
-  const seHandleRef = React.useRef<HTMLDivElement>();
-  const sHandleRef = React.useRef<HTMLDivElement>();
-  const swHandleRef = React.useRef<HTMLDivElement>();
-  const wHandleRef = React.useRef<HTMLDivElement>();
-  const contentRef = React.useRef<HTMLDivElement>();
+  const nwHandleRef = React.useRef<HTMLDivElement>(null);
+  const nHandleRef = React.useRef<HTMLDivElement>(null);
+  const neHandleRef = React.useRef<HTMLDivElement>(null);
+  const eHandleRef = React.useRef<HTMLDivElement>(null);
+  const seHandleRef = React.useRef<HTMLDivElement>(null);
+  const sHandleRef = React.useRef<HTMLDivElement>(null);
+  const swHandleRef = React.useRef<HTMLDivElement>(null);
+  const wHandleRef = React.useRef<HTMLDivElement>(null);
+  const contentRef = React.useRef<HTMLDivElement>(null);
 
   // Refs to keep track of drag start values during subsequent renders
-  const startValueRef = React.useRef<Rect>();
+  const startValueRef = React.useRef<RectShape>();
   const startPointRef = React.useRef<Point>();
 
   const activeElementRef = React.useRef<HTMLDivElement>();
@@ -49,12 +49,12 @@ const Resizable: React.StatelessComponent<Props> = (props): React.ReactNode => {
 
   const handleMouseDown = (event: React.MouseEvent): void => {
     if (event.target instanceof HTMLDivElement) {
+      activeElementRef.current = event.target;
       startValueRef.current = props.value;
       startPointRef.current = {
         x: event.clientX - props.anchor.x,
         y: event.clientY - props.anchor.y,
       };
-      activeElementRef.current = event.target;
     }
   };
 
@@ -66,98 +66,105 @@ const Resizable: React.StatelessComponent<Props> = (props): React.ReactNode => {
   }, []);
 
   const handleMouseMove = React.useCallback((event: MouseEvent) => {
-    if (!activeElementRef.current) {
+    const startPoint = startPointRef.current;
+    const startValue = startValueRef.current;
+    const activeElement = activeElementRef.current;
+
+    if (!activeElement || !startValue || !startPoint || !propsRef.current) {
       return;
     }
+
+    const {
+      value,
+      maxHeight,
+      minHeight,
+      maxWidth,
+      minWidth,
+      onChange,
+    } = propsRef.current;
 
     setIsDragging(true);
 
     const drag = {
-      x: event.clientX - startPointRef.current.x - propsRef.current.anchor.x,
-      y: event.clientY - startPointRef.current.y - propsRef.current.anchor.y,
+      x: event.clientX - startPoint.x - propsRef.current.anchor.x,
+      y: event.clientY - startPoint.y - propsRef.current.anchor.y,
     };
 
-    let top = propsRef.current.value.top;
-    let left = propsRef.current.value.left;
-    let bottom = propsRef.current.value.bottom;
-    let right = propsRef.current.value.right;
+    let top = value.top;
+    let left = value.left;
+    let bottom = value.top + value.height;
+    let right = value.left + value.width;
 
     let setTop = (): void => {
       top = Math.min(
-        Math.max(
-          startValueRef.current.top + drag.y,
-          propsRef.current.value.bottom - propsRef.current.maxHeight,
-        ),
-        propsRef.current.value.bottom - propsRef.current.minHeight,
+        Math.max(startValue.top + drag.y, value.top + value.height - maxHeight),
+        value.top + value.height - minHeight,
       );
     };
 
     let setRight = (): void => {
       right = Math.max(
         Math.min(
-          startValueRef.current.right + drag.x,
-          propsRef.current.value.left + propsRef.current.maxWidth,
+          startValue.left + startValue.width + drag.x,
+          value.left + maxWidth,
         ),
-        propsRef.current.value.left + propsRef.current.minWidth,
+        value.left + minWidth,
       );
     };
 
     let setBottom = (): void => {
       bottom = Math.max(
         Math.min(
-          startValueRef.current.bottom + drag.y,
-          propsRef.current.value.top + propsRef.current.maxHeight,
+          startValue.top + startValue.height + drag.y,
+          value.top + maxHeight,
         ),
-        propsRef.current.value.top + propsRef.current.minHeight,
+        value.top + minHeight,
       );
     };
 
     let setLeft = (): void => {
       left = Math.min(
-        Math.max(
-          startValueRef.current.left + drag.x,
-          propsRef.current.value.right - propsRef.current.maxWidth,
-        ),
-        propsRef.current.value.right - propsRef.current.minWidth,
+        Math.max(startValue.left + drag.x, value.left + value.width - maxWidth),
+        value.left + value.width - minWidth,
       );
     };
 
-    if (propsRef.current.value.width < 0) {
+    if (value.width < 0) {
       const temp = setLeft;
       setLeft = setRight;
       setRight = temp;
     }
 
-    if (propsRef.current.value.height < 0) {
+    if (value.height < 0) {
       const temp = setTop;
       setTop = setBottom;
       setBottom = temp;
     }
 
-    if (activeElementRef.current === contentRef.current) {
-      top = startValueRef.current.top + drag.y;
-      right = startValueRef.current.right + drag.x;
-      bottom = startValueRef.current.bottom + drag.y;
-      left = startValueRef.current.left + drag.x;
-    } else if (activeElementRef.current === nwHandleRef.current) {
+    if (activeElement === contentRef.current) {
+      top = startValue.top + drag.y;
+      right = startValue.left + startValue.width + drag.x;
+      bottom = startValue.top + startValue.height + drag.y;
+      left = startValue.left + drag.x;
+    } else if (activeElement === nwHandleRef.current) {
       setTop();
       setLeft();
-    } else if (activeElementRef.current === nHandleRef.current) {
+    } else if (activeElement === nHandleRef.current) {
       setTop();
-    } else if (activeElementRef.current === neHandleRef.current) {
+    } else if (activeElement === neHandleRef.current) {
       setTop();
       setRight();
-    } else if (activeElementRef.current === eHandleRef.current) {
+    } else if (activeElement === eHandleRef.current) {
       setRight();
-    } else if (activeElementRef.current === seHandleRef.current) {
+    } else if (activeElement === seHandleRef.current) {
       setBottom();
       setRight();
-    } else if (activeElementRef.current === sHandleRef.current) {
+    } else if (activeElement === sHandleRef.current) {
       setBottom();
-    } else if (activeElementRef.current === swHandleRef.current) {
+    } else if (activeElement === swHandleRef.current) {
       setBottom();
       setLeft();
-    } else if (activeElementRef.current === wHandleRef.current) {
+    } else if (activeElement === wHandleRef.current) {
       setLeft();
     } else {
       // The active element is not currently mounted. This is the case when a
@@ -166,10 +173,8 @@ const Resizable: React.StatelessComponent<Props> = (props): React.ReactNode => {
       return;
     }
 
-    if (propsRef.current.onChange) {
-      propsRef.current.onChange(
-        new Rect(left, top, right - left, bottom - top),
-      );
+    if (onChange) {
+      onChange(new Rect(left, top, right - left, bottom - top));
     }
   }, []);
 
@@ -185,7 +190,7 @@ const Resizable: React.StatelessComponent<Props> = (props): React.ReactNode => {
   }, []);
 
   // Update forced global cursor style
-  React.useEffect(() => {
+  React.useEffect((): (() => void) => {
     let cursor;
 
     switch (activeElementRef.current) {
@@ -224,6 +229,8 @@ const Resizable: React.StatelessComponent<Props> = (props): React.ReactNode => {
         }
       };
     }
+
+    return () => {};
   }, [activeElementRef.current, isDragging]);
 
   const renderHandle = (

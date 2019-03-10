@@ -150,7 +150,7 @@ class Rect implements DOMRectReadOnly, RectShape {
     return this.top + this.height;
   }
 
-  private constructor(x: number, y: number, width: number, height: number) {
+  public constructor(x: number, y: number, width: number, height: number) {
     this.left = x;
     this.top = y;
     this.width = width;
