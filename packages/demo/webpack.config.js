@@ -1,5 +1,5 @@
-import {loader} from 'webpack-partial';
-import path from 'path';
+const loader = require('webpack-partial').loader;
+const path = require('path');
 
 const base = {
   context: __dirname,
@@ -10,10 +10,13 @@ const base = {
   },
 };
 
-export default loader(
+module.exports = loader(
   {
     loader: 'babel-loader',
     test: /\.js$/,
+    options: {
+      rootMode: 'upward',
+    },
     exclude: [/node_modules/],
   },
   base,

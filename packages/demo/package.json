@@ -8,7 +8,7 @@
     "url": "https://github.com/metalabdesign/flowtip/issues"
   },
   "scripts": {
-    "dev": "npx webpack-serve -r @babel/register --config ./webpack.config.js --content ./static"
+    "dev": "npx webpack-serve --config ./webpack.config.js --content ./static"
   },
   "dependencies": {
     "flowtip-react-dom": "^5.2.0",
