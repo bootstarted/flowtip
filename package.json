@@ -28,7 +28,7 @@
     "babel-jest": "24.1.0",
     "babel-plugin-module-resolver": "3.2.0",
     "enzyme": "3.9.0",
-    "enzyme-adapter-react-16": "1.10.0",
+    "enzyme-adapter-react-16": "1.15.2",
     "eslint": "5.14.1",
     "eslint-config-metalab": "10.0.0",
     "eslint-plugin-prettier": "3.0.1",
